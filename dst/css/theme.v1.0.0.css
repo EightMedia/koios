@@ -1,1 +1,4 @@
-/* npm-scripts 1.0.0 */ .component{color:#00f;background:url(/img/test.jpg)}
+/* npm-scripts 1.0.0 */ .component {
+  color: #0000ff;
+  background: url("/img/test.jpg");
+}

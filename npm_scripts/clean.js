@@ -3,12 +3,13 @@ const chalk = require("chalk");
 
 const del = require("del");
 
-(async () => {
+async function clean() {
 	const deleted = await del([
     paths.DST.styles + "*.css",
     paths.DST.scripts + "*.js"
   ]);
-  console.log(
-    chalk.bold("  Clean destination:") + "\n" + "    " + chalk.blueBright(deleted.join("\n    "))
-  );
-})();
+
+  console.log(chalk.blueBright(deleted.join("\n    ")));
+};
+
+exports.default = clean;
