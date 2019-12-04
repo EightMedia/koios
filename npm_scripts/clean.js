@@ -8,5 +8,7 @@ const del = require("del");
     paths.DST.styles + "*.css",
     paths.DST.scripts + "*.js"
   ]);
-	console.log("  Deleted:\n", "    " + chalk.blueBright(deleted.join("\n    ")));
+  console.log(
+    chalk.bold("  Clean destination:") + "\n" + "    " + chalk.blueBright(deleted.join("\n    "))
+  );
 })();

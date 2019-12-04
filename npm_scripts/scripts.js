@@ -1,3 +1,3 @@
 const paths = require("./paths");
+const chalk = require("chalk");
 
-console.log("Process scripts");

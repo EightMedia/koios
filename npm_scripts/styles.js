@@ -7,6 +7,7 @@ const mkdirp = require("mkdirp");
 const path = require("path");
 
 const autoprefixer = require("autoprefixer");
+const cssnano = require("cssnano");
 const postcss = require("postcss");
 
 /**
@@ -16,20 +17,28 @@ const postcss = require("postcss");
 const buildStyles = function() {
   this.data;
   
-  console.log("  Styles:");
+  console.log(chalk.bold("  Build styles:"));
 
   this.build = (filename) => {
-    src = path.resolve(__dirname, "../" + paths.SRC.styles + filename + ".css");
-    dst = path.resolve(__dirname, "../" + paths.DST.styles + filename + ".scss");
+    const src = path.resolve(__dirname, "../" + paths.SRC.styles + filename + ".scss");
+    const dst = path.resolve(
+      __dirname,
+      "../" +
+        paths.DST.styles +
+        filename +
+        ".v" +
+        process.env.npm_package_version +
+        ".css"
+    );
     this.read(src);
     this.compile();
-    this.autoprefix();
+    this.postcss();
     this.banner();
     this.write(dst);
   };
 
   /**
-   * Read input from sass file
+   * Read input from scss file
    */
 
   this.read = src => {
@@ -54,9 +63,9 @@ const buildStyles = function() {
    * Run input through postcss's autoprefixer
    */
 
-  this.autoprefix = () => {
-    postcss([autoprefixer])
-      .process(this.data, { from: undefined } )
+  this.postcss = () => {
+    postcss([autoprefixer, cssnano])
+      .process(this.data, { from: undefined })
       .then(result => {
         result.warnings().forEach(warn => {
           console.warn("    " + chalk.yellow(warn.toString()));
@@ -92,4 +101,4 @@ const buildStyles = function() {
 };
 
 const scss = new buildStyles();
-scss.build("all");
+scss.build("theme");
