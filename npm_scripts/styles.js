@@ -1,14 +1,14 @@
 const paths = require("./paths");
 const chalk = require("chalk");
 
-const sass = require("node-sass");
 const fs = require('fs');
 const mkdirp = require("mkdirp");
 const path = require("path");
-
+const sass = require("node-sass");
+const pp = require("preprocess");
+const postcss = require("postcss");
 const autoprefixer = require("autoprefixer");
 const cssnano = require("cssnano");
-const postcss = require("postcss");
 
 /**
  * Build sass styles
@@ -32,9 +32,15 @@ const buildStyles = function() {
     );
     this.read(src);
     this.compile();
-    this.postcss();
-    this.banner();
-    this.write(dst);
+    this.preprocess();
+    this.postcss().then(done => {
+      if (done) {
+        this.banner();
+        this.write(dst);
+      } else {
+        console.error("    " + chalk.red("Could not minify " + dst));
+      }
+    });
   };
 
   /**
@@ -46,36 +52,59 @@ const buildStyles = function() {
   };
 
   /**
-   * Run input through node-sass
+   * Compile scss to css and set it to this.data
    */
 
   this.compile = () => {
     // render the result
     var result = sass.renderSync({
       data: this.data,
-      outputStyle: "compressed"
+      outputStyle: "expanded",
+      includePaths: [paths.SRC.styles]
     });
 
     this.data = result.css;
   };
 
   /**
-   * Run input through postcss's autoprefixer
+   * Preprocess this.data
+   */
+
+  this.preprocess = () => {
+    this.data = pp.preprocess(this.data, paths.locals, { type: "css" });
+  }
+
+  /**
+   * Autoprefix and minify this.data
    */
 
   this.postcss = () => {
-    postcss([autoprefixer, cssnano])
-      .process(this.data, { from: undefined })
+    return postcss([
+      autoprefixer({
+        cascade: false
+      }),
+      cssnano({
+        zindex: false,
+        discardComments: {
+          removeAll: true
+        },
+        discardDuplicates: true,
+        discardEmpty: true,
+        minifyFontValues: true,
+        minifySelectors: true
+      })
+    ]).process(this.data, { from: undefined })
       .then(result => {
         result.warnings().forEach(warn => {
           console.warn("    " + chalk.yellow(warn.toString()));
         });
-        this.css = result.css;
+        this.data = result.css;
+        return true;
       });
   };
 
   /**
-   * Add banner to destination data
+   * Add banner to this.data
    */
 
   this.banner = () => {
@@ -83,7 +112,7 @@ const buildStyles = function() {
   }
 
   /**
-   * Write input to destination file
+   * Write this.data to dst
    */
 
   this.write = (dst) => {

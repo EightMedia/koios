@@ -14,7 +14,9 @@ const paths = {
 };
 
 paths.locals = {
-  
+  CSS_URL: "/css/",
+  JS_URL: "/js/",
+  IMG_URL: "/img/"
 };
 
 module.exports = paths;
