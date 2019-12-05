@@ -22,7 +22,7 @@ function read(src) {
 }
  
 /**
- * Compiler using node-sass
+ * Compile using node-sass
  */
 
 function compile(scss) {
@@ -35,7 +35,37 @@ function compile(scss) {
       (err, result) => err ? reject(err) : resolve(result.css));
   });
 }
+
+/**
+ * Minify (and autoprefix) using cssnano
+ */
  
+function minify(css) {
+  return new Promise((resolve, reject) => {
+    postcss([
+    autoprefixer({
+      cascade: false
+    }),
+    cssnano({
+      zindex: false,
+      discardComments: {
+        removeAll: true
+      },
+      discardDuplicates: true,
+      discardEmpty: true,
+      minifyFontValues: true,
+      minifySelectors: true
+    })
+  ]).process(css, { from: undefined })
+    .then(result => {
+      result.warnings().forEach(warn => {
+        console.warn(chalk.yellow(warn.toString()));
+      });
+      resolve(result.css);
+    })
+  });
+}
+
 /**
  * Main module function called by run.js
  * $ node tasks/run styles
@@ -68,28 +98,7 @@ function styles() {
     read(src)
       .then(scss => compile(scss))
       .then(css => pp.preprocess(css, paths.locals, { type: "css" }))
-      .then(css => postcss([
-          autoprefixer({
-            cascade: false
-          }),
-          cssnano({
-            zindex: false,
-            discardComments: {
-              removeAll: true
-            },
-            discardDuplicates: true,
-            discardEmpty: true,
-            minifyFontValues: true,
-            minifySelectors: true
-          })
-        ]).process(css, { from: undefined })
-          .then(result => {
-            result.warnings().forEach(warn => {
-              console.warn(chalk.yellow(warn.toString()));
-            });
-            return result.css;
-          })
-      )
+      .then(css => minify(css))
       .then(css => "/* " + process.env.npm_package_name + " v" + process.env.npm_package_version + " */ " + css)
       .then(css => fs.writeFile(dst, css, (err) => err ?reject(err) : resolve()))
       .catch(err => reject(err));
