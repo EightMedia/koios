@@ -15,9 +15,9 @@ const cssnano = require("cssnano");
  * Read file 
  */
 
-function read(src) {
+function read(file) {
   return new Promise(function (resolve, reject) {
-    fs.readFile(src, (err, scss) => err ? reject(err) : resolve(scss.toString()));
+    fs.readFile(file, (err, content) => err ? reject(err) : resolve(content.toString()));
   });
 }
  
@@ -75,19 +75,8 @@ function styles() {
   const filename = "theme"; // TEMP STATIC SOLUTION
 
   return new Promise((resolve, reject) => {
-    const src = path.resolve(
-      __dirname,
-      "../" + paths.SRC.styles + filename + ".scss"
-    );
-    const dst = path.resolve(
-      __dirname,
-      "../" +
-      paths.DST.styles +
-      filename +
-      ".v" +
-      process.env.npm_package_version +
-      ".css"
-    );
+    const src = path.resolve(__dirname, `../${paths.SRC.styles}${filename}.scss`);
+    const dst = path.resolve(__dirname, `../${paths.DST.styles}${filename}.v${process.env.npm_package_version}.css`);
 
     // make sure the destination exists
     mkdirp(path.dirname(dst), function (err) {

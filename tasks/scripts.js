@@ -42,20 +42,8 @@ function scripts() {
   const filename = "app"; // TEMP STATIC SOLUTION
 
   return new Promise((resolve, reject) => {
-    const src = path.resolve(
-      __dirname,
-      "../" + paths.SRC.scripts + filename + ".js"
-    );
-
-    const dst = path.resolve(
-      __dirname,
-      "../" +
-        paths.DST.scripts +
-        filename +
-        ".v" +
-        process.env.npm_package_version +
-        ".js"
-    );
+    const src = path.resolve(__dirname, `../${paths.SRC.scripts}${filename}.js`);
+    const dst = path.resolve(__dirname, `../${paths.DST.scripts}${filename}.v${process.env.npm_package_version}.js`);
 
     // make sure the destination exists
     mkdirp(path.dirname(dst), function (err) {
