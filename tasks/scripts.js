@@ -1,5 +1,3 @@
-require("./run");
-
 const paths = require("./paths");
 const chalk = require("chalk");
 
@@ -11,34 +9,28 @@ const browserify = require("browserify");
 const envify = require("envify");
 const uglify = require("uglify-js");
 
-
 /**
- * Minify javascript
+ * Bundle javascript using Browserify
  */
 
-function minify(source) {
-  return browserify(source, { transform: [envify] }).bundle();
+function bundle(src) {
+  return new Promise(function(resolve, reject) {
+    return browserify(src, { transform: [envify] }).bundle(function(err, js) {
+      if (err) reject(err);
+      resolve(js.toString());
+    });
+  });
 };
 
-function banner(source) {
-  return "/* " +
-      process.env.npm_package_name +
-      " " +
-      process.env.npm_package_version +
-      " */ " +
-      source;
-}
+/**
+ * Minify javascript using Uglify
+ */
 
-function save(source) {
-  // make destination directory if it doesn't exist
-  mkdirp(path.dirname(dst), function(err) {
-    if (err) throw err;
-  });
-
-  // write destination file
-  fs.writeFile(dst, this.data, function(err) {
-    if (err) throw err;
-    console.log("    " + chalk.blueBright(dst));
+function minify(js) {
+  return new Promise(function(resolve, reject) {
+    var result = uglify.minify(js);
+    if (result.error) reject(error);
+    resolve(result.code);
   });
 }
 
@@ -65,13 +57,17 @@ function scripts() {
         ".js"
     );
 
-    var stream = minify(src);
+    // make sure the destination exists
+    mkdirp(path.dirname(dst), function (err) {
+      if (err) reject(err);
+    });
 
-    if (stream.err) {
-      return reject(stream.err);
-    }
-
-    return resolve();
+    // read and process the file
+    bundle(src)
+      .then(js => minify(js))
+      .then(js => "/* " + process.env.npm_package_name + " v" + process.env.npm_package_version + " */ " + js)
+      .then(js => fs.writeFile(dst, js, (err) => err ? reject(err) : resolve()))
+      .catch(err => reject(err));
   });
 }
 
