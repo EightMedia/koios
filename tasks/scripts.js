@@ -53,8 +53,14 @@ function scripts() {
     // read and process the file
     bundle(src)
       .then(js => minify(js))
-      .then(js => "/* " + process.env.npm_package_name + " v" + process.env.npm_package_version + " */ " + js)
-      .then(js => fs.writeFile(dst, js, (err) => err ? reject(err) : resolve()))
+      .then(js => `/* ${process.env.npm_package_name} v${process.env.npm_package_version} */ ` + js)
+      .then(js =>
+        fs.writeFile(dst, js, err => {
+          if (err) reject(err);
+          console.log(chalk.blueBright(`${dst}`));
+          resolve();
+        })
+      )
       .catch(err => reject(err));
   });
 }

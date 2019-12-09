@@ -73,7 +73,7 @@ function templates() {
               .then(html => "<!-- " + process.env.npm_package_name + " v" + process.env.npm_package_version + " -->\n" + html)
               .then(html => fs.writeFile(dstFile, html, (err) => {
                 if (err) reject(err); 
-                console.log("Compiled " + chalk.blueBright(`${dstFile}`));
+                console.log(chalk.blueBright(`${dstFile}`));
                 resolve();
               }))
               .catch(err => reject(err));

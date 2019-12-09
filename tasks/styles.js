@@ -88,8 +88,14 @@ function styles() {
       .then(scss => compile(scss))
       .then(css => pp.preprocess(css, paths.locals, { type: "css" }))
       .then(css => minify(css))
-      .then(css => "/* " + process.env.npm_package_name + " v" + process.env.npm_package_version + " */ " + css)
-      .then(css => fs.writeFile(dst, css, (err) => err ?reject(err) : resolve()))
+      .then(css => `/* ${process.env.npm_package_name} v${process.env.npm_package_version} */ ` + css)
+      .then(css =>
+        fs.writeFile(dst, css, err => {
+          if (err) reject(err);
+          console.log(chalk.blueBright(`${dst}`));
+          resolve();
+        })
+      )
       .catch(err => reject(err));
   });
 }

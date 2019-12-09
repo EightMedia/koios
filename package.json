@@ -10,9 +10,8 @@
     "build:scripts": "node tasks/run scripts",
     "build:templates": "node tasks/run templates",
     "build": "run-s clean build:* --silent",
-    "watch:styles": "onchange 'src/styles/*.scss' -- npm run build:styles",
-    "watch:scripts": "onchange 'src/scripts/*.js' -- npm run build:scripts",
-    "start": "run-p serve watch:* --silent"
+    "watch": "node tasks/run watch",
+    "start": "run-p serve watch --silent"
   },
   "author": "hylmar@eight.nl",
   "license": "ISC",
@@ -21,6 +20,7 @@
     "browser-sync": "^2.26.7",
     "browserify": "^16.5.0",
     "chalk": "^3.0.0",
+    "chokidar": "^3.3.0",
     "cssnano": "^4.1.10",
     "del": "^5.1.0",
     "envify": "^4.1.0",
@@ -28,7 +28,6 @@
     "glob-all": "^3.1.0",
     "node-sass": "^4.13.0",
     "npm-run-all": "^4.1.5",
-    "onchange": "^6.1.0",
     "postcss": "^7.0.23",
     "preprocess": "^3.1.0",
     "pug": "^2.0.4",
