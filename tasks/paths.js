@@ -7,15 +7,15 @@ const paths = {
 
   DST: {
     base: "dst/",
-    styles: "dst/css/",
-    scripts: "dst/js/",
+    styles: "dst/assets/css/",
+    scripts: "dst/assets/js/",
     templates: "dst/"
   }
 };
 
 paths.locals = {
-  CSS_URL: "/css/",
-  JS_URL: "/js/",
+  CSS_URL: "/assets/css/",
+  JS_URL: "/assets/js/",
   IMG_URL: "/img/",
   VERSION: process.env.npm_package_version
 };

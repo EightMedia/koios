@@ -71,29 +71,25 @@ function single(src, dst) {
  * Build
  */
 
-function templates(files) {
-  if (files) Array.from(files);
+async function templates(files) {
+  const globs = [
+    `${paths.SRC.templates}**${path.sep}*.pug`,
+    `!${paths.SRC.templates}**${path.sep}_*.pug`
+  ];
 
-  return new Promise(async (resolve, reject) => {
-    const globs = [
-      path.resolve(__dirname, `../${paths.SRC.templates}**/*.pug`),
-      "!" + path.resolve(__dirname, `../${paths.SRC.templates}**/_*.pug`)
-    ];
+  if (files && !Array.isArray(files)) files = Array.of(files);
+  else files = await readAll(globs);
 
-    const src = files || await readAll(globs);
-    const dst = path.resolve(__dirname, `../${paths.DST.templates}`);
-
-    console.log(src);
-
-    // make sure the destination exists
-    mkdirp(path.dirname(dst), function(err) {
-      if (err) reject(err);
-    });
-    
-    if (src.length > 0) {
+  return new Promise((resolve, reject) => {
+    if (files.length > 0) {
       let promises = [];
-      src.forEach(file => {
-        promises.push(single(file, dst + "/" + path.basename(file, ".pug") + ".html"));
+      files.forEach(src => {
+        let dir = paths.DST.templates + path.dirname(src.split(paths.SRC.templates).join("")) + path.sep;
+        mkdirp(dir, function(err) {
+          if (err) reject(err);
+        });
+        let dst = path.normalize(dir + path.basename(src, ".pug") + ".html");
+        promises.push(single(src, dst));
       });
       
       Promise.all(promises).then(function(done) {
