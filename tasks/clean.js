@@ -10,7 +10,7 @@ async function clean() {
     paths.DST.templates + "*.html"
   ]);
 
-  console.log(chalk.blueBright(deleted.join("\n")));
+  console.log("> " + deleted.join("\n> "));
 };
 
 exports.default = clean;

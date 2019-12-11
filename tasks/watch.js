@@ -24,7 +24,7 @@ function watch() {
 
     watcher.on("change", function(file) {
       const ext = path.extname(file).substr(1);
-      run(tasks[ext]).catch(err => {
+      run(tasks[ext], file).catch(err => {
         console.error(err.stack);
         process.exit(1);
       });

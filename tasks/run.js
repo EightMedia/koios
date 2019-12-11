@@ -8,7 +8,7 @@ function run(fn, options) {
   const task = typeof fn.default === "undefined" ? fn : fn.default;
   const start = new Date();
   console.info(
-    `[${chalk.dim(format(start))}] Starting '${chalk.cyan(task.name)}${
+    `[${chalk.dim(format(start))}] Starting '${chalk.hex('#FFA500')(task.name)}${
       options ? ` (${options})` : ""
     }'...`
   );
@@ -16,7 +16,7 @@ function run(fn, options) {
     const end = new Date();
     const time = end.getTime() - start.getTime();
     console.info(
-      `[${chalk.dim(format(end))}] Finished '${chalk.magenta(task.name)}${
+      `[${chalk.dim(format(end))}] Finished '${chalk.greenBright(task.name)}${
         options ? ` (${options})` : ""
       }' after ${time} ms`
     );

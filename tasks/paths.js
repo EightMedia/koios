@@ -16,7 +16,8 @@ const paths = {
 paths.locals = {
   CSS_URL: "/css/",
   JS_URL: "/js/",
-  IMG_URL: "/img/"
+  IMG_URL: "/img/",
+  VERSION: process.env.npm_package_version
 };
 
 module.exports = paths;

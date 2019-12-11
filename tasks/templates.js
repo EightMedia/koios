@@ -12,7 +12,7 @@ const pug = require("pug");
  * Read multiple files in a Glob manner
  */
 
-function readAll(globs) {
+async function readAll(globs) {
   globs = [].concat(globs);
 
   return new Promise(function (resolve, reject) {
@@ -47,43 +47,62 @@ function render(src) {
 };
 
 /**
+ * Process one file at a time
+ */
+
+function single(src, dst) {
+  return new Promise((resolve, reject) => {
+    render(src)
+      .then(html => "<!-- " + process.env.npm_package_name + " v" + process.env.npm_package_version + " -->\n" + html)
+      .then(html => fs.writeFile(dst, html, (err) => {
+        if (err) {
+          reject(err);
+          console.log(chalk.redBright(`> ${dst} (${err})`))
+        } else {
+          console.log(chalk.greenBright(`> ${dst}`));
+          resolve(dst);
+        }
+      }))
+      .catch(err => reject(err));
+  });
+}
+
+/**
  * Build
  */
 
-function templates() {
-  return new Promise((resolve, reject) => {
-    const src = [
+function templates(files) {
+  if (files) Array.from(files);
+
+  return new Promise(async (resolve, reject) => {
+    const globs = [
       path.resolve(__dirname, `../${paths.SRC.templates}**/*.pug`),
       "!" + path.resolve(__dirname, `../${paths.SRC.templates}**/_*.pug`)
     ];
+
+    const src = files || await readAll(globs);
     const dst = path.resolve(__dirname, `../${paths.DST.templates}`);
+
+    console.log(src);
 
     // make sure the destination exists
     mkdirp(path.dirname(dst), function(err) {
       if (err) reject(err);
     });
-
-    readAll(src)
-      .then(files => {
-        if (files.length > 0) {
-          files.forEach(file => {
-            var dstFile = dst + "/" + path.basename(file, ".pug") + ".html";
-
-            render(file)
-              .then(html => "<!-- " + process.env.npm_package_name + " v" + process.env.npm_package_version + " -->\n" + html)
-              .then(html => fs.writeFile(dstFile, html, (err) => {
-                if (err) reject(err); 
-                console.log(chalk.blueBright(`${dstFile}`));
-                resolve();
-              }))
-              .catch(err => reject(err));
-          });
-        } else {
-          console.warn(chalk.yellow(`No templates to render`));
-          resolve(); // finish task nicely
-        }
-      })
-      .catch(err => reject(err));
+    
+    if (src.length > 0) {
+      let promises = [];
+      src.forEach(file => {
+        promises.push(single(file, dst + "/" + path.basename(file, ".pug") + ".html"));
+      });
+      
+      Promise.all(promises).then(function(done) {
+        resolve(done);
+      });
+    } else {
+      console.warn(chalk.yellow(`No templates to render`));
+      resolve(); // finish task nicely
+    }
   });
 }
 

@@ -16,16 +16,13 @@ html(lang="nl")
       meta(name="description", content=pageMetaDescription)
       
       //- preload
-      link(rel="preload", href=`${JS_URL}app.v${version}.js`, as="script")
-      link(rel="preload", href=`${CSS_URL}theme.v${version}.css`, as="style")
+      link(rel="preload", href=`${JS_URL}app.v${VERSION}.js`, as="script")
+      link(rel="preload", href=`${CSS_URL}theme.v${VERSION}.css`, as="style")
 
       //- preload fonts
       link(rel="preload", href=`${FONTS_URL}ROsanswebtextregular.woff`, as="font", type="font/woff2", crossorigin="anonymous")
-      link(rel="preload", href=`${FONTS_URL}ROsanswebtextitalic.woff`, as="font", type="font/woff2", crossorigin="anonymous")
-      link(rel="preload", href=`${FONTS_URL}ROsanswebtextbold.woff`, as="font", type="font/woff2", crossorigin="anonymous")
-
-      link(rel="stylesheet", href=`${CSS_URL}all.v${version}.css`)
-      link(rel="stylesheet", href=`${CSS_URL}print.v${version}.css`, media="print")
+      
+      link(rel="stylesheet", href=`${CSS_URL}theme.v${VERSION}.css`)
 
       link(rel="apple-touch-icon", sizes="180x180", href=`${IMAGES_URL}favicons/apple-touch-icon.png`)
       link(rel="icon", type="image/png", sizes="32x32", href=`${IMAGES_URL}favicons/favicon-32x32.png`)
@@ -46,13 +43,6 @@ html(lang="nl")
       meta(property="og:type", content="website")
 
   body
-
-    script
-      | var xhr=new XMLHttpRequest;xhr.open("GET","#{IMAGES_URL}_symbols.v#{version}.html",!0),xhr.onreadystatechange=function(){4===xhr.readyState&&200===xhr.status&&document.body.insertAdjacentHTML("afterbegin",xhr.responseText)},xhr.send();
-
-    block skiplinks
-      .skiplinks
-        a(href="#content") Direct naar de inhoud
 
     block nav
 
