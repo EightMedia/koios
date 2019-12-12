@@ -1,5 +1,5 @@
 function test() {
-  console.log("test app.js");
+  console.log("testkees app.js");
 }
 
 function go() {

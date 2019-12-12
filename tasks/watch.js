@@ -17,9 +17,9 @@ function watch() {
 
   return new Promise(function (resolve, reject) {
     const watcher = chokidar.watch([
-      paths.SRC.styles,
-      paths.SRC.scripts,
-      paths.SRC.templates
+      `${paths.SRC.styles}**/*.scss`,
+      `${paths.SRC.scripts}**/*.js`,
+      `${paths.SRC.templates}**/*.pug`
     ]);
 
     watcher.on("change", function(file) {

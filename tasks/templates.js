@@ -7,6 +7,22 @@ const path = require("path");
 
 const glob = require("glob-all");
 const pug = require("pug");
+const pugdoc = require("pug-doc");
+const discodip = require("discodip");
+
+/**
+ * Get difference between paths
+ */
+
+function pathDiff(a, b) {
+  a = a.split(path.sep);
+  b = b.split(path.sep);
+
+  return a
+    .filter((x, i) => i > b.length || (b[i] != x && x != ""))
+    .concat(b.filter((x, i) => i > a.length || (a[i] != x && x != "")))
+    .join(path.sep);
+}
 
 /**
  * Get file list in a Glob manner
@@ -52,24 +68,14 @@ function render(src) {
 
 function buildPage(src) {
   return new Promise((resolve, reject) => {
-    const filename = src.pop();
-    const dir = paths.DST.templates + src.join(path.sep);
+    const dir = path.normalize(paths.DST.pages + path.dirname(pathDiff(paths.SRC.pages, src)));
 
     mkdirp(dir, function(err) {
-      if (err) reject(err);
+      if (err) reject(err);   
 
-      let dst = path.normalize(
-        dir + path.sep + path.basename(filename, ".pug") + ".html"
-      );
+      const dst = dir + path.sep + path.basename(src, ".pug") + ".html";
 
-      render(
-        paths.SRC.templates +
-          "pages" +
-          path.sep +
-          src.join(path.sep) +
-          path.sep +
-          filename
-      )
+      render(src)
         .then(
           html =>
             `<!-- ${process.env.npm_package_name} v${process.env.npm_package_version} -->\n ${html}`
@@ -80,13 +86,52 @@ function buildPage(src) {
               reject(err);
               console.log(chalk.redBright(`> ${dst} (${err})`));
             } else {
-              console.log(chalk.greenBright(`> ${dst}`));
+              console.log(`> ${dst}`);
               resolve(dst);
             }
           })
         )
         .catch(err => reject(err));
+    });
+  });
+}
+
+/**
+ * Build pages
+ */
+
+function pages(changed) {
+  return new Promise(async (resolve, reject) => {
+    const globs = [
+      `${paths.SRC.pages}**${path.sep}*.pug`,
+      `!${paths.SRC.pages}**${path.sep}_*.pug`
+    ];
+
+    const fileList = changed ? Array.of(changed) : await getFileList(globs);
+
+    if (fileList.length > 0) {
+      let promises = [];
+      fileList.forEach(src => {
+        promises.push(buildPage(src));
       });
+
+      Promise.all(promises).then(function(done) {
+        resolve(done);
+      });
+    } else {
+      reject(new Error(`No templates inside ${paths.SRC.pages}`));
+    }
+  });
+}
+
+/**
+ * Build components
+ */
+
+function components(changed) {
+  return new Promise(async (resolve, reject) => {
+    console.log(chalk.magenta(`Check dependencies of ${changed}`));
+    resolve();
   });
 }
 
@@ -94,40 +139,12 @@ function buildPage(src) {
  * Build
  */
 
-function templates(files) {
-  return new Promise(async (resolve, reject) => {
-    const globs = [
-      `${paths.SRC.templates}**${path.sep}*.pug`,
-      `!${paths.SRC.templates}**${path.sep}_*.pug`
-    ];
-
-    if (files && !Array.isArray(files)) files = Array.of(files);
-    else files = await getFileList(globs);
-
-    if (files.length > 0) {
-      let promises = [];
-      files.forEach(src => {
-        const a = paths.SRC.templates.split(path.sep);
-        const b = src.split(path.sep);
-        const d = a.filter(x => x != "" && !b.includes(x)).concat(b.filter(x => x != "" && !a.includes(x)));
-        const type = d.shift();
-
-        if (type == "pages") {
-          promises.push(buildPage(d));
-        } else if (type == "components") {
-          // promises.push(buildComponent(d));
-          console.log(chalk.magenta(`Build component ${d}`));
-        }
-      });
-
-      Promise.all(promises).then(function(done) {
-        resolve(done);
-      }).catch(err => reject(err));
-    } else {
-      console.warn(chalk.yellow(`No templates to render`));
-      resolve(); // finish task nicely
-    }
-  });
+function templates(changed) {
+  const type = pathDiff(paths.SRC.templates, changed).split(path.sep).shift();
+  
+  if (type === "components") return components(changed);
+  
+  return pages(changed);
 }
 
 exports.default = templates;

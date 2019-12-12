@@ -92,7 +92,7 @@ function styles() {
       .then(css =>
         fs.writeFile(dst, css, err => {
           if (err) reject(err);
-          console.log(chalk.greenBright(`> ${dst}`));
+          console.log(`> ${dst}`);
           resolve();
         })
       )

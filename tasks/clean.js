@@ -7,7 +7,8 @@ async function clean() {
 	const deleted = await del([
     paths.DST.styles + "*.css",
     paths.DST.scripts + "*.js",
-    paths.DST.templates + "**/*.html"
+    paths.DST.pages + "**/*.html",
+    "!" + paths.DST.components + "**/*.html"
   ]);
 
   console.log("> " + deleted.join("\n> "));

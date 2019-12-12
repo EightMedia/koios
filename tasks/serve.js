@@ -8,14 +8,12 @@ const bs = require("browser-sync").create("localdev");
 
 function serve() {
   return new Promise(function (resolve, reject) {
-    // bs.watch("*.html").on("change", bs.reload);
-
     bs.init({
       server: {
-        baseDir: paths.DST.base,
+        baseDir: paths.DST.pages,
         directory: true
       },
-      files: [paths.DST.base, paths.DST.styles, paths.DST.scripts],
+      files: [paths.DST.pages, paths.DST.styles, paths.DST.scripts],
       notify: false,
       port: 8000,
       open: false

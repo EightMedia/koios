@@ -1,0 +1,9 @@
+extends ../../_base
+
+include ../../../components/h1
+
+block append vars
+  - pageTitle.push("Test");
+
+block main
+  +h1("Paginb")
