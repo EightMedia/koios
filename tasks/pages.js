@@ -71,35 +71,38 @@ function single(src, dst) {
  * Build
  */
 
-async function templates(files) {
-  const globs = [
-    `${paths.SRC.templates}**${path.sep}*.pug`,
-    `!${paths.SRC.templates}**${path.sep}_*.pug`
-  ];
+function pages(files) {
+  return new Promise(async (resolve, reject) => {
+    const globs = [
+      `${paths.SRC.pages}**${path.sep}*.pug`,
+      `!${paths.SRC.pages}**${path.sep}_*.pug`
+    ];
 
-  if (files && !Array.isArray(files)) files = Array.of(files);
-  else files = await readAll(globs);
+    if (files && !Array.isArray(files)) files = Array.of(files);
+    else files = await readAll(globs);
 
-  return new Promise((resolve, reject) => {
     if (files.length > 0) {
       let promises = [];
       files.forEach(src => {
-        let dir = paths.DST.templates + path.dirname(src.split(paths.SRC.templates).join("")) + path.sep;
+        let dir =
+          paths.DST.pages +
+          path.dirname(src.split(paths.SRC.pages).join("")) +
+          path.sep;
         mkdirp(dir, function(err) {
           if (err) reject(err);
         });
         let dst = path.normalize(dir + path.basename(src, ".pug") + ".html");
         promises.push(single(src, dst));
       });
-      
+
       Promise.all(promises).then(function(done) {
         resolve(done);
       });
     } else {
-      console.warn(chalk.yellow(`No templates to render`));
+      console.warn(chalk.yellow(`No pages to render`));
       resolve(); // finish task nicely
     }
   });
 }
 
-exports.default = templates;
+exports.default = pages;

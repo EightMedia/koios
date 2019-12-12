@@ -8,7 +8,8 @@
     "clean": "node tasks/run clean",
     "build:styles": "node tasks/run styles",
     "build:scripts": "node tasks/run scripts",
-    "build:templates": "node tasks/run templates",
+    "build:pages": "node tasks/run pages",
+    "build:components": "node tasks/run components",
     "build": "run-s clean build:* --silent",
     "watch": "node tasks/run watch",
     "start": "run-p serve watch --silent"
@@ -25,6 +26,7 @@
     "chokidar": "^3.3.0",
     "cssnano": "^4.1.10",
     "del": "^5.1.0",
+    "discodip": "^1.3.0",
     "envify": "^4.1.0",
     "eslint": "^6.6.0",
     "glob-all": "^3.1.0",
@@ -33,6 +35,7 @@
     "postcss": "^7.0.23",
     "preprocess": "^3.1.0",
     "pug": "^2.0.4",
+    "pug-doc": "^2.15.0",
     "uglify": "^0.1.5",
     "uglify-js": "^3.7.1"
   }
