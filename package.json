@@ -8,8 +8,7 @@
     "clean": "node tasks/run clean",
     "build:styles": "node tasks/run styles",
     "build:scripts": "node tasks/run scripts",
-    "build:pages": "node tasks/run pages",
-    "build:components": "node tasks/run components",
+    "build:templates": "node tasks/run templates",
     "build": "run-s clean build:* --silent",
     "watch": "node tasks/run watch",
     "start": "run-p serve watch --silent"

@@ -2,15 +2,14 @@ const paths = {
   SRC: {
     styles: "src/styles/",
     scripts: "src/scripts/",
-    pages: "src/templates/pages/",
-    components: "src/templates/components/"
+    templates: "src/templates/",
   },
 
   DST: {
     base: "dst/",
     styles: "dst/assets/css/",
     scripts: "dst/assets/js/",
-    pages: "dst/"
+    templates: "dst/"
   }
 };
 

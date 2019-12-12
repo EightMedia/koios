@@ -57,7 +57,7 @@ function scripts() {
       .then(js =>
         fs.writeFile(dst, js, err => {
           if (err) reject(err);
-          console.log(`> ${dst}`);
+          console.log(chalk.greenBright(`> ${dst}`));
           resolve();
         })
       )
