@@ -68,12 +68,12 @@ function render(src) {
 
 function buildPage(src) {
   return new Promise((resolve, reject) => {
-    const dir = path.normalize(paths.DST.pages + path.dirname(pathDiff(paths.SRC.pages, src)));
+    const dstdir = path.normalize(paths.DST.pages + path.dirname(pathDiff(paths.SRC.pages, src)));
 
-    mkdirp(dir, function(err) {
+    mkdirp(dstdir, function(err) {
       if (err) reject(err);   
 
-      const dst = dir + path.sep + path.basename(src, ".pug") + ".html";
+      const dst = dstdir + path.sep + path.basename(src, ".pug") + ".html";
 
       render(src)
         .then(
@@ -140,7 +140,7 @@ function components(changed) {
  */
 
 function templates(changed) {
-  const type = pathDiff(paths.SRC.templates, changed).split(path.sep).shift();
+  const type = changed ? pathDiff(paths.SRC.templates, changed).split(path.sep).shift() : "";
   
   if (type === "components") return components(changed);
   
