@@ -68,83 +68,58 @@ function render(src) {
 
 function buildPage(src) {
   return new Promise((resolve, reject) => {
-    const dstdir = path.normalize(paths.DST.pages + path.dirname(pathDiff(paths.SRC.pages, src)));
+    const dir = path.normalize(paths.DST.pages + path.dirname(pathDiff(paths.SRC.pages, src)));
+    const dst = dir + path.sep + path.basename(src, ".pug") + ".html";
 
-    mkdirp(dstdir, function(err) {
-      if (err) reject(err);   
+    mkdirp.sync(dir);
 
-      const dst = dstdir + path.sep + path.basename(src, ".pug") + ".html";
-
-      render(src)
-        .then(
-          html =>
-            `<!-- ${process.env.npm_package_name} v${process.env.npm_package_version} -->\n ${html}`
-        )
-        .then(html =>
-          fs.writeFile(dst, html, err => {
-            if (err) {
-              reject(err);
-              console.log(chalk.redBright(`> ${dst} (${err})`));
-            } else {
-              console.log(`> ${dst}`);
-              resolve(dst);
-            }
-          })
-        )
-        .catch(err => reject(err));
-    });
-  });
+    render(src)
+      .then(
+        html =>
+          `<!-- ${process.env.npm_package_name} v${process.env.npm_package_version} -->\n ${html}`
+      )
+      .then(html =>
+        fs.writeFile(dst, html, err => {
+          if (err) reject(err);
+          resolve(dst);
+        })
+      )
+      .catch(err => err);
+  }).catch(err => err);
 }
 
 /**
- * Build pages
+ * Build templates
  */
 
-function pages(changed) {
+function templates(changed) {
   return new Promise(async (resolve, reject) => {
     const globs = [
-      `${paths.SRC.pages}**${path.sep}*.pug`,
-      `!${paths.SRC.pages}**${path.sep}_*.pug`
+      `${paths.SRC.templates}**${path.sep}*.pug`,
+      `!${paths.SRC.templates}**${path.sep}_*.pug`
     ];
-
     const fileList = changed ? Array.of(changed) : await getFileList(globs);
 
     if (fileList.length > 0) {
-      let promises = [];
-      fileList.forEach(src => {
-        promises.push(buildPage(src));
+      let buildPromises = [];
+      
+      fileList.map(src => {
+        // check if src is inside "components" or "pages"
+        const type = pathDiff(paths.SRC.templates, src).split(path.sep).shift();
+        
+        // check type and build accordingly
+        if (type === "pages") buildPromises.push(buildPage(src));
       });
 
-      Promise.all(promises).then(function(done) {
+      // resolve entire build when all build promises are done
+      Promise.all(buildPromises).then(function(done) {
+        console.log("> " + done.join("\n> "));
         resolve(done);
-      });
+      }).catch(err => reject(err));
     } else {
       reject(new Error(`No templates inside ${paths.SRC.pages}`));
     }
   });
-}
-
-/**
- * Build components
- */
-
-function components(changed) {
-  return new Promise(async (resolve, reject) => {
-    console.log(chalk.magenta(`Check dependencies of ${changed}`));
-    resolve();
-  });
-}
-
-/**
- * Build
- */
-
-function templates(changed) {
-  const type = changed ? pathDiff(paths.SRC.templates, changed).split(path.sep).shift() : "";
-  
-  if (type === "components") return components(changed);
-  
-  return pages(changed);
 }
 
 exports.default = templates;
