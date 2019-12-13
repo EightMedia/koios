@@ -1,0 +1,11 @@
+extends _base
+
+include ../components/sections/meet-us
+
+block append vars
+  - pageTitle.push("Agenda");
+  - pagePath = ["Maak kennis", "Agenda"];
+
+block main
+
+  +section-meet-us({ category: "evenement", branchLabel: "<h1>Agenda</h1> voor" })

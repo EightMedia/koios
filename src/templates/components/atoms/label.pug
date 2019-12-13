@@ -1,0 +1,9 @@
+mixin label(label, iconID)
+  include ../../icons/_icon
+
+  span.label #{label}
+
+    if iconID
+      span.label__icon
+        +icon(id=iconID)
+        

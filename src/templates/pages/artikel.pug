@@ -1,0 +1,56 @@
+extends _base
+
+include ../components/heroes/hero-content
+include ../components/sections/article-intro
+include ../components/sections/image
+include ../components/sections/richtext
+include ../components/sections/quote
+include ../components/sections/callout-simple
+include ../components/sections/related-articles
+include ../components/sections/line
+include ../components/sections/share
+
+block append vars
+  - pageTitle.push("Artikel");
+  - pagePath = ["Maak kennis", "Marion Straatman: ‘Rijkswaterstaat van start met grootste onderhouds-opgave ooit’"];
+
+block main
+  +hero-content('marion-banner.jpg')
+
+  +section-article-intro("interview", "25 januari 2019", "Marion Straatman: ‘Rijkswaterstaat van start met grootste onderhouds-opgave ooit’")
+    p Rijkswaterstaat bevindt zich aan de vooravond van een enorme onderhoudsopgave. Het komende decennium moet de infrastructuur-beheerder tientallen bruggen, sluizen, viaducten en tunnels uitgebreid renoveren en toekomstbestendig maken.
+
+  +section-image(self.SLIM, "marion-straatman.jpg", "Marion Straatman is afdelingshoofd techniek en technisch management van Rijkswaterstaat.")
+
+  +section-richtext
+    p De onderhoudsopgave is de grootste in de Nederlandse geschiedenis. Dat komt omdat veel bruggen, tunnels en viaducten gebouwd zijn in de jaren ‘50 en ‘60, in verband met de wederopbouw na de Tweede Wereldoorlog. Inmiddels zijn deze kunstwerken ook niet meer berekend op het alsmaar toenemende verkeer en steeds zwaardere vrachtwagens. 
+    p De meeste van deze civiele bouwwerken zijn daarom nu aan een grote opknapbeurt toe, zodat ze weer zo'n zestig tot zeventig jaar meekunnen. Zo staan er in Zuid-Holland alleen al voor de komende jaren dertien bruggen, acht tunnels en tien wegen op het programma.
+
+  +section-quote("‘De adviseurs die we zoeken zijn vakinhoudelijke experts die weten wat de ontwikkelingen in hun vakgebied zijn’")
+
+  +section-richtext
+    p Het renoveren en vervangen van de bestaande infrastructuur vraagt naast flinke investeringen om menskracht en specifieke kennis. Marion Straatman is afdelingshoofd techniek en technisch management van Rijkswaterstaat. Voor de onderhoudsopgave coördineert zij de technische vacatures. Ze licht toe: ‘In plaats van bijvoorbeeld een brug regulier te onderhouden, gaat het nu stuk voor stuk om intensieve projecten. De wereld is namelijk niet stil blijven staan. Er worden nu andere eisen gesteld aan deze infrastructuur dan toen we deze bouwden.’
+
+  +section-image(self.WIDE, "tunnel-velsen.jpg", "Deze afbeelding breekt uit voor een ‘immersive’-effect.", "Fotograaf: Hendrik-Jan de Vries")
+
+  +section-richtext
+    h2 Big data
+    p Dat heeft voor een groot deel te maken met automatisering en de introductie van nieuwe technologie. Zo kan er inmiddels veel meer met bediening en besturing. Het gaat bijvoorbeeld om verdere standaardisatie en ontwikkeling van nieuwe ict-oplossingen. Te denken valt aan de inzet van innovatieve sensorsystemen die de staat van objecten real-time scherp monitoren zodat Rijkswaterstaat vroegtijdig tegen een dreigende storing kan optreden. 
+    p Het gaat ook om analyses van big data, zodat de beheerders beter kunnen voorspellen waar onderhoud nodig is. Daarnaast verwacht Rijkswaterstaat de komende jaren veel ontwikkelingen op het gebied van verkeersmanagementsystemen die weggebruikers onderweg ondersteunen met rij- en reisadviezen.
+
+  +section-callout("We zoeken inkoopprofessionals", "De nieuwste technieken, zowel op de hardware als de software van de objecten, kunnen worden toegepast om de constructies en installaties zodanig te vernieuwen.", {label: "Onze inkoop vacatures", link: "#"})
+
+  +section-richtext
+    p ‘Tijdens iedere renovatie benutten we daarom meteen de mogelijkheid om onze wegen, bruggen en tunnels veiliger en duurzamer te maken.’ Door grote energie verbruikende installaties – zoals de besturing van hef- en draaibruggen en sluizen – te vervangen door een zuinigere oplossing probeert Rijkswaterstaat bij te dragen aan de ambities om netwerken duurzamer en uiteindelijk bij voorkeur volledig energieneutraal te laten opereren.
+    p Bijvoorbeeld door plaatsing van zonnepanelen voor de stroomvoorziening van verkeersinstallaties, maar ook door oude funderingen en asfalt te hergebruiken. Er is zelfs interesse in het onderzoeken van de mogelijkheden van bermgras als biobrandstof.
+
+  +section-share("Deel dit artikel")
+
+  +section-line
+
+  //- related articles
+  - var cards = [];
+  - cards.push({ type: self.EVENT, image: "knooppunt.jpg", title: "Webinar Circulaire infrastructuur", text: "Onze experts gaan tijdens dit webinar in op het thema: Circulaire infrastructuur door de ogen van Rijkswaterstaat.", link: "", date: { from: "12 dec", to: "14 dec" } })
+  - cards.push({ type: self.EVENT, image: "snelweg-bij-nacht.jpg", title: "Inhouselunch", text: "Ben je benieuwd naar wat het traineeship bij Rijkswaterstaat inhoudt en wil je even de sfeer proeven? Kom dan naar onze Inhouselunch.", link: "", date: { from: "16 dec", to: null } })
+  - cards.push({ type: self.ARTICLE, image: "tunnel-velsen.jpg", title: "Harold van Waveren: ‘Ik wilde niets liever dan Nederland beschermen tegen hoogwater’", link: "", label: "interview" })
+  +section-related-articles("Maak kennis", { label: "Toon meer", link: "" }, cards)

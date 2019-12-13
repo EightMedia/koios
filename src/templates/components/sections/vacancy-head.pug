@@ -1,0 +1,49 @@
+//- @pugdoc
+  name: Vacature kop
+  capture: none
+
+mixin vacancy-head(title, date, meta)
+  include ../../rh-icons/_rh-icon
+  include ../molecules/vacancy-apply
+
+  .vacancy-head
+    .vacancy-head__pointer
+      .vacancy-head__pointer-inner
+        h1.vacancy-head__pointer__title #{title}
+        +vacancy-apply(date)(class="js-fixed-cta-trigger")
+
+    ul.vacancy-head__meta
+
+      each item in meta
+
+        li.vacancy-head__meta__item
+          +rh-icon(item.icon)
+          .vacancy-head__meta__item__label
+            |#{item.label}
+
+//- @pugdoc
+  name: Sectie (Vacaturekop)
+  example: |
+    include ../general/fixed-cta
+    include ./vacancy-head
+
+    div.fixed-cta-test-container(style="height: 600px; overflow-y: scroll;")
+      div(style="height: 150px;")
+
+      - var meta = [];
+      - meta.push({icon: "locatie marker", label: "Utrecht"})
+      - meta.push({icon: "stapeltje euros", label: "€3.130 - €4.809 (schaal 11)"})
+      - meta.push({icon: "rijkspas", label: "Vaste aanstelling (eventueel met een proeftijd)"})
+      - meta.push({icon: "onderwijs cultuur wetenschap", label: "Master/doctoraal"})
+      - meta.push({icon: "klok", label: "32 - 36 uren per week"})
+      - meta.push({icon: "maatwerk", label: "ICT, Financieel/economisch"})
+      +section-vacancy-head("Changemanager tunnels, elektrotechniek en industriële automatisering", "13 februari 2019", meta)
+
+      <!-- plaats dit na div#content -->
+      +fixed-cta("Changemanager tunnels, elektrotechniek en industriële automatisering", {label: "Direct solliciteren", link: "#"}, true)
+
+mixin section-vacancy-head(title, date, meta)
+  include ./_setup
+
+  +section(class='section--vacancy-head layout-z')
+    +vacancy-head(title, date, meta)

@@ -1,0 +1,337 @@
+.hero-home {
+  position: relative;
+
+  .video-accessibility-btn {
+    right: 30px;
+    bottom: 64px;
+
+    @include breakpoint($bp-m) {
+      bottom: 16px;
+    }
+
+    @include breakpoint($bp-l) {
+      right: 40px;
+      bottom: 64px;
+    }
+
+    @include breakpoint(1320px) {
+      right: 16px;
+      bottom: 16px;
+    }
+  }
+}
+
+/**
+ * Picture
+ */
+
+.hero-home__picture {
+  display: block;
+  position: relative;
+  height: 240px;
+  overflow: hidden;
+
+  img {
+    display: block;
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+  }
+
+  @include breakpoint($bp-m) {
+    height: 380px;
+
+    img {
+      height: 380px;
+    }
+  }
+
+  @include breakpoint($bp-l) {
+    height: 480px;
+
+    img {
+      height: 480px;
+    }
+  }
+
+  @include breakpoint($bp-xl) {
+    height: 560px;
+
+    img {
+      height: 560px;
+    }
+  }
+}
+
+/**
+ * Video
+ */
+
+.hero-home__video-wrap {
+  display: block;
+  position: relative;
+  height: 240px;
+  overflow: hidden;
+  margin: 0 auto;
+
+  @include breakpoint(max $bp-m) {
+    .video-accessibility-btn {
+      right: 15px;
+      bottom: 64px;
+    }
+  }
+
+  @include breakpoint($bp-m) {
+    height: 380px;
+  }
+
+  @include breakpoint($bp-l) {
+    height: 480px;
+  }
+
+  @include breakpoint($bp-xl) {
+    height: 560px;
+  }
+}
+
+.hero-home__video {
+  display: block;
+  object-fit: cover;
+  object-position: center center;
+  width: 100%;
+  height: 100%;
+}
+
+/**
+ * Body
+ */
+
+.hero-home__body {
+  @include page-spacing;
+
+  @include breakpoint(max $bp-m) {
+    transform: translateY(-80px);
+    margin-bottom: -80px;
+    background: linear-gradient(to bottom, transparent 80px, $rh-grey-1 81px);
+  }
+
+  @include breakpoint($bp-m) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    height: 380px;
+  }
+
+  @include breakpoint($bp-l) {
+    height: 480px;
+
+    img {
+      height: 480px;
+    }
+  }
+
+  @include breakpoint($bp-xl) {
+    height: 560px;
+  }
+}
+
+.hero-home__body-inner {
+  @include grid;
+  height: 100%;
+}
+
+.hero-home__body__content {
+  @include grid-item(12);
+  max-width: grid-calc(12);
+  align-self: center;
+
+  @include breakpoint($bp-m) {
+    @include grid-item(8);
+    max-width: grid-calc(8);
+    margin-right: auto;
+  }
+
+  @include breakpoint($bp-l) {
+    @include grid-item(6);
+    max-width: grid-calc(6);
+  }
+}
+
+.hero-home-pointer {
+  @include breakpoint(max $bp-m) {
+    @include pointer("top");
+  }
+
+  @include breakpoint($bp-m) {
+    @include pointer("right");
+  }
+}
+
+.hero-home-pointer__title {
+  @include title-serif-2;
+  margin-bottom: 0;
+
+  &:not(:last-child) {
+    margin-bottom: 16px;
+  }
+}
+
+/**
+ * Search
+ */
+
+.hero-home__search {
+  @include page-spacing;
+  background-color: $rh-grey-1;
+
+  @include breakpoint($bp-l) {
+    position: relative;
+    z-index: 101;
+    transform: translateY(-52px);
+    margin-bottom: -52px;
+    background: transparent;
+  }
+}
+
+.hero-home__search-inner {
+  @include grid;
+}
+
+.hero-home__search__bar {
+  width: 100%;
+
+  @include breakpoint($bp-l) {
+    @include grid-item(12);
+  }
+}
+
+.hero-home__search__bar-inner {
+  @include grid-item-spacing;
+  display: flex;
+  flex-direction: column;
+  padding-top: 40px;
+  padding-bottom: 40px;
+
+  @include breakpoint($bp-m) {
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  @include breakpoint($bp-l) {
+    border-radius: 4px;
+    box-shadow: 0 0 8px 0 rgba($black, 0.3);
+    background-color: $rh-grey-1;
+    height: 104px;
+    padding: 24px;
+  }
+}
+
+.hero-home__search__bar__title {
+  @include h2;
+  margin-bottom: 12px;
+
+  @include breakpoint($bp-m) {
+    flex-basis: 100%;
+    margin-right: 24px;
+  }
+
+  @include breakpoint($bp-l) {
+    flex-basis: auto;
+    margin-bottom: 0;
+  }
+}
+
+/**
+ * Select
+ */
+
+.hero-home__search__bar__select {
+  background-color: $white;
+  background: url("../images/select-chevron.svg") no-repeat right 20px center $white;
+  background-size: 16px auto;
+
+  font-size: 16px;
+  cursor: pointer;
+  border: 1px solid $rh-grey-5;
+  border-radius: 4px;
+  padding: 16px 56px 16px 16px;
+  margin-bottom: 12px;
+
+  -webkit-appearance: none; // disable default styling in webkit
+  -moz-appearance: none; // disable default styling in ff
+  appearance: none;
+
+  &:-moz-focusring {
+    // disable ugly ass outline in firefox
+    color: transparent;
+    text-shadow: 0 0 0 $black;
+  }
+
+  &::-ms-expand {
+    // disable default arrow in IE 11+
+    display: none;
+  }
+
+  @include breakpoint($bp-m) {
+    font-size: 17px;
+    margin-bottom: 0;
+    margin-right: 12px;
+  }
+}
+
+/**
+ * Input
+ */
+
+.hero-home__search__bar__input-wrap {
+  position: relative;
+  flex-grow: 1;
+  flex-shrink: 1;
+  margin-bottom: 12px;
+
+  .icon-search {
+    display: block;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 16px;
+  }
+
+  @include breakpoint($bp-m) {
+    margin-bottom: 0;
+    margin-right: 13px;
+  }
+}
+
+.hero-home__search__bar__input {
+  width: 100%;
+  font-family: $rijksoverheid-sans;
+  background-color: $white;
+  padding: 16px 19px 16px 45px;
+  font-size: 16px;
+  border: 1px solid $rh-grey-5;
+  border-radius: 4px;
+  -webkit-appearance: none !important;
+
+  @include breakpoint($bp-m) {
+    border-radius: 4px;
+    padding: 16px 28px 16px 50px;
+    font-size: 18px;
+  }
+}
+
+.hero-home__search__bar__button {
+  @include button;
+  @include button-medium;
+  flex-grow: 0;
+  flex-shrink: 0;
+  border-radius: 4px;
+  height: 52px;
+  text-align: center;
+
+  @include breakpoint($bp-m) {
+    height: 55px;
+  }
+}

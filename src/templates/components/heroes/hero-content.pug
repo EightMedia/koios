@@ -1,0 +1,15 @@
+//- @pugdoc
+  name: Hero (Content)
+  example: |
+    +hero-content('snelweg-bij-nacht.jpg')
+
+mixin hero-content(image)
+  include ../../utils/todo
+  include ../../utils/srcset
+  include ../atoms/button
+
+  - var cls = ["layout-z"];
+
+  .hero-content(class=cls)
+    picture.hero-content__picture
+      +srcset(image, self.imageSizes["hero-content"], "")

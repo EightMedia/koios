@@ -1,0 +1,16 @@
+.intro-home {
+  @include breakpoint($bp-m) {
+    text-align: center;
+  }
+}
+
+.intro-home__title {
+  @include h2-action;
+  margin-bottom: 11.25px;
+}
+
+.intro-home__text {
+  p {
+    @include lead;
+  }
+}

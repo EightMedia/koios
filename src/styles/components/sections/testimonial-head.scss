@@ -1,0 +1,35 @@
+.testimonial-head {
+  display: flex;
+  align-items: center;
+}
+
+.testimonial-head__avatar {
+  min-width: 80px;
+  flex-basis: 80px;
+  margin-right: 15px;
+
+  img {
+    @include avatar(80px, 100px);
+  }
+
+  @include breakpoint($bp-m) {
+    min-width: 100px;
+    flex-basis: 100px;
+    margin-right: 20px;
+  }
+}
+
+.testimonial-head__content__title {
+  @include h2-action;
+}
+
+.testimonial-head__content__subtitle {
+  font-family: $rijksoverheid-sans;
+  font-size: 20px;
+  line-height: 1.3;
+  color: $rh-logo-blue;
+
+  @include breakpoint($bp-m) {
+    font-size: 22px;
+  }
+}

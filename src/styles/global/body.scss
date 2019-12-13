@@ -1,0 +1,67 @@
+html,
+body {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: $rijksoverheid-sans;
+  touch-action: manipulation;
+  color: $rh-grey-4;
+}
+
+body {
+  overflow-x: hidden;
+  overflow-y: scroll;
+  color: $black;
+  background-color: $white;
+  position: relative;
+
+  &.has-menu-open,
+  &.modal-is-open--coursenav,
+  &.modal-is-open--videobox,
+  &.modal-is-open--takeover {
+    overflow-y: hidden;
+  }
+
+  &.modal-is-opening--takeover,
+  &.modal-is-closing--takeover {
+    overflow-y: auto;
+  }
+}
+
+::selection {
+  background: rgba($rws-blue, 0.1);
+}
+
+/**
+ * Main container
+ */
+
+.main {
+  margin: 0 auto;
+
+  &:focus {
+    outline: 0;
+  }
+
+  .has-menu-open & {
+    position: fixed;
+    overflow: hidden;
+    width: 100%;
+    top: 88px;
+    bottom: 0;
+  }
+
+  @include breakpoint($bp-l) {
+    .has-menu-open & {
+      top: 128px;
+    }
+  }
+}
+
+/**
+ * Sharpen images
+ */
+
+img {
+  image-rendering: -webkit-optimize-contrast; //sass-lint:disable-line no-misspelled-properties
+}

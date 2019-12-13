@@ -36,6 +36,19 @@
     "pug": "^2.0.4",
     "pug-doc": "^2.15.0",
     "uglify": "^0.1.5",
-    "uglify-js": "^3.7.1"
+    "uglify-es": "^3.3.9"
+  },
+  "dependencies": {
+    "body-scroll-lock": "^2.6.4",
+    "debounce": "^1.2.0",
+    "delegate-events": "^1.1.1",
+    "find-parent": "^2.0.2",
+    "focus-trap": "^5.1.0",
+    "has-localstorage": "^1.0.1",
+    "in-view": "^0.6.1",
+    "keymirror": "^0.1.1",
+    "lory.js": "^2.5.3",
+    "object-assign": "^4.1.1",
+    "velocity-animate": "^1.5.2"
   }
 }

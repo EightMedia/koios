@@ -1,0 +1,73 @@
+.fact-grid {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: -16px;
+
+  @include breakpoint($bp-m) {
+    margin-bottom: -40px;
+  }
+}
+
+.fact-grid__item {
+  flex-basis: 50%;
+  margin-bottom: 16px;
+
+  @include breakpoint($bp-m) {
+    margin-bottom: 40px;
+  }
+}
+
+/**
+ * Fact
+ */
+
+.fact {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  @include breakpoint($bp-m) {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-end;
+  }
+}
+
+.fact__label {
+  @include p;
+  color: $rh-grey-10;
+  order: 2;
+
+  @include breakpoint($bp-m) {
+    order: 1;
+    margin-bottom: 8px;
+    flex-basis: 100%;
+  }
+}
+
+.fact__icon {
+  fill: $rws-blue;
+  width: 64px;
+  height: 64px;
+  order: 1;
+
+  @include breakpoint($bp-m) {
+    order: 2;
+    flex-basis: 64px;
+    width: 64px;
+    height: 64px;
+    margin-right: 16px;
+  }
+}
+
+.fact__number {
+  color: $rws-blue;
+  font-size: 40px;
+  line-height: 1;
+  order: 3;
+
+  @include breakpoint($bp-m) {
+    flex-basis: 50%;
+    font-size: 56px;
+  }
+}

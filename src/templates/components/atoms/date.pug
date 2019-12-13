@@ -1,0 +1,60 @@
+mixin date(date)
+
+  if (date)
+
+    .date
+
+      if (date.from)
+        - var from = date.from.split(" ")
+        .date__item(class="date--from")
+          .date__item__day #{from[0]}
+          .date__item__month #{from[1]}
+
+      if (date.to)
+        .date__dash
+
+        - var to = date.to.split(" ")
+        .date__item(class="date--to")
+          .date__item__day #{to[0]}
+          .date__item__month #{to[1]}
+
+//- Wrapper for the general date component
+  - converts ISO6801 strings
+  - { "from": "2019-10-18T12:30:00.000Z", "to": "2019-10-20T12:30:00.000Z" }
+
+mixin isoDate(isoDate)
+  -
+    const objDate = { from: "", to: "" };
+    
+    const monthNames = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(function(mon) {
+      return new Date(2000, mon).toLocaleString("en-EN", { month: "short" });
+    });
+
+    if (isoDate) {
+
+      if (Date.parse(isoDate.from)) {
+        const dateFrom = new Date(isoDate.from);
+
+        if (dateFrom.toISOString() === isoDate.from) {
+          const dateFromDay = dateFrom.getDate();
+          const dateFromMonth = monthNames[dateFrom.getMonth()].substr(0, 3); // get rid of the dot
+          objDate.from = `${dateFromDay} ${dateFromMonth}`;
+        }        
+      } else {
+        objDate.from = isoDate.from;
+      }
+
+      if (Date.parse(isoDate.to)) {
+        const dateTo = new Date(isoDate.to);
+
+        if (dateTo.toISOString() === isoDate.from) {
+          const dateToDay = dateTo.getDate();
+          const dateToMonth = monthNames[dateTo.getMonth()].substr(0, 3); // get rid of the dot
+          objDate.to = `${dateToDay} ${dateToMonth}`;
+        }
+      } else {
+        objDate.to = isoDate.to;
+      }
+    }
+    
+  +date(objDate)

@@ -1,0 +1,14 @@
+//- @pugdoc
+  name: Vacature knop en datum
+  capture: none
+
+mixin vacancy-apply(date)
+  include ../atoms/button
+
+  .vacancy-apply(class=attributes.class)
+    .vacancy-apply__button-wrap
+      +button("Direct solliciteren", "https://google.com")
+    .vacancy-apply__info
+      |Je kunt reageren tot 
+      span.vacancy-apply__info__date #{date}
+      span.vacancy-apply__info__days-left Nog vijf dagen

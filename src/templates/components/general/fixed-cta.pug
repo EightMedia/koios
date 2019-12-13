@@ -1,0 +1,30 @@
+//- @pugdoc
+  name: Algemeen (Fixed CTA)
+  examples:
+    - 
+      name: Navigatie (Fixed CTA, vacature)
+      example: |
+        div(style="height: 100px;")
+        div(style="padding: 20px; background-color: #f9e11e; color: #000;").js-fixed-cta-trigger Scroll hierlangs
+        div(style="height: 1000px;")
+        +fixed-cta("Changemanager tunnels, elektrotechniek en industriële automatisering", {label: "Direct solliciteren", link: "#"}, true)
+    - 
+      name: Navigatie (Fixed CTA, vakgebied)
+      example: |
+        div(style="height: 100px;")
+        div(style="padding: 20px; background-color: #f9e11e; color: #000;").js-fixed-cta-trigger Scroll hierlangs
+        div(style="height: 1000px;")
+        +fixed-cta("ICT bij Rijkswaterstaat", {label: "Bekijk de ICT-vacatures", link: "#", number: "18"})
+
+mixin fixed-cta(title, button, showShare)
+  include ../../icons/_icon
+  include ../atoms/button
+  include ../molecules/share-balloon
+
+  nav.fixed-cta(class="js-fixed-cta")
+    .fixed-cta-inner
+      .fixed-cta__title #{title}
+      .fixed-cta__buttons
+        if showShare
+          +share-balloon
+        +button(button.label, button.link, button.number)

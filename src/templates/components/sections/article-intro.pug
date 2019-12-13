@@ -1,0 +1,20 @@
+//- @pugdoc
+  name: Sectie (Artikel intro)
+  examples:
+    - 
+      name: Sectie (Artikel intro)
+      example: |
+        +section-article-intro("interview", "25 januari 2019", "Marion Straatman: ‘Rijkswaterstaat van start met grootste onderhouds-opgave ooit’")
+          p Rijkswaterstaat bevindt zich aan de vooravond van een enorme onderhoudsopgave. Het komende decennium moet de infrastructuur-beheerder tientallen bruggen, sluizen, viaducten en tunnels uitgebreid renoveren en toekomstbestendig maken.
+
+mixin section-article-intro(category, date, title)
+  include ./_setup
+
+  +section(class='section--article-intro layout-m')
+    .article-intro
+      .article-intro__meta
+        a.article-intro__meta__category(href="#") #{category}
+        span.article-intro__meta__date #{date}
+      h1.article-intro__title #{title}
+      .article-intro__text
+        block

@@ -1,0 +1,131 @@
+extends _base
+
+include ../components/heroes/hero-timeline
+include ../components/sections/timeline-tabs
+include ../components/sections/timeline-updates
+include ../components/sections/timeline-about
+include ../components/sections/line
+include ../components/sections/cta
+include ../components/general/takeover
+
+block append vars
+  - pageTitle.push("Timeline");
+  - pagePath = ["Maak kennis", "Timeline"];
+
+block main
+
+  +hero-timeline(self.VIDEO, {video: "/static/video/rws-zeeland.mp4", poster: "rws-zeeland.jpg"}, "Samen werken aan een bereikbaar Zeeland")
+    | We renoveren en vervangt de komende jaren een flink aantal sluizen, bruggen, wegen en waterwerken in de provincie Zeeland.
+
+  - var buttons = [];
+  - buttons.push({ id: "updates", label: "Updates", active: true, number: 8 });
+  - buttons.push({ id: "about", label: "Over dit project" });
+  +section-timeline-tabs(buttons)
+
+  -
+    var people = [];
+    people.push({
+      avatar: "avatar-andrebaars.jpg",
+      name: "Ruud Wijdeven",
+      description: "Contractmanager ICT",
+      link: "RuudWijdeven"
+    });
+    people.push({
+      avatar: "avatar-mirandabeer.jpg",
+      name: "Mirjam de Vries",
+      description: "Bruggenexpert",
+      link: "MirjamDeVries"
+    });
+    people.push({
+      avatar: "avatar-andreploeg.jpg",
+      name: "Paul Hendrixk",
+      description: "Inkoper",
+      link: "PaulHendrixk"
+    });
+    people.push({
+      avatar: "avatar-timosamson.jpg",
+      name: "Herman Driessen",
+      description: "Weginspecteur",
+      link: "HermanDriessen"
+    });
+
+  -
+    var items = [];
+    items.push({ 
+      type: self.VIDEO, 
+      date: "2 oktober 2019", 
+      title: "Ombouwen van de huidige besturingsinstallatie", 
+      author: people[0], 
+      text: "<p>Door de renovatie en vervanging zorgen we voor een vlotte en veilige doorstroming van het wegverkeer en de scheepvaart, ook in de toekomst.</p>",
+      video: {
+        source: "https://www.rovid.nl/ienm/rws/2016/ienm-rws-20161216-idzp549cx-web-hd.mp4", 
+        captions: "https://www.rovid.nl/ienm/rws/2016/ienm-rws-20161216-idzp549cx-ondertiteling.vtt",
+        audio: "https://www.rovid.nl/ienm/rws/2016/ienm-rws-20161216-idzp549cx-audio.mp3",
+        text: "https://www.rovid.nl/ienm/rws/2016/ienm-rws-20161216-idzp549cx-tekst.txt",
+        poster: "https://www.rovid.nl/ienm/rws/2016/ienm-rws-20161216-idzp549cx-still-groot.jpg"
+      }
+    });
+    items.push({
+      type: GALLERY, 
+      date: "4 september 2019", 
+      title: "Aanleg van 5 rotondes op Schouwen-Duiveland", 
+      author: people[1], 
+      text: "<p>We renoveren de E-steiger van de Kreekraksluizen, zodat schepen ook hier veilig kunnen aanleggen. De Kreekraksluizen zijn essentieel voor de scheepvaart tussen Antwerpen-Rotterdam.</p>",
+      images: [ 
+        { src: "rws-zeeland.jpg", dimensions: "1440x800", title: "Brug in Zeeland", description: "De brug werd gebouwd op initiatief van de Provincie Zeeland." }, 
+        { src: "florus_noordhoek.jpg", dimensions: "1280x1920" }, 
+        { src: "snelweg-bij-nacht.jpg", dimensions: "2116x1416" },
+        { src: "asfalt-nacht.jpg", dimensions: "1920x1280" } ],
+      related: { category: "interview", title: "'Rijkswaterstaat van start met grootste onderhoudsopgave ooit'", image: "marion-straatman.jpg", link: "#" }
+    });
+    items.push({
+      type: PODCAST, 
+      date: "6 augustus 2019",
+      title: "Podcast reparatie aan de Kreekraksluizen ", 
+      author: people[2], 
+      text: "<p>Op deze dagen bieden wij een inhoudelijk programma zodat je een goed idee krijgt van onze organisatie en kun je bijvoorbeeld speed daten met collega’s en vragen stellen aan trainees.</p>",
+      audio: { chapeau: "Aflevering 1", title: "Leon Wijnker, Technisch manager", subtitle: "Renovatie en innovatie Beatrixsluis", posterImg: "antenna.jpg" },
+    });
+    items.push({
+      type: QUOTE, 
+      date: "2 juli 2019",
+      title: "De reacties van een bruggenexpert", 
+      author: people[3], 
+      text: "<p>Op deze dagen bieden wij een inhoudelijk programma zodat je een goed idee krijgt van onze organisatie en kun je bijvoorbeeld speed daten met collega’s en vragen stellen aan trainees.</p>",
+      quote: "‘We renoveren en vervangen daarom tot circa 2030 een groot aantal werken. De bruggen, sluizen, wegen en andere waterwerken worden hierdoor veiliger en duurzamer.’",
+      related: { category: "podcast", title: "Audiotour: Wij zijn bezig met groot onderhoud aan onze kunstwerken", image: "zandsuppletie.jpg", link: "#" }
+    });
+    items.push({
+      type: GALLERY, 
+      date: "3 juni 2019", 
+      title: "De reacties van een bruggenexpert", 
+      author: people[1],
+      text: "<p>We werken aan de N57, N59 en A58 om het verkeer in Zeeland en op Goeree-Overflakkee (Zuid-Holland) goed te laten doorrijden:</p>",
+      images: [ { src: "rws-zeeland.jpg", dimensions: "1440x800" } ]
+    });
+    items.push({
+      type: NEWS, 
+      date: "5 mei 2019", 
+      title: "Wat kan je verwachten bij deze 'nieuwsfeed'?", 
+      author: people[2],
+      text: "<p>Rijkswaterstaat gaat in de komende jaren bruggen, sluizen, viaducten en tunnels uitgebreid renoveren en waar nodig vervangen. Daarbij wordt gekeken hoe de nieuwste technieken, zowel op de hardware als de software van de objecten, kunnen worden toegepast om de constructies en installaties zodanig te vernieuwen dat ze klaar zijn voor de toekomst.</p>",
+      related: { category: "vlog", title: "Onze innovatie experts testen de nieuwste drones", image: "drone.jpg", link: "#" }
+    });
+  +section-timeline-updates("updates", items)(class="is-active")
+  
+  +section-timeline-about("about", people, "https://www.rijkswaterstaat.nl/water/projectenoverzicht/samen-werken-aan-een-bereikbaar-zeeland/index.aspx")(hidden="true")
+    p Het is de grootste onderhoudsopgave in onze geschiedenis. Bovendien een programma met een lange adem. Het renoveren en vervangen van de bestaande infrastructuur duurt zeker tot 2030. De totale vervangingswaarde bedraagt vele miljarden euro’s.
+    blockquote Veel sluizen en bruggen in Zeeland stammen uit de jaren 50, 60, 70 en 80, het (scheepvaart)verkeer is sindsdien enorm toegenomen
+    p Tijdens de werkzaamheden benutten we meteen de mogelijkheid om onze sluizen en bruggen veiliger en duurzamer te maken. Zo zorgen we voor een vlotte en veilige doorstroming van het verkeer. Ook in de toekomst.
+    
+  +section-line
+
+  +section-cta("Werk jij mee aan een bereikbaar Zeeland?", {"label": "Bekijk alle vacatures", "link": "#", "number": "60"})
+
+
+block append modals
+
+  each person in people
+    +takeover-testimonial("florus_noordhoek.jpg", {avatar: person.avatar, name: person.name, position: person.description})(id=person.link)
+      p Radha Jharap is technisch manager bij <a href="#">Rijkswaterstaat (RWS)</a>. Haar werk is deels technisch, maar vraagt ook om overleg met experts uit verrassende vakgebieden. Bij de versterking van de Afsluitdijk heeft Marieke bijvoorbeeld contact met ecologen en visdeskundigen.
+      blockquote ‘Ik adviseer over effecten van ingrepen in het watersysteem op voldoende en schoon water’

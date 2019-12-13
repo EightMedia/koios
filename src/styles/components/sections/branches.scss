@@ -1,0 +1,202 @@
+.branches__button {
+  padding-left: 15px;
+  padding-right: 15px;
+  text-align: center;
+  margin-top: 55px;
+
+  .button--ghost {
+    @include button-outline;
+    @include button-medium;
+  }
+}
+
+/**
+ * Grid
+ */
+
+.branches__grid {
+  @include grid;
+  margin-bottom: -20px;
+
+  @include breakpoint($bp-s) {
+    margin-bottom: -15px;
+  }
+
+  @include breakpoint($bp-m) {
+    margin-bottom: -30px;
+  }
+
+  @include breakpoint($bp-l) {
+    margin-bottom: -40px;
+  }
+
+  @include breakpoint(max $bp-scrolltrack) {
+    .is-swipeable & {
+      @include cards-scroll;
+      margin-bottom: 0;
+    }
+  }
+}
+
+/**
+ * Item
+ */
+
+.branches__grid__item {
+  @include grid-item(12);
+  max-width: grid-calc(12);
+  margin-bottom: 20px;
+
+  @include breakpoint($bp-s) {
+    @include grid-item(6);
+    max-width: grid-calc(6);
+    margin-bottom: 15px;
+  }
+
+  @include breakpoint($bp-m) {
+    margin-bottom: 30px;
+  }
+
+  @include breakpoint($bp-l) {
+    @include grid-item(4);
+    max-width: grid-calc(4);
+    margin-bottom: 40px;
+  }
+
+  @include breakpoint(max $bp-scrolltrack) {
+    .is-swipeable & {
+      @include cards-scroll-item;
+      margin-bottom: 0;
+    }
+  }
+}
+
+/** 
+ * Card
+ */
+
+.card-branch {
+  position: relative;
+  overflow: hidden;
+
+  &:hover {
+    .card-branch__body {
+      bottom: 0;
+    }
+
+    .card-branch__body__buttons {
+      opacity: 1;
+    }
+  }
+
+  // split these so :hover still works in IE11
+  &:focus-within {
+    .card-branch__body {
+      bottom: 0;
+    }
+
+    .card-branch__body__buttons {
+      opacity: 1;
+    }
+  }
+
+  @include breakpoint($bp-l) {
+    padding-bottom: 33%;
+  }
+}
+
+.card-branch__link {
+  display: block;
+
+  &:focus {
+    .card-branch__link__image {
+      @include focus-outline($rws-blue, 4px, -4px);
+    }
+  }
+}
+
+/**
+ * Image
+ */
+
+.card-branch__link__image {
+  display: block;
+  position: relative;
+
+  img {
+    display: block;
+  }
+}
+
+/**
+ * Body
+ */
+
+.card-branch__body {
+  background-color: $rws-yellow;
+  padding: 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+
+  @include breakpoint($bp-s) {
+    padding: 24px;
+  }
+
+  @include breakpoint($bp-l) {
+    position: absolute;
+    bottom: -55px;
+    transition: bottom 0.2s ease;
+  }
+}
+
+.card-branch__body__title {
+  font-family: $rijksoverheid-serif;
+  font-weight: bold;
+  font-size: 24px;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+.card-branch__body__text {
+  @include p;
+  margin-bottom: 8px;
+
+  @include breakpoint($bp-s) {
+    min-height: 56px;
+  }
+}
+
+/**
+ * Buttons
+ */
+
+.card-branch__body__buttons {
+  display: flex;
+  margin-top: auto;
+  flex-wrap: wrap;
+
+  .button {
+    @include button-small;
+    flex-shrink: 0;
+    margin-top: 8px;
+  }
+
+  .button__number {
+    min-width: 22px;
+    text-align: center;
+  }
+
+  .button--info {
+    margin-right: 13px;
+  }
+
+  .button--vacancies {
+    @include button-yellow;
+  }
+
+  @include breakpoint($bp-l) {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+}

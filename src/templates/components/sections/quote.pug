@@ -1,0 +1,23 @@
+//- @pugdoc
+  name: Sectie (Citaat)
+  examples:
+    - 
+      name: Sectie (Citaat, simpel)
+      example: |
+        +section-quote("Ik adviseer over effecten van ingrepen in het watersysteem op voldoende en schoon water")
+    - 
+      name: Sectie (Citaat, auteur)
+      example: |
+        +section-quote("Ik adviseer over effecten van ingrepen in het watersysteem op voldoende en schoon water", "André Baars (Recruiter ICT)")
+    - 
+      name: Sectie (Citaat, avatar en auteur)
+      example: |
+        +section-quote("Ik adviseer over effecten van ingrepen in het watersysteem op voldoende en schoon water", "André Baars (Recruiter ICT)", "avatar-andreploeg.jpg")
+
+mixin section-quote(quote, author, avatar)
+  include ./_setup
+  include ../molecules/quote
+
+  +section(class='section--quote layout-l')
+    
+    +quote(quote, author, avatar)

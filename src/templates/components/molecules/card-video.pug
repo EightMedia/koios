@@ -1,0 +1,14 @@
+//- @pugdoc
+  name: Kaart (video)
+
+mixin card-video(card)
+  include ../../utils/srcset
+  include ../atoms/button-play
+  
+  .card-video(class="js-click-block")
+    .card-video__body
+      strong.card-video__body__title #{card.title}
+      +button-play(card.link, card.videobox)
+
+    picture.card-video__image
+      +srcset(card.image, self.imageSizes["card-video"])(data-object-fit='cover')

@@ -1,0 +1,14 @@
+//- @pugdoc
+  name: Atom (Richtext)
+  description: Wrapper voor CMS WYSIWYG content.
+  capture: 0
+
+mixin richtext(lead)
+  
+  - var cls = [];
+  
+  if lead
+    - cls.push('richtext--lead')
+
+  .richtext(class=cls)
+    block

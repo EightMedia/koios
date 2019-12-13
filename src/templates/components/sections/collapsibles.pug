@@ -1,0 +1,72 @@
+//- @pugdoc
+  name: Sectie (Uitklappers)
+
+  example: |
+    include ../atoms/richtext
+    include ../molecules/collapsible
+
+    +section-collapsibles("Uitklappers")
+      +collapsible("Biedt Rijkswaterstaat een leerwerkplek aan?")
+        p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam in aliquet lacus. Proin pulvinar venenatis dolor ac volutpat. Quisque dignissim, tortor sit amet ullamcorper mollis, ipsum urna cursus mi, a condimentum orci est egestas metus.
+        p Vestibulum dictum metus vitae rhoncus scelerisque. Praesent est dolor, aliquet ut feugiat a, vehicula a eros. Integer ultrices sit amet orci sit amet varius. Sed varius lacinia odio, sit amet laoreet est rhoncus nec. Fusce vel est pulvinar, commodo magna ac, pretium enim. Cras laoreet porta dolor, faucibus egestas arcu semper ac.
+
+      +collapsible("Heeft Rijkswaterstaat mogelijkheden voor vakantiewerk?")
+        p Voor tijdelijk werk (zoals vakantiewerk) werkt Rijkswaterstaat samen met verschillende <a href="https://nl.wikipedia.org/wiki/Uitzendbureau">uitzendbureaus</a> zoals Randstad en Tempo-Team. Om hiervoor in aanmerking te komen, kun je bij een van deze uitzendbureaus informeren naar de mogelijkheden.
+
+      +collapsible("Mijn vraag staat niet in deze lijst. Wat kan ik doen?")
+        p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam in aliquet lacus. Proin pulvinar venenatis dolor ac volutpat. Quisque dignissim, tortor sit amet ullamcorper mollis, ipsum urna cursus mi, a condimentum orci est egestas metus. Vestibulum dictum metus vitae rhoncus scelerisque. Praesent est dolor, aliquet ut feugiat a, vehicula a eros. Integer ultrices sit amet orci sit amet varius. Sed varius lacinia odio, sit amet laoreet est rhoncus nec. Fusce vel est pulvinar, commodo magna ac, pretium enim. Cras laoreet porta dolor, faucibus egestas arcu semper ac.
+
+      +collapsible("Lijsten")
+
+        ul
+          li ul. De ontwikkelingen op het gebied van sensortechnologie
+          li Het toepassen van <a href="#">Big Data</a>
+          li Het plaatsen van zonnepanelen voor een duurzamer en uiteindelijk energieneutraal netwerk
+          li Het hergebruik van de fundering en het asfalt van de weg bij groot onderhoud
+          li Het onderzoeken van mogelijkheden voor bermgras als biobrandstof.
+        
+        ol
+          li ol. De ontwikkelingen op het gebied van sensortechnologie
+          li Het toepassen van Big Data
+          li Het plaatsen van zonnepanelen voor een duurzamer en uiteindelijk energieneutraal netwerk
+          li Het hergebruik van de fundering en het asfalt van de weg bij groot onderhoud
+          li Het onderzoeken van mogelijkheden voor bermgras als biobrandstof.
+
+      +collapsible("Tabellen")
+
+        table
+          thead
+            tr
+              th Data startmoment april
+              th Data startmoment april
+          tbody
+            tr
+              td 1 maart: Deadline solliciteren
+              td 1 maart: Deadline solliciteren
+            tr
+              td 15 maart: Selectiedag
+              td 15 maart: Selectiedag
+            tr
+              td 1 april: Startdatum nieuwe traineegroep
+              td 1 april: Startdatum nieuwe traineegroep
+            
+        table
+          tbody
+            tr
+              th Datum
+              td 14 februari 2019 tot 16 februari
+            tr 
+              th Locatie
+              td Hoofdkantoor Rijkswaterstaat, Griffioenlaan 2, Utrecht
+            tr 
+              th Tijd
+              td 13:00 - 21:00 uur
+
+
+mixin section-collapsibles(title)
+  include ./_setup
+  include ../../icons/_icon
+
+  +section(title)(class=['section--collapsibles', 'layout-m'])
+    .collapsibles
+      block

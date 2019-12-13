@@ -10,6 +10,17 @@ const pug = require("pug");
 const pugdoc = require("pug-doc");
 const discodip = require("discodip");
 
+const locals = Object.assign(
+  {
+    version: process.env.npm_package_version,
+    imageSizes: require(paths.SRC.data + "image-sizes.json"),
+    dataMeetUs: require(paths.SRC.data + "maak-kennis-items.json"),
+    self: true
+  },
+  require(paths.SRC.data + "maak-kennis-items.json"),
+  paths.locals
+);
+
 /**
  * Get difference between paths
  */
@@ -40,30 +51,24 @@ async function getFileList(globs) {
 }
 
 /**
- * Read file
- */
-
-function read(file) {
-  return new Promise(function (resolve, reject) {
-    fs.readFile(file, (err, content) => err ? reject(err) : resolve(content.toString()));
-  });
-}
-
-/**
  * Compile pug into html
  */
 
 function render(src) {
   return new Promise(function (resolve, reject) {
-    pug.renderFile(src, paths.locals, function(err, html) {
-      if (err) reject(err);
-      resolve(html);
-    });
+    pug.renderFile(
+      src,
+      locals,
+      function(err, html) {
+        if (err) reject(err);
+        else resolve(html);
+      }
+    );
   });
-};
+}
 
 /**
- * Process one file at a time
+ * Process src
  */
 
 function buildPage(src) {
@@ -81,11 +86,11 @@ function buildPage(src) {
       .then(html =>
         fs.writeFile(dst, html, err => {
           if (err) reject(err);
-          resolve(dst);
+          else resolve(chalk.greenBright(dst));
         })
       )
-      .catch(err => err);
-  }).catch(err => err);
+      .catch(err => reject(`${chalk.redBright(src)} (${err})\n`));
+  }).catch(err => err); // this catch prevents breaking the Promise.all
 }
 
 /**
@@ -95,26 +100,27 @@ function buildPage(src) {
 function templates(changed) {
   return new Promise(async (resolve, reject) => {
     const globs = [
-      `${paths.SRC.templates}**${path.sep}*.pug`,
-      `!${paths.SRC.templates}**${path.sep}_*.pug`
+      `${paths.SRC.pages}**${path.sep}*.pug`,
+      `!${paths.SRC.pages}**${path.sep}_*.pug`,
+      `${paths.SRC.components}**${path.sep}*.pug`,
+      `!${paths.SRC.components}**${path.sep}_*.pug`
     ];
     const fileList = changed ? Array.of(changed) : await getFileList(globs);
 
     if (fileList.length > 0) {
       let buildPromises = [];
       
-      fileList.map(src => {
+      fileList.forEach(src => {
         // check if src is inside "components" or "pages"
         const type = pathDiff(paths.SRC.templates, src).split(path.sep).shift();
-        
         // check type and build accordingly
-        if (type === "pages") buildPromises.push(buildPage(src));
+        if (type === paths.SRC.pagesFolder) buildPromises.push(buildPage(src));
       });
 
       // resolve entire build when all build promises are done
-      Promise.all(buildPromises).then(function(done) {
-        console.log("> " + done.join("\n> "));
-        resolve(done);
+      Promise.all(buildPromises).then(function(results) {
+        console.log("> " + results.join("\n> "));
+        resolve(results);
       }).catch(err => reject(err));
     } else {
       reject(new Error(`No templates inside ${paths.SRC.pages}`));

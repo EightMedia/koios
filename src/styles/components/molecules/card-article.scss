@@ -1,0 +1,34 @@
+.card-article {
+  @include card-image;
+  transition: box-shadow 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 2px 7px 0 rgba($black, 0.15);
+
+    .card-article__body__title-wrapper {
+      text-decoration: underline;
+    }
+  }
+}
+
+.card-article__body {
+  @include card-image-gradient;
+}
+
+.card-article__body__title {
+  @include card-image-title;
+  font-weight: normal;
+  text-decoration: none;
+
+  .label {
+    margin-bottom: 8px;
+  }
+}
+
+.card-article__body__title-wrapper {
+  display: block;
+}
+
+.card-article__image {
+  @include card-image-img;
+}

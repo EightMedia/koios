@@ -1,0 +1,168 @@
+@keyframes animate-takeover-in {
+  from {
+    transform: translate3d(0, 100vh, 0);
+  }
+
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes animate-takeover-out {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: translate3d(0, 100vh, 0);
+  }
+}
+
+.takeover {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 200;
+  width: 100vw;
+
+  &.is-open {
+    z-index: 3002;
+    transform: scale3d(1, 1, 1);
+
+    animation-name: animate-takeover-in;
+    animation-fill-mode: forwards;
+    animation-timing-function: "ease";
+    animation-duration: 0.4s;
+    animation-delay: 0;
+  }
+
+  &.is-closing {
+    animation-name: animate-takeover-out;
+    animation-fill-mode: forwards;
+    animation-timing-function: "ease";
+    animation-duration: 0.4s;
+    animation-delay: 0;
+  }
+
+  &.is-closed {
+    z-index: 200;
+    transform: scale3d(0, 100vh, 0);
+  }
+
+  &:focus {
+    outline: 0;
+  }
+}
+
+.takeover__background {
+  display: block;
+  z-index: 199;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: $black;
+  opacity: 0.8;
+}
+
+/**
+ * Body
+ */
+
+.takeover__body-wrap {
+  position: relative;
+  z-index: 202;
+
+  height: 100%;
+  width: 100%;
+
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch; //sass-lint:disable-line no-misspelled-properties
+}
+
+.takeover__body {
+  position: relative;
+}
+
+/**
+ * Testimonial Picture 
+ */
+
+.takeover-testimonial__picture {
+  display: block;
+  z-index: 202;
+
+  @include breakpoint($bp-l) {
+    position: fixed;
+    width: 50vw;
+    height: 100%;
+  }
+
+  img {
+    display: block;
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+/**
+ * Testimonial Content
+ */
+
+.takeover-testimonial__content {
+  position: relative;
+  background-color: $white;
+  padding-top: 32px;
+  padding-bottom: 32px;
+  min-height: 100vh;
+
+  @include breakpoint($bp-m) {
+    padding-top: 64px;
+    padding-bottom: 64px;
+  }
+
+  @include breakpoint($bp-l) {
+    padding-top: 80px;
+    padding-bottom: 80px;
+    padding-left: 50vw;
+  }
+}
+
+/**
+ * Close button
+ */
+
+.takeover__close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 203;
+  background-color: rgba($black, 0.4);
+  width: 43px;
+  height: 43px;
+  transition: background-color 0.15s ease;
+  border-radius: 50%;
+
+  &:hover,
+  &:focus {
+    background-color: $black;
+  }
+
+  .icon-cross {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    fill: $white;
+    width: 32px;
+    height: 32px;
+  }
+
+  @include breakpoint($bp-m) {
+    right: 30px;
+  }
+}

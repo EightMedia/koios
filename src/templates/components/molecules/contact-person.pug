@@ -1,0 +1,30 @@
+//- @pugdoc
+  name: Contact Person
+  capture: 0
+
+mixin contact-person(person)
+  include ../../utils/srcset
+  include ../atoms/contact-link
+
+  .contact-person
+    if person.avatar
+      picture.contact-person__avatar
+        +srcset(person.avatar, self.imageSizes["contact-person-avatar"])
+
+    .contact-person__body
+      h3.contact-person__body__title #{person.title}
+      .contact-person__body__text !{person.subtitle}
+
+      ul.contact-person__body__options
+        
+        if person.phone
+          li.contact-person__body__options__item
+            +contact-link("mobile", person.phone, "tel:"+person.phone)
+          
+        if person.whatsapp
+          li.contact-person__body__options__item
+            +contact-link("whatsapp", "Whatsapp", "whatsapp:"+person.phone)
+
+        if person.email
+          li.contact-person__body__options__item
+            +contact-link("email", person.email, "mailto:"+person.email)

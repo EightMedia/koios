@@ -1,0 +1,22 @@
+//- @pugdoc
+  name: Sectie (Testimonial head)
+  examples:
+    - 
+      name: Sectie (Testimonial head)
+      example: |
+        +section-testimonial-head("avatar-andreploeg.jpg", "André Ploeg", "Technisch manager")
+
+mixin section-testimonial-head(avatar, title, subtitle)
+  include ./_setup
+  include ../../utils/srcset
+  
+  +section(class='section--testimonial-head layout-m')
+
+    .testimonial-head
+
+      picture.testimonial-head__avatar
+        +srcset(avatar, self.imageSizes["testimonial-head-avatar"])
+
+      .head__content
+        h2.testimonial-head__content__title #{title}
+        .testimonial-head__content__subtitle #{subtitle}

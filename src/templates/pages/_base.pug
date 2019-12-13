@@ -1,6 +1,15 @@
+include ../utils/todo
+include ../nav/header
+include ../nav/footer
+include ../components/general/videobox
+include ../components/general/photoswipe
+
 block vars
   - let pageTitle = [];
-  
+  - let pagePath;
+  - let pageMetaDescription = "";
+  - let isHome = false;
+
 doctype html
 html(lang="nl")
   head
@@ -9,32 +18,36 @@ html(lang="nl")
       meta(name="viewport", content="width=device-width, initial-scale=1, shrink-to-fit=no")
       meta(http-equiv="X-UA-Compatible", content="IE=Edge,chrome=1")
 
-      title #{pageTitle.join(" - ")} - Taskrunner
+      title #{pageTitle.join(" - ")} - werkenbij.rijkswaterstaat.nl
       meta(http-equiv="cleartype", content="on")
       meta(name="author", content="Eight Media")
       meta(name="format-detection", content="telephone=no")
       meta(name="description", content=pageMetaDescription)
       
       //- preload
-      link(rel="preload", href=`${JS_URL}app.v${VERSION}.js`, as="script")
-      link(rel="preload", href=`${CSS_URL}theme.v${VERSION}.css`, as="style")
+      link(rel="preload", href=`${self.JS_URL}lib.v${self.version}.js`, as="script")
+      link(rel="preload", href=`${self.JS_URL}app.v${self.version}.js`, as="script")
+      link(rel="preload", href=`${self.CSS_URL}all.v${self.version}.css`, as="style")
 
       //- preload fonts
-      link(rel="preload", href=`${FONTS_URL}ROsanswebtextregular.woff`, as="font", type="font/woff2", crossorigin="anonymous")
-      
-      link(rel="stylesheet", href=`${CSS_URL}theme.v${VERSION}.css`)
+      link(rel="preload", href=`${self.FONTS_URL}ROsanswebtextregular.woff`, as="font", type="font/woff2", crossorigin="anonymous")
+      link(rel="preload", href=`${self.FONTS_URL}ROsanswebtextitalic.woff`, as="font", type="font/woff2", crossorigin="anonymous")
+      link(rel="preload", href=`${self.FONTS_URL}ROsanswebtextbold.woff`, as="font", type="font/woff2", crossorigin="anonymous")
 
-      link(rel="apple-touch-icon", sizes="180x180", href=`${IMAGES_URL}favicons/apple-touch-icon.png`)
-      link(rel="icon", type="image/png", sizes="32x32", href=`${IMAGES_URL}favicons/favicon-32x32.png`)
-      link(rel="icon", type="image/png", sizes="16x16", href=`${IMAGES_URL}favicons/favicon-16x16.png`)
+      link(rel="stylesheet", href=`${self.CSS_URL}all.v${self.version}.css`)
+      link(rel="stylesheet", href=`${self.CSS_URL}print.v${self.version}.css`, media="print")
+
+      link(rel="apple-touch-icon", sizes="180x180", href=`${self.self.IMAGES_URL}favicons/apple-touch-icon.png`)
+      link(rel="icon", type="image/png", sizes="32x32", href=`${self.self.IMAGES_URL}favicons/favicon-32x32.png`)
+      link(rel="icon", type="image/png", sizes="16x16", href=`${self.self.IMAGES_URL}favicons/favicon-16x16.png`)
       meta(name="msapplication-TileColor", content="#0073bf")
       meta(name="theme-color", content="#ffffff")
-      link(rel="mask-icon", href=`${IMAGES_URL}favicons/safari-pinned-tab.svg`, color="#000000")
-      link(rel="shortcut icon", href=`${IMAGES_URL}favicons/favicon.ico`)
-      meta(name="msapplication-config", content=`${IMAGES_URL}favicons/browserconfig.xml`)
+      link(rel="mask-icon", href=`${self.self.IMAGES_URL}favicons/safari-pinned-tab.svg`, color="#000000")
+      link(rel="shortcut icon", href=`${self.self.IMAGES_URL}favicons/favicon.ico`)
+      meta(name="msapplication-config", content=`${self.self.IMAGES_URL}favicons/browserconfig.xml`)
       link(rel="manifest", href="./manifest.json")
 
-      meta(property="og:image", content=`${IMAGES_URL}favicons/og-image.png`)
+      meta(property="og:image", content=`${self.self.IMAGES_URL}favicons/og-image.png`)
       meta(property="og:image:width", content="280")
       meta(property="og:image:height", content="280")
       meta(property="og:title", content=pageTitle.join(" - "))
@@ -44,12 +57,33 @@ html(lang="nl")
 
   body
 
+    script
+      | var xhr=new XMLHttpRequest;xhr.open("GET","#{self.self.IMAGES_URL}_symbols.v#{self.version}.html",!0),xhr.onreadystatechange=function(){4===xhr.readyState&&200===xhr.status&&document.body.insertAdjacentHTML("afterbegin",xhr.responseText)},xhr.send();
+
+    block skiplinks
+      .skiplinks
+        a(href="#content") Direct naar de inhoud
+
     block nav
+      +header(pagePath, isHome)
 
     .main(role="main", id="content")
       block main
 
       block footer
+        +footer(pagePath)
+
+    block modals
+      +videobox
+      +photoswipe
 
     block scripts
-      script(src=`${JS_URL}app.v${VERSION}.js`, defer)
+      script.
+        var OLDIE_MESSAGE = "Rijkswaterstaat omarmt moderne standaarden en technieken.<br>Uw webbrowser ondersteunt deze standaarden niet. Stap daarom over op een recente browser.";
+        var CARD_self.EVENT_CATEGORY = "Evenement";
+
+      script(src=`${self.JS_URL}lib.v${self.version}.js`, defer)
+      script(src=`${self.JS_URL}app.v${self.version}.js`, defer)
+
+      script.
+        (function(){var sz = document.createElement('script'); sz.type = 'text/javascript'; sz.async = true; sz.src = '//siteimproveanalytics.com/js/siteanalyze_6005621.js'; var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(sz, s); })();

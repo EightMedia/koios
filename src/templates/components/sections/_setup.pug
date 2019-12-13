@@ -1,0 +1,50 @@
+//- @pugdoc
+  name: Sectie
+  examples:
+    - 
+      name: Sectie (voorbeeld)
+      example: |
+        +section
+    - 
+      name: Sectie (voorbeeld met titel)
+      example: |
+        +section("section title")
+    - 
+      name: Sectie (voorbeeld met titel en intro)
+      example: |
+        +section("section title", "Bij Rijkswaterstaat stap je in een grote, complexe IV-wereld die belangrijk is voor Nederland en steeds belangrijker wordt. Zo biedt big data mogelijkheden om nieuwe informatie en inzichten uit de enorme hoeveelheid data te genereren.")
+    - 
+      name: Sectie (voorbeeld met titel en knop)
+      example: |
+        +section("section title", null, { link: '', label: 'Toon meer' })
+    - 
+      name: Sectie (voorbeeld met titel, intro en knop)
+      example: |
+        +section("section title", "Bij Rijkswaterstaat stap je in een grote, complexe IV-wereld die belangrijk is voor Nederland en steeds belangrijker wordt. Zo biedt big data mogelijkheden om nieuwe informatie en inzichten uit de enorme hoeveelheid data te genereren.", { link: '', label: 'Toon meer' })
+
+mixin section(title, intro, btn)
+  include ../atoms/stronglink
+
+  .section&attributes(attributes)
+    .section-inner
+      if title
+        .section__head
+
+          if title && btn
+            .section__head-wrapper
+              if title
+                h2.section__head__title #{title}
+
+              if btn
+                .section__head__btn
+                  +stronglink(btn.label, btn.link)
+
+          else if title && !btn
+            h2.section__head__title #{title}
+
+          if intro
+            .section__head__intro !{intro}
+
+      if block
+        .section__body
+          block

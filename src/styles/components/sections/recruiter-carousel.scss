@@ -1,0 +1,103 @@
+.recruiter-carousel__head {
+  @include grid-item(12);
+  @include section-margin-bottom(s);
+  display: flex;
+  align-items: center;
+}
+
+.recruiter-carousel__head__title {
+  @include h2-action;
+  flex-grow: 1;
+}
+
+.recruiter-carousel__head__nav {
+  display: none;
+  flex-grow: 0;
+  flex-shrink: 0;
+  margin-left: 16px;
+
+  @include breakpoint($bp-s) {
+    display: block;
+  }
+}
+
+@mixin carousel-nav-btn {
+  background-color: $rws-blue;
+  padding: 10px;
+  border-radius: 4px;
+  transition: background-color 0.15s ease;
+
+  .icon-chevron {
+    fill: $white;
+    width: 20px;
+    height: 20px;
+  }
+
+  &:hover {
+    background-color: $rws-blue-dark;
+  }
+
+  &.disabled {
+    opacity: 0.5;
+    cursor: auto;
+  }
+}
+
+.recruiter-carousel__head__nav__prev {
+  @include carousel-nav-btn;
+  margin-right: 10px;
+
+  .icon-chevron {
+    transform: rotate(180deg);
+  }
+}
+
+.recruiter-carousel__head__nav__next {
+  @include carousel-nav-btn;
+}
+
+/**
+ * Frame
+ */
+
+.recruiter-carousel__frame {
+  position: relative;
+  z-index: 2;
+  cursor: grab;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/**
+ * Viewport containing slides
+ */
+
+.recruiter-carousel__viewport {
+  @include grid;
+  flex-wrap: nowrap;
+  overflow: visible;
+}
+
+.recruiter-carousel__viewport__item {
+  @include grid-item(3);
+  width: 90vw;
+
+  flex-shrink: 0;
+  pointer-events: none;
+
+  &:focus {
+    outline: 0;
+  }
+
+  @include breakpoint($bp-s) {
+    max-width: grid-calc(3);
+    min-width: 280px;
+  }
+
+  @include breakpoint(max $bp-s) {
+    &:last-of-type {
+      width: 100vw;
+      padding-right: 10vw;
+    }
+  }
+}

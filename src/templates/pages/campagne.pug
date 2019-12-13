@@ -1,0 +1,85 @@
+extends _base
+
+include ../components/general/fixed-cta
+include ../components/heroes/superhero
+include ../components/sections/richtext
+include ../components/sections/intro
+include ../components/sections/highlight
+include ../components/sections/featured-vacancies
+include ../components/sections/callout-quote
+include ../components/sections/related-articles
+include ../components/sections/line
+include ../components/sections/featured-testimonials
+include ../components/sections/article-grid
+include ../components/sections/video
+include ../components/sections/contact-person
+include ../components/sections/callout-simple
+include ../components/general/takeover
+
+block append vars
+  - pageTitle.push("Campagne");
+  - pagePath = ["Campagne"];
+
+block main
+  - var button = {label: "Bekijk de ICT-vacatures", link: "#", number: "18"}
+  +superhero(self.IMAGE, "sluis.jpg", "Pak jij uit met een nieuwe carrière in 2019?", button)
+
+  +section-intro("Werk mee aan de industriële automatisering van onze infrastructuur", true)
+    p Complexe elektronische installaties liggen aan de basis van wegen, bruggen, tunnels, keringen en sluizen. Industriele Automatisering wordt daarom toegepast in alle Rijkswaterstaat systemen met een dynamische component. Op deze manier houden we onze infrastructuur voortdurend in beweging.
+
+  - var items = [];
+  - items.push({ image: "tunnel-velsen.jpg", title: "Leon Uijttewaal: ‘Zo werkt de standaardisatie van IT in bruggen, tunnels en sluizen’", link: "", label: "interview" });
+  - items.push({ image: "snelweg-bij-nacht.jpg", title: "Marion Straatman: ‘Rijkswaterstaat van start met grootste onderhoudsopgave ooit’", link: "", label: "interview" });
+  +section-article-grid(items)
+
+  +section-richtext
+    h2 Informeren van (vaar)weggebruikers
+    p Dit leidt er ook toe dat ontwikkelingen als smart maintenance en informeren van (vaar) weggebruikers mogelijk worden. Werk mee aan de toekomst van Nederland. Bekijk hier alle industriële automatisering vacatures. Wie weet begin jij het nieuwe jaar met een carrière bij Rijkswaterstaat.
+
+  //- featured vacancies
+  - var cards = [];
+  - cards.push({ title: "Changemanager tunnels, elektrotechniek en industriële automatisering", link: ".", location: "Amsterdam", hours: "32 - 40 uren per week", degree: "Bachelor - HBO" })
+  - cards.push({ title: "Adviseur watermodellen en -applicaties", link: ".", location: "Utrecht", hours: "40 uren per week", degree: "Bachelor - HBO, Master / doctoraal" })
+  - cards.push({ title: "BIG Data Database administrator", link: ".", location: "Utrecht", hours: "40 uren per week", degree: "Master / doctoraal" })
+  +section-featured-vacancies("Onze ICT-vacatures", 'Wij hebben regelmatig vacatures in de volgende vakgebieden: <a href="#">Big data</a> industriële automatisering, <a href="#">service management</a>, <a href="#">applicatiemanagement</a> en projectmanagement.', cards, {label: "Bekijk alle ICT-vacatures", link: ".", number: "18"})
+
+  +section-richtext
+    h2 Hoe ziet de weg van de toekomst eruit?
+    p Onze rijkswegen zijn continu in ontwikkeling. Van vluchtstrook naar spitsstrook. Van verkeersbord naar matrixbord en van praatpaal naar directe communicatie met de auto via Wifi-P. Samen met circa 8.700 collega’s werken we in een innovatieve omgeving aan projecten die er echt toe doen.
+  
+  +section-video(self.WIDE, "/static/video/big-data.mp4", "/static/video/big-data.vtt", "/static/video/big-data.txt", "snelweg-bij-nacht.jpg")
+
+  +section-richtext
+    p Onze rijkswegen zijn continu in ontwikkeling. Van vluchtstrook naar spitsstrook. Van verkeersbord naar matrixbord en van praatpaal naar directe communicatie met de auto via Wifi-P. Samen met circa 8.700 collega’s werken we in een innovatieve omgeving aan projecten die er echt toe doen.
+
+  - var button = {label: "Onze techniek vacatures", link: "#"};
+  +section-callout("Ook meewerken aan de weg van de toekomst?", "De nieuwste technieken, zowel op de hardware als de software van de objecten, kunnen worden toegepast om de constructies en installaties zodanig te vernieuwen.", button)
+
+  - var person = {title: 'Meer weten of vragen?', subtitle: '<strong>Luca van Melick</strong> (campus recruiter)', avatar: 'avatar-radhajharap.jpg', phone: '06-29 95 69 44', whatsapp: '0629956944', email: 'campus@rws.nl'};
+  +section-contact-person(person)
+
+  //- testimonials
+  - var cards = [];
+  - cards.push({ type: self.TESTIMONIAL, image: "florus_noordhoek.jpg", avatar: "avatar-radhajharap.jpg", quote: "Ik adviseer over effecten van ingrepen in het watersysteem op voldoende en schoon water", name: "Radha Jharap", description: "Technisch manager", btn: { label: "Lees haar verhaal", link: "#RadhaJharap" }})
+  - cards.push({ type: self.TESTIMONIAL, image: "knooppunt.jpg", avatar: "avatar-andreploeg.jpg", quote: "Met mooi weer zien we zeehonden. Bij storm vliegen de computers door de stuurhut", name: "Florus Noordhoek", description: "Kapitein betonningsvaartuig", btn: { label: "Lees zijn verhaal", link: "#AndrePloeg" }})
+  - cards.push({ type: self.VIDEO, image: "vlog-melissa.jpg", title: "5 vragen aan Melissa", link: "#v-melissa", videobox: { title: "5 vragen aan Melissa", url: "//vjs.zencdn.net/v/oceans.mp4" } })
+  +section-featured-testimonials("Worden dit jouw collega's?", cards)
+
+block append modals
+
+  +fixed-cta("ICT bij Rijkswaterstaat", {label: "Bekijk de ICT-vacatures", link: "#", number: "18"})
+
+  +takeover-testimonial("florus_noordhoek.jpg", {avatar: "avatar-radhajharap.jpg", name: "Radha Jharap", position: "Technisch manager"})#RadhaJharap
+    p Radha Jharap is technisch manager bij <a href="#">Rijkswaterstaat (RWS)</a>. Haar werk is deels technisch, maar vraagt ook om overleg met experts uit verrassende vakgebieden. Bij de versterking van de Afsluitdijk heeft Marieke bijvoorbeeld contact met ecologen en visdeskundigen.
+    blockquote ‘Ik adviseer over effecten van ingrepen in het watersysteem op voldoende en schoon water’
+    h2 De vorderingen bekijken
+    p Sinds 2010 ben ik in vaste dienst bij RWS. 1 van mijn huidige projecten draait om de versterking van de Afsluitdijk, zodat hij de komende 50 jaar superstorm-bestendig zal zijn. Om de waterstanden in het IJsselmeer goed te kunnen regelen gaan we ook grote pompen installeren in de spuisluizen bij Den Oever. Het project moet in 2022 zijn voltooid, en zit nu nog in de planfase. Ik help het managementteam te bepalen hoe we technische problemen kunnen oplossen.
+    h2 Minimale verspilling van tijd en geld
+    p De komende jaren richt ik me ook op de herstelwerkzaamheden aan de Nijkerkerbrug, die Gelderland met Flevoland verbindt. RWS besteedt dit project op bijzondere manier aan onder de naam Project DOEN. We kiezen de aannemer met wie we de beste samenwerking denken te kunnen aangaan, en we laten hem veel ruimte om na te denken hoe hij dingen wil gaan oplossen.
+
+  +takeover-testimonial("knooppunt.jpg", {avatar: "avatar-andreploeg.jpg", name: "André Ploeg", position: "Kapitein betonningsvaartuig"})#AndrePloeg
+    p André Ploeg is technisch manager bij Rijkswaterstaat (RWS). Haar werk is deels technisch, maar vraagt ook om overleg met experts uit verrassende vakgebieden. Bij de versterking van de Afsluitdijk heeft Marieke bijvoorbeeld contact met ecologen en visdeskundigen.
+    blockquote ‘Ik adviseer over effecten van ingrepen in het watersysteem op voldoende en schoon water’
+    h2 De vorderingen bekijken
+    p Sinds 2010 ben ik in vaste dienst bij RWS. 1 van mijn huidige projecten draait om de <a href="#">versterking van de Afsluitdijk</a>, zodat hij de komende 50 jaar superstorm-bestendig zal zijn. Om de waterstanden in het IJsselmeer goed te kunnen regelen gaan we ook grote pompen installeren in de spuisluizen bij Den Oever. Het project moet in 2022 zijn voltooid, en zit nu nog in de planfase. Ik help het managementteam te bepalen hoe we technische problemen kunnen oplossen.
+    p De komende jaren richt ik me ook op de herstelwerkzaamheden aan de Nijkerkerbrug, die Gelderland met Flevoland verbindt. RWS besteedt dit project op bijzondere manier aan onder de naam Project DOEN. We kiezen de aannemer met wie we de beste samenwerking denken te kunnen aangaan, en we laten hem veel ruimte om na te denken hoe hij dingen wil gaan oplossen.

@@ -1,0 +1,69 @@
+@mixin h1 {
+  font-family: $rijksoverheid-sans;
+  font-size: 31px;
+  line-height: 1.3;
+  color: $rh-logo-blue;
+
+  @include breakpoint($bp-m) {
+    font-size: 45px;
+  }
+}
+
+@mixin h2 {
+  font-family: $rijksoverheid-sans;
+  font-weight: bold;
+  font-size: 22px;
+  line-height: 1.3;
+  color: $rh-logo-blue;
+
+  @include breakpoint($bp-m) {
+    font-size: 28px;
+  }
+}
+
+@mixin h2-action {
+  font-family: $rijksoverheid-sans;
+  font-size: 28px;
+  line-height: 1.3;
+  color: $rh-logo-blue;
+
+  @include breakpoint($bp-m) {
+    font-size: 38px;
+  }
+}
+
+@mixin h3 {
+  font-family: $rijksoverheid-sans;
+  font-weight: bold;
+  font-size: 20px;
+  line-height: 1.3;
+  color: $rh-logo-blue;
+
+  @include breakpoint($bp-m) {
+    font-size: 22px;
+  }
+}
+
+@mixin h4 {
+  font-family: $rijksoverheid-sans;
+  font-weight: bold;
+  font-size: 16px;
+  line-height: 1.3;
+  color: $rws-blue;
+
+  @include breakpoint($bp-m) {
+    font-size: 17px;
+  }
+}
+
+@mixin h5 {
+  font-family: $rijksoverheid-sans;
+  font-weight: bold;
+  font-size: 15px;
+  line-height: 1.3;
+  color: $rws-blue;
+
+  @include breakpoint($bp-m) {
+    font-size: 16px;
+  }
+}

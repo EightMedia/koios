@@ -1,0 +1,33 @@
+.notification {
+  display: flex;
+  border: 1px solid $rh-grey-4;
+  border-left: 4px solid $rws-blue;
+  padding: 16px;
+
+  .icon {
+    fill: $rws-blue;
+    margin-top: 5px;
+    margin-right: 8px;
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.notification__content {
+  p {
+    @include p;
+  }
+}
+
+.notification__content__btn {
+  color: $rws-blue;
+  text-decoration: underline;
+
+  &:hover {
+    color: $rws-blue-dark;
+  }
+
+  &:focus {
+    outline: 0;
+  }
+}

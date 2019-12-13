@@ -1,0 +1,28 @@
+//- @pugdoc
+  name: Kaart (testimonial)
+
+mixin card-testimonial(card)
+  include ../../utils/srcset
+  include ../atoms/button
+
+  - var cls = ["js-click-block"];
+
+  .card-testimonial(class=cls)
+
+    //- body
+    .card-testimonial__body
+      picture.card-testimonial__body__avatar
+        +srcset(card.avatar, self.imageSizes["card-testimonial-avatar"])
+
+      blockquote.card-testimonial__body__quote &lsquo;#{card.quote}&rsquo;
+
+      strong.card-testimonial__body__name #{card.name}
+      span.card-testimonial__body__description #{card.description}
+
+    //- image
+    picture.card-testimonial__image
+      +srcset(card.image, self.imageSizes["card-testimonial"])
+
+    //- footer
+    .card-testimonial__footer
+      +button(card.btn.label, card.btn.link)

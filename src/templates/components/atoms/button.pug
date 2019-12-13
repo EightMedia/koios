@@ -1,0 +1,44 @@
+//- @pugdoc
+  name: Atoom (Button)
+  description: Button
+  examples:
+    -
+      name: Atoom (Button, large)
+      example: |
+        .button-example.button-example--l
+          +button("Knop L", "#")
+
+          .button-example--yellow
+            +button("Knop L", "#")
+
+          .button-example--outline
+            +button("Knop L", "#")
+    -
+      name: Atoom (Button, medium)
+      example: |
+        .button-example.button-example--m
+          +button("Knop M", "#")
+
+          .button-example--yellow
+            +button("Knop M", "#")
+
+          .button-example--outline
+            +button("Knop M", "#")
+    -
+      name: Atoom (Button, small)
+      example: |
+        .button-example.button-example--s
+          +button("Knop S", "#")
+
+          .button-example--yellow
+            +button("Knop S", "#")
+
+          .button-example--outline
+            +button("Knop S", "#")
+
+mixin button(label, link='#', number)
+  a.button(href=link, class=attributes.class, tabindex=attributes.tabindex)
+    |!{label}
+    
+    if number
+      span.button__number #{number}

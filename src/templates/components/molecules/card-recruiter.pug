@@ -1,0 +1,36 @@
+//- @pugdoc
+  name: Kaart (recruiter)
+
+mixin card-recruiter(card)
+  include ../../utils/srcset
+  include ../atoms/contact-link
+
+  - var cls = [""];
+
+  .card-recruiter(class=cls)
+
+    //- body
+    .card-recruiter__body
+      picture.card-recruiter__body__avatar
+        +srcset(card.avatar, self.imageSizes["card-recruiter-avatar"])
+
+      strong.card-recruiter__body__name #{card.name}
+      span.card-recruiter__body__description #{card.description}
+
+      ul.card-recruiter__body__options
+
+        if card.email
+          li.card-recruiter__body__options__item
+            +contact-link("email", card.email, "mailto:"+card.email)
+        
+        if card.phone
+          li.card-recruiter__body__options__item
+            +contact-link("mobile", card.phone, "tel:"+card.phone)
+          
+        if card.whatsapp
+          li.card-recruiter__body__options__item
+            +contact-link("whatsapp", "Whatsapp", "whatsapp:"+card.whatsapp)
+
+    //- image
+    picture.card-recruiter__image
+      +srcset(card.image, self.imageSizes["card-recruiter"])

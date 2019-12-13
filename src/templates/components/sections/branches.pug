@@ -1,0 +1,64 @@
+//- @pugdoc
+  name: Sectie (Vakgebieden)
+  examples:
+    - 
+      name: Sectie (Vakgebieden, standaard)
+      example: |
+        - var branches = [];
+        - branches.push({image: "big-data.jpg", title: "ICT", text: "Wil jij meewerken aan een slimmere en veiligere infrastructuur?", vacancyNr: 12});
+        - branches.push({image: "tunnel-velsen.jpg", title: "Techniek", text: "Verhelp jij een storing voordat iemand er iets van merkt?", vacancyNr: 8});
+        - branches.push({image: "viaduct-kampen.jpg", title: "Inkoop", text: "Wil jij meewerken?", vacancyNr: 24});
+        - branches.push({image: "viaduct-kampen.jpg", title: "Inkoop", text: "Wil jij meewerken aan een slimmere en veiligere infrastructuur?", vacancyNr: 3});    
+        - branches.push({image: "tunnel-velsen.jpg", title: "Techniek", text: "Verhelp jij een storing?", vacancyNr: 16});
+        - branches.push({image: "big-data.jpg", title: "ICT", text: "Wil jij meewerken aan een slimmere en veiligere infrastructuur?", vacancyNr: 1});
+        +section-branches(branches, {label: "Bekijk alle vacatures", link: "#", number: 60})
+    -
+      name: Sectie (Vakgebieden, home)
+      example: |
+        - var branches = [];
+        - branches.push({image: "big-data.jpg", title: "ICT", text: "Wil jij meewerken aan een slimmere en veiligere infrastructuur?", vacancyNr: 12});
+        - branches.push({image: "tunnel-velsen.jpg", title: "Techniek", text: "Verhelp jij een storing voordat iemand er iets van merkt?", vacancyNr: 8});
+        - branches.push({image: "viaduct-kampen.jpg", title: "Inkoop", text: "Wil jij meewerken?", vacancyNr: 24});
+        - branches.push({image: "viaduct-kampen.jpg", title: "Inkoop", text: "Wil jij meewerken aan een slimmere en veiligere infrastructuur?", vacancyNr: 3});    
+        - branches.push({image: "tunnel-velsen.jpg", title: "Techniek", text: "Verhelp jij een storing?", vacancyNr: 16});
+        - branches.push({image: "big-data.jpg", title: "ICT", text: "Wil jij meewerken aan een slimmere en veiligere infrastructuur?", vacancyNr: 1});
+        +section-branches(branches, {label: "Meer vakgebieden", link: "#", ghost: true}, true)
+
+mixin section-branches(branches, button, isSwipeable)
+  include ./_setup
+  include ../../utils/srcset
+  include ../atoms/button
+
+  -
+    var cls = ["section--branches", "layout-l"]
+    if (isSwipeable) cls.push("is-swipeable")
+
+  +section(class=cls)
+
+    .branches
+
+      .branches__grid
+
+        each branch in branches
+
+          - if (!branch.vacancyNr) branch.vacancyNr = 12;
+
+          .branches__grid__item
+
+            .card-branch(class="js-equal-height")
+            
+              a.card-branch__link(href="vakgebied.html", tabindex="-1")
+                picture.card-branch__link__image
+                  +srcset(branch.image, self.imageSizes["card-branch"])
+
+              .card-branch__body(class="js-equal-height-resize")
+                h2.card-branch__body__title #{branch.title}
+                .card-branch__body__text 
+                  p #{branch.text}
+                .card-branch__body__buttons
+                  +button(`Meer info <span class="accessibility">over ${branch.title}</span>`, "vakgebied.html")(class="button--info")
+                  +button(`Vacatures <span class="accessibility">in ${branch.title}</span>`, "vacatures.html?branches[]=CVG.08", branch.vacancyNr)(class="button--vacancies")
+
+      if button
+        .branches__button
+          +button(button.label, button.link, button.number)(class=(button.ghost ? "button--ghost" : ""))

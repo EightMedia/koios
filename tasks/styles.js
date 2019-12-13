@@ -16,7 +16,7 @@ const cssnano = require("cssnano");
  */
 
 function read(file) {
-  return new Promise(function (resolve, reject) {
+  return new Promise((resolve, reject) => {
     fs.readFile(file, (err, content) => err ? reject(err) : resolve(content.toString()));
   });
 }
@@ -72,7 +72,7 @@ function minify(css) {
  */
 
 function styles() {
-  const filename = "theme"; // TEMP STATIC SOLUTION
+  const filename = "all"; // TEMP STATIC SOLUTION
 
   return new Promise((resolve, reject) => {
     const src = path.resolve(__dirname, `../${paths.SRC.styles}${filename}.scss`);

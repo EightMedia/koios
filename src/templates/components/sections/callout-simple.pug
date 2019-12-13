@@ -1,0 +1,17 @@
+//- @pugdoc
+  name: Sectie (Callout simpel)
+  example: |
+    include ./callout-simple
+    - var button = {label: "Onze inkoop vacatures", link: "#"};
+    +section-callout("We zoeken inkoopprofessionals", "De nieuwste technieken, zowel op de hardware als de software van de objecten, kunnen worden toegepast om de constructies en installaties zodanig te vernieuwen.", button)
+
+mixin section-callout(title, text, button)
+  include ./_setup
+  include ../atoms/button
+  
+  +section(class=['section--callout-simple', 'layout-l'])
+
+    .callout-simple
+      .callout-simple__title #{title}
+      .callout-simple__text #{text}
+      +button(button.label, button.link)

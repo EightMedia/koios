@@ -1,0 +1,55 @@
+/**
+ * Person
+ */
+
+.person {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+
+  &:hover {
+    .person__body__name {
+      text-decoration: underline;
+    }
+  }
+}
+
+.person__avatar {
+  flex-grow: 0;
+  flex-shrink: 0;
+
+  img {
+    @include avatar(64px, 80px);
+  }
+}
+
+.person__body {
+  margin-left: 8px;
+}
+
+.person__body__name {
+  font-size: 16px;
+  font-weight: bold;
+  line-height: 1.3;
+  text-decoration: none;
+  color: $rws-blue;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  @include breakpoint($bp-m) {
+    font-size: 18px;
+  }
+}
+
+.person__body__description {
+  font-size: 13px;
+  color: $rh-grey-7;
+  line-height: 1.3;
+  display: block;
+
+  @include breakpoint($bp-m) {
+    font-size: 15px;
+  }
+}

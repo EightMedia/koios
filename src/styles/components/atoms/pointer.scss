@@ -1,0 +1,104 @@
+@mixin pointer($position: "top", $diagonal-s: 32px) {
+  @include pointer-arrow($position, $diagonal-s);
+  position: relative;
+  background-color: $rws-yellow;
+  padding: 20px;
+
+  @include breakpoint($bp-m) {
+    @include pointer-arrow($position, $diagonal-s * 2);
+    padding: nth(map-get($section-spacings, s), 2);
+  }
+}
+
+@mixin pointer-arrow($position, $diagonal) {
+  // get side length of square from diagonal
+  $side: round($diagonal / sqrt(2));
+
+  margin-#{$position}: $diagonal;
+
+  &::after {
+    position: absolute;
+    z-index: 10;
+    width: 0;
+    height: $side;
+
+    @if $position == "top" {
+      top: 1px;
+      left: $side;
+      transform-origin: top left;
+      transform: rotate(135deg) translate(-(2 * $side), -(2 * $side)) translate3d(0, 0, 1px);
+      border-bottom: $side solid $rws-yellow;
+    } @else if $position == "right" {
+      right: 1px;
+      bottom: $side;
+      transform-origin: top left;
+      transform: rotate(-135deg) translate(-(2 * $diagonal + $side), -$side) translate3d(0, 0, 1px);
+      border-bottom: $side solid $rws-yellow;
+    } @else if $position == "bottom" {
+      bottom: 1px;
+      left: $side;
+      transform-origin: bottom left;
+      transform: rotate(135deg) translate(-$side, $side) translate3d(0, 0, 1px);
+      border-top: $side solid $rws-yellow;
+    } @else if $position == "left" {
+      bottom: $side;
+      left: 1px;
+      transform-origin: bottom left;
+      transform: rotate(-135deg) translate(0, 2 * $side) translate3d(0, 0, 1px);
+      border-top: $side solid $rws-yellow;
+    }
+
+    content: "";
+    display: block;
+    border-left: $side solid transparent;
+    border-right: $side solid transparent;
+  }
+}
+
+/**
+ * Example styling
+ */
+
+.pointer-group {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.pointer-group__item {
+  background-color: $rh-grey-1;
+  flex-basis: calc(50% - 20px);
+  margin: 10px;
+
+  &::after {
+    content: "";
+    display: table;
+    padding-top: 50%;
+  }
+}
+
+.pointer {
+}
+
+.pointer--top {
+  @include pointer("top");
+  height: calc(100% - 64px);
+  width: 100%;
+}
+
+.pointer--right {
+  @include pointer("right");
+  height: 100%;
+  width: calc(100% - 64px);
+}
+
+.pointer--bottom {
+  @include pointer("bottom");
+  height: calc(100% - 64px);
+  width: 100%;
+}
+
+.pointer--left {
+  @include pointer("left");
+  height: 100%;
+  width: calc(100% - 64px);
+}

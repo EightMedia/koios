@@ -1,0 +1,93 @@
+//- @pugdoc
+  name: Algemeen (Iconen)
+  description: Overzicht van alle gebruikte iconen.
+  attributes:
+    - {string} id - used for the xlink
+    - {string} class - class to be set on the svg
+  example: |
+    style.
+      .display-icon {
+        display: inline-block;
+        border: 1px solid #ccc;
+        background-color: whitesmoke;
+        padding: 14px;
+        text-align: center;
+        margin: 3px;
+        position: relative;
+        min-width: 54px;
+      }
+
+      .display-icon:hover {
+        z-index: 1;
+      }
+
+      [class^="icon-"] {
+        transition: transform .15s ease-out;
+      }
+
+      .display-icon:hover [class^="icon-"] {
+        transform: scale(1.1, 1.1);
+      }
+
+      .display-icon svg {
+        fill: #111;
+      }
+
+    div
+      +icon#home
+      +icon#chevron
+      +icon#check
+      +icon#cross
+      +icon#hat
+      +icon#calendar
+      +icon#external
+      +icon#search
+      +icon#audio
+      +icon#video
+      +icon#info
+      +icon#share
+
+    div
+      +icon#email
+      +icon#mobile
+      +icon#facebook
+      +icon#instagram
+      +icon#linkedin
+      +icon#twitter
+      +icon#spotify
+      +icon#youtube
+      +icon#whatsapp
+
+    div
+      +icon#timeline-video
+      +icon#timeline-audio
+      +icon#timeline-gallery
+      +icon#timeline-quote
+      +icon#timeline-news
+
+    script.
+      var $$icons = document.querySelectorAll('div > [class^="icon"]');
+      for (var i = 0, l = $$icons.length; i < l; ++i) {
+        var $icon = $$icons[i];
+
+        var $wrapper = document.createElement('span');
+        $wrapper.classList.add('display-icon');
+        $wrapper.setAttribute('title', $icon.firstChild.getAttribute('xlink:href'));
+
+        $icon.parentNode.insertBefore($wrapper, $icon);
+        $wrapper.appendChild($icon);
+      }
+
+
+mixin icon
+
+  //- viewbox dimensions go here [x, y, width, height]
+  - var VIEWBOX = [0, 0, 24, 24];
+
+  //- add icon-class
+  - var cls = "icon-" + attributes.id;
+  if attributes.class
+    - cls += " " + attributes.class
+
+  if attributes.id
+    | <svg class="icon #{cls}" aria-hidden="true" viewBox="#{VIEWBOX.join(" ")}" width="#{VIEWBOX[2]}" height="#{VIEWBOX[3]}"><use xlink:href="##{attributes.id}"></use></svg>

@@ -1,0 +1,70 @@
+/**
+ * Pointer
+ */
+
+.vacancy-head__pointer {
+  @include pointer("top");
+
+  transform: translateY(-64px);
+  margin-bottom: -64px;
+
+  @include breakpoint($bp-m) {
+    transform: translateY(-102px);
+    margin-bottom: -102px;
+  }
+}
+
+.vacancy-head__pointer__title {
+  @include title-serif-1;
+  margin-bottom: 16px;
+
+  @include breakpoint(max $bp-s) {
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+}
+
+/**
+ * Meta
+ */
+
+.vacancy-head__meta {
+  margin-top: 24px;
+
+  @include breakpoint($bp-s) {
+    columns: 2;
+    margin-top: 48px;
+  }
+}
+
+.vacancy-head__meta__item {
+  margin-bottom: 8px;
+  display: flex;
+  align-items: flex-start;
+
+  svg {
+    width: 24px;
+    height: 24px;
+    fill: $rws-blue;
+    margin-right: 4px;
+  }
+
+  @include breakpoint($bp-s) {
+    margin-bottom: 16px;
+
+    svg {
+      width: 32px;
+      height: 32px;
+      fill: $rws-blue;
+      margin-right: 8px;
+    }
+  }
+}
+
+.vacancy-head__meta__item__label {
+  @include p;
+
+  @include breakpoint($bp-s) {
+    margin-top: 3px;
+  }
+}

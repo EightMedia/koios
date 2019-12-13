@@ -1,0 +1,219 @@
+/**
+ * Section spacings
+ * This file orchestrates all vertical spacing between sections
+ * Be very careful when modifying this file because
+ * this could potentially break all sections everywhere ever
+ */
+
+$section-spacings: (
+  xl: (
+    56px,
+    64px,
+    80px
+  ),
+  l: (
+    40px,
+    56px,
+    64px
+  ),
+  m: (
+    32px,
+    40px,
+    40px
+  ),
+  s: (
+    24px,
+    32px,
+    32px
+  ),
+  xs: (
+    16px,
+    24px,
+    24px
+  ),
+  none: (
+    0,
+    0,
+    0
+  )
+);
+
+@mixin section-spacing($method: null, $direction: null, $size: null) {
+  @if $method != null and $direction != null and $size != null {
+    #{$method}-#{$direction}: nth(map-get($section-spacings, $size), 1);
+
+    @include breakpoint($bp-m) {
+      #{$method}-#{$direction}: nth(map-get($section-spacings, $size), 2);
+    }
+
+    @include breakpoint($bp-l) {
+      #{$method}-#{$direction}: nth(map-get($section-spacings, $size), 3);
+    }
+  }
+}
+
+@mixin section-padding-top($size) {
+  @include section-spacing("padding", "top", $size);
+}
+
+@mixin section-padding-bottom($size) {
+  @include section-spacing("padding", "bottom", $size);
+}
+
+@mixin section-margin-top($size) {
+  @include section-spacing("margin", "top", $size);
+}
+
+@mixin section-margin-bottom($size) {
+  @include section-spacing("margin", "bottom", $size);
+}
+
+/**
+ * View layout label on hover in debug mode
+ */
+
+@mixin layout-label($text: "no-layout") {
+  position: relative;
+
+  &::before {
+    position: absolute;
+    content: $text;
+    text-transform: uppercase;
+    padding: 4px;
+    font-size: 12px;
+    font-family: "Courier New", Courier, monospace;
+    border: 1px dotted black;
+    background-color: yellow;
+    display: none;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .is-debug &:hover {
+    &::before {
+      display: block;
+    }
+  }
+}
+
+/**
+ * Sections with small margin
+ */
+
+.layout-s {
+  @include section-margin-top(s);
+  @include section-margin-bottom(s);
+}
+
+/**
+ * Sections with medium margin
+ */
+
+.layout-m {
+  @include section-margin-top(m);
+  @include section-margin-bottom(m);
+
+  &.section--richtext + &.section--button-link {
+    margin-top: -24px;
+  }
+}
+
+/**
+ * Sections with large margin
+ */
+
+.layout-l {
+  @include section-margin-top(l);
+  @include section-margin-bottom(l);
+}
+
+/**
+ * Sections with extra-large margin
+ */
+
+.layout-xl {
+  @include section-margin-top(xl);
+  @include section-margin-bottom(xl);
+}
+
+/**
+ * Sections with extra-large margin
+ */
+
+.layout-z {
+  // sass-lint:disable force-pseudo-nesting
+
+  .section:not(.layout-z) + & {
+    @include section-margin-top(xl);
+  }
+
+  & + .section:not(.layout-z):not(.section--react-vacancies):not(.section--timeline-tabs) {
+    @include section-margin-top(xl);
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  $grey-sections: (".section--featured-vacancies", ".section--contact-person");
+
+  @each $grey-section-1 in $grey-sections {
+    @each $grey-section-2 in $grey-sections {
+      &#{$grey-section-1} + &#{$grey-section-2} {
+        border-top: 1px solid $rh-grey-3;
+      }
+    }
+
+    &#{$grey-section-1} + .footer {
+      @include section-margin-top(xl);
+    }
+  }
+}
+
+/**
+ * Enlarge margin-top of certain sections when they're the first child
+ */
+
+.section--intro {
+  &:first-child {
+    @include section-margin-top(xl);
+  }
+}
+
+/**
+ * Group certain sections
+ */
+
+$exceptions: (".section--image", ".section--video", ".section--contact-person");
+
+@each $exception in $exceptions {
+  #{$exception} + #{$exception} {
+    margin-top: -(nth(map-get($section-spacings, s), 1));
+
+    @include breakpoint($bp-m) {
+      margin-top: -(nth(map-get($section-spacings, s), 2));
+    }
+
+    @include breakpoint($bp-l) {
+      margin-top: -(nth(map-get($section-spacings, s), 3));
+    }
+  }
+}
+
+/**
+ * Inside takeover
+ */
+
+.takeover {
+  .section {
+    &:first-of-type {
+      margin-top: 0;
+    }
+  }
+
+  .layout-m,
+  .layout-l {
+    @include section-margin-top(s);
+  }
+}

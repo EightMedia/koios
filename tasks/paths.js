@@ -8,10 +8,13 @@ const paths = {
 // Source paths
 paths.SRC.styles = `${paths.SRC.root}styles${S}`;
 paths.SRC.scripts = `${paths.SRC.root}scripts${S}`;
+paths.SRC.data = `${process.cwd()}${S}${paths.SRC.root}data${S}`;
 
 paths.SRC.templates = `${paths.SRC.root}templates${S}`;
-paths.SRC.components = `${paths.SRC.templates}components${S}`;
-paths.SRC.pages = `${paths.SRC.templates}pages${S}`;
+paths.SRC.pagesFolder = "components";
+paths.SRC.components = `${paths.SRC.templates}${paths.SRC.componentsFolder}${S}`;
+paths.SRC.pagesFolder = "pages";
+paths.SRC.pages = `${paths.SRC.templates}${paths.SRC.pagesFolder}${S}`;
 
 // Destination paths
 paths.DST.assets = `${paths.DST.root}assets${S}`;
@@ -24,8 +27,7 @@ paths.DST.pages = `${paths.DST.root}`;
 paths.locals = {
   CSS_URL: "/assets/css/",
   JS_URL: "/assets/js/",
-  IMG_URL: "/img/",
-  VERSION: process.env.npm_package_version
+  IMG_URL: "/img/"
 };
 
 module.exports = paths;

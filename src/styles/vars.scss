@@ -1,1 +1,83 @@
-$blue: #0000ff;
+/**
+ * Folders
+ */
+
+$fonts-url: "/* @echo FONTS_URL */";
+$images-url: "/* @echo IMAGES_URL */";
+
+/**
+ * Fonts
+ */
+
+$rijksoverheid-sans: "RijksoverheidSansText", Verdana, Arial, sans-serif;
+$rijksoverheid-serif: "RijksoverheidSerif", Georgia, Times, serif;
+
+/**
+ * Colors Rijkshuisstijl
+ * https://www.rijkshuisstijl.nl/basiselementen/kleur/online-kleuren
+ */
+
+$white: #fff;
+$black: #000;
+
+$rh-grey-1: #f3f3f3;
+$rh-grey-2: #e6e6e6;
+$rh-grey-3: #ddd;
+$rh-grey-4: #ccc;
+$rh-grey-5: #a9a9a9;
+$rh-grey-6: #999;
+$rh-grey-7: #696969;
+$rh-grey-9: #535353;
+$rh-grey-10: #222;
+
+$rh-logo-blue: #154273;
+$rh-blue: #007bc7;
+
+$rh-red: #d52b1e;
+
+/**
+ * Colors RWS
+ */
+
+$rws-yellow: #f9e11e;
+$rws-yellow-light: #fcf29a;
+$rws-yellow-dark: #e3d981;
+$rws-yellow-dark-alt: #edd406;
+
+$rws-blue: #0073bf;
+$rws-blue-light: #d9ebf7;
+$rws-blue-dark: #005aa6;
+
+/**
+ * Social Media colors
+ */
+
+$instagram: #f4306d;
+$facebook: #39579a;
+$twitter: #007cad;
+$linkedin: #0072b4;
+$whatsapp: #34af23;
+$youtube: #cf3126;
+$spotify: #1db954;
+
+/**
+ * Breakpoints
+ */
+
+$bp-xs: 375px;
+$bp-s: 500px;
+$bp-m: 768px;
+$bp-ml: 900px;
+$bp-l: 1024px;
+$bp-xl: 1160px;
+$bp-xxl: 1440px;
+
+$bp-scrolltrack: 920px;
+
+/**
+ * Sizes
+ */
+
+$w-content: 700px;
+$w-container: 1200px;
+$w-max: 2000px;

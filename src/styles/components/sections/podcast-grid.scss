@@ -1,0 +1,78 @@
+.podcast-grid {
+  @include grid;
+}
+
+.podcast-grid__item {
+  @include grid-item(12);
+  margin-bottom: 24px;
+
+  &:not(:only-child) {
+    @include breakpoint($bp-m) {
+      @include grid-item(6);
+      max-width: grid-calc(6);
+      margin-bottom: 30px;
+    }
+
+    @include breakpoint($bp-l) {
+      margin-bottom: 40px;
+    }
+  }
+
+  &:only-child {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: $w-content;
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+.podcast-grid__footer {
+  @include grid-item(12);
+  margin-top: 24px;
+  text-align: center;
+}
+
+/**
+ * Spotify button
+ */
+
+.spotify-btn {
+  position: relative;
+  display: inline-block;
+  border-radius: 3px;
+  overflow: hidden;
+  text-decoration: none;
+  background-color: $rh-grey-10;
+  color: $white;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.spotify-btn__icon {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: $spotify;
+  padding: 18px;
+
+  .icon {
+    width: 20px;
+    height: 20px;
+    fill: $white;
+  }
+}
+
+.spotify-btn__label {
+  font-size: 18px;
+  font-family: $rijksoverheid-sans;
+  font-weight: bold;
+  color: $white;
+  padding: 16px 24px 16px 80px;
+
+  @include breakpoint($bp-m) {
+    font-size: 20px;
+  }
+}

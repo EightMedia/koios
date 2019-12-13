@@ -1,0 +1,32 @@
+mixin rh-icon(name)
+  case name
+    when 'groep mensen torso'
+      include ./svg/0016 groep mensen torso.svg
+    when 'locatie marker'
+      include ./svg/1007 locatie marker.svg
+    when 'maatwerk'
+      include ./svg/1011 maatwerk.svg
+    when 'rijkspas'
+      include ./svg/1012 rijkspas.svg
+    when 'man achter pc'
+      include ./svg/1042 man achter pc.svg
+    when 'kalender'
+      include ./svg/2001 kalender.svg
+    when 'computer'
+      include ./svg/2008 computer.svg
+    when 'klok'
+      include ./svg/2010 klok.svg
+    when 'onderwijs cultuur wetenschap'
+      include ./svg/4030 onderwijs cultuur wetenschap.svg
+    when 'mensen in kracht zetten'
+      include ./svg/4154 mensen in kracht zetten.svg
+    when 'stapeltje euros'
+      include ./svg/9003 stapeltje euros.svg
+    when 'vaste brug'
+      include ./svg/5018 vaste brug.svg
+    when 'stormvloedkering'
+      include ./svg/5025 stormvloedkering.svg
+    when 'ondernemingen'
+      include ./svg/6024 ondernemingen.svg
+    default
+      - console.log('Onbekend icoon: ' + name)

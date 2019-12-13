@@ -1,0 +1,61 @@
+.date {
+  position: relative;
+  display: flex;
+  background-color: $rws-yellow;
+}
+
+/**
+ * Item
+ */
+
+.date__item {
+  width: 45px;
+  flex-shrink: 0;
+  flex-grow: 1;
+  text-align: center;
+  color: $rh-grey-10;
+  padding: 8px;
+
+  @include breakpoint($bp-m) {
+    width: 60px;
+    padding: 16px;
+  }
+}
+
+/**
+ * Dash
+ */
+
+.date__dash {
+  width: 8px;
+  height: 2px;
+  background-color: $rh-grey-10;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%);
+
+  @include breakpoint($bp-m) {
+    width: 12px;
+  }
+}
+
+.date__item__day {
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: -1px;
+
+  @include breakpoint($bp-m) {
+    font-size: 20px;
+  }
+}
+
+.date__item__month {
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: bold;
+
+  @include breakpoint($bp-m) {
+    font-size: 14px;
+  }
+}

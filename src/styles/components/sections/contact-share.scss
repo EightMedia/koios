@@ -1,0 +1,59 @@
+/**
+ * Main
+ */
+
+.contact-share {
+  @include grid;
+  background-color: $rh-grey-1;
+  border-radius: 4px;
+}
+
+.contact-share__persons {
+  @include section-padding-top(m);
+  @include section-padding-bottom(s);
+  @include grid-item(12);
+  padding-left: 24px;
+  padding-right: 24px;
+
+  border-bottom: 1px solid $rh-grey-3;
+
+  @include breakpoint($bp-m) {
+    @include section-padding-bottom(m);
+    @include grid-item(6);
+    max-width: grid-calc(6);
+    border-right: 1px solid $rh-grey-3;
+    border-bottom: 0;
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+}
+
+.contact-share__social {
+  @include section-padding-top(s);
+  @include section-padding-bottom(m);
+  @include grid-item(12);
+  padding-left: 24px;
+  padding-right: 24px;
+
+  @include breakpoint($bp-m) {
+    @include section-padding-top(m);
+    @include grid-item(6);
+    max-width: grid-calc(6);
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+}
+
+/**
+ * Share social
+ */
+
+.contact-share__social__title {
+  @include h3;
+  margin-bottom: 8px;
+}
+
+.contact-share__social__text {
+  @include p;
+  margin-bottom: 16px;
+}

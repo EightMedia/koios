@@ -1,0 +1,33 @@
+//- @pugdoc
+  name: Sectie (Afbeelding)
+  examples:
+    - 
+      name: Sectie (Afbeelding, content)
+      example: |
+        +section-image(self.SLIM, "dienend-leiderschap.jpg", "Dit is de (optionele) beschrijving.", "Fotograaf: Hendrik-Jan de Vries")
+    - 
+      name: Sectie (Afbeelding, uitgebroken)
+      example: |        
+        +section-image(self.WIDE, "tunnel-velsen.jpg", "Deze afbeelding breekt uit voor een ‘immersive’-effect.", "Fotograaf: Hendrik-Jan de Vries")
+
+mixin section-image(type, image, caption, credits)
+  include ./_setup
+  include ../../utils/srcset
+
+  +section(class='section--image layout-l')
+
+    - var cls = [];
+    - cls.push("image--" + type)
+
+    .image(class=cls)
+      picture.image__pic
+        +srcset(image, self.imageSizes["image"])
+
+        if caption || credits
+          figcaption.image__pic__caption
+      
+            if caption
+              span.image__pic__caption__label !{caption}
+          
+            if credits
+              span.image__pic__caption__credits !{credits}

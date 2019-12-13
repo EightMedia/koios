@@ -1,0 +1,14 @@
+//- @pugdoc
+  name: Molecuul (Gallery)
+  capture: none
+
+mixin gallery(images)
+
+  .gallery(class="js-gallery")
+
+    each image in images
+  
+      a.gallery__item(href=self.IMGIX_URL+image.src, class="js-gallery-item", data-dimensions=image.dimensions, title=image.title)
+
+        picture.gallery__item__image
+          +srcset(image.src, self.imageSizes["gallery"])

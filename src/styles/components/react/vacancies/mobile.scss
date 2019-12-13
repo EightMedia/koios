@@ -1,0 +1,175 @@
+.noscroll {
+  overflow: hidden;
+}
+
+$header-height: 48px;
+$footer-height: 60px;
+
+.react-vacancies__mobile {
+  position: fixed;
+  background-color: $white;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: $footer-height;
+  z-index: 2001;
+  display: flex;
+  flex-direction: column;
+  transition: height 0.2s ease, opacity 0.2s ease;
+  transform: scale3d(1, 1, 1);
+  opacity: 1;
+
+  .has-menu-open &,
+  .has-footer-inview & {
+    opacity: 0;
+    transform: scale3d(0, 0, 0);
+  }
+
+  @include breakpoint($bp-l) {
+    display: none;
+  }
+
+  &.react-vacancies__mobile--open {
+    height: 100%; // use % instead of vh for iOS
+    z-index: 3002;
+  }
+}
+
+/**
+ * Header
+ */
+
+.react-vacancies__mobile__header {
+  position: relative;
+  flex-shrink: 0;
+  z-index: 30;
+  width: 100vw;
+  background-color: $white;
+  box-shadow: 0 0 10px 0 rgba($black, 0.3);
+}
+
+.react-vacancies__mobile__header-inner {
+  position: relative;
+  height: $header-height;
+
+  @include breakpoint($bp-m) {
+    max-width: $bp-m;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+.react-vacancies__mobile__header__clear {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  font-size: 13px;
+  color: $rh-blue;
+}
+
+.react-vacancies__mobile__header__title {
+  width: 100%;
+  padding: 15px 0;
+  font-size: 17px;
+  font-weight: bold;
+  text-align: center;
+
+  .badge {
+    display: inline-block;
+    padding: 1px 4px;
+    background-color: $rws-blue;
+    border-radius: 3px;
+    font-size: 12px;
+    text-align: center;
+    color: $white;
+    font-weight: 700;
+    margin-left: 8px;
+    transform: translateY(-2px);
+  }
+}
+
+.react-vacancies__mobile__header__close {
+  position: absolute;
+  right: 15px;
+  width: 24px;
+  height: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.react-vacancies__mobile__header__close__btn-icon {
+  width: 24px;
+  height: 24px;
+
+  path {
+    fill: $rh-grey-9;
+  }
+}
+
+/**
+ * Body
+ */
+
+.react-vacancies__mobile__body {
+  position: relative;
+  z-index: 20;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+  background-color: $rh-grey-1;
+  margin-bottom: $footer-height;
+}
+
+/**
+ * Footer
+ */
+
+.react-vacancies__mobile__footer {
+  position: relative;
+  flex-shrink: 0;
+  z-index: 30;
+  background-color: $white;
+  box-shadow: 0 0 10px 0 rgba($black, 0.3);
+  margin-top: auto;
+  width: 100%;
+
+  .react-vacancies__mobile--open & {
+    position: fixed;
+    bottom: 0;
+  }
+}
+
+.react-vacancies__mobile__footer-inner {
+  height: $footer-height;
+  display: flex;
+  align-items: center;
+  padding-left: 15px;
+  padding-right: 15px;
+
+  @include breakpoint($bp-m) {
+    max-width: $bp-m;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+.react-vacancies__mobile__footer__button {
+  @include button-medium;
+  width: 100%;
+  text-decoration: none;
+  text-align: center;
+
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+/**
+ * Form
+ */
+
+.react-vacancies__filter-form {
+  display: block;
+}

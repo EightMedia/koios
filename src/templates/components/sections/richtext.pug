@@ -1,0 +1,87 @@
+//- @pugdoc
+  name: Richtext
+  examples:
+    - 
+      name: Sectie (richtext)
+      example: |
+        include ./richtext
+        +section-richtext
+          +richtext-content
+
+    - 
+      name: Sectie (richtext met inleiding)
+      example: |
+        include ./richtext
+        +section-richtext-with-lead
+          +richtext-content
+
+mixin section-richtext()
+  include ./_setup
+  include ../atoms/richtext
+
+  +section(class='section--richtext layout-m')
+    +richtext()
+      block
+
+mixin section-richtext-with-lead()
+  include ./_setup
+  include ../atoms/richtext
+
+  +section(class='section--richtext layout-m')
+    +richtext(true)
+      block
+
+
+
+
+mixin richtext-content
+  h2 h2. Heading 2
+  p Paragraph. Tijdens de <i>Security Battle</i> kom je alles te weten over hoe de Rijksoverheid omgaat met de dreigingen die dagelijks op <a href="https://www.werkenvoornederland.nl/vakgebieden/icters-bij-de-rijksoverheid/security-battle">nationaal niveau</a> op ons afkomen. De 7 SOC’s hebben elk hun eigen verantwoordelijkheid bij het signaleren, monitoren en tegengaan van cyberaanvallen die de <a href="#">nationale veiligheid</a> onder druk zetten.
+
+  h3 h3. Heading 3
+  p Paragraph. Tijdens de <i>Security Battle</i> kom je alles te weten over hoe de Rijksoverheid omgaat met de dreigingen die dagelijks op nationaal niveau op ons afkomen. De 7 SOC’s hebben elk hun eigen verantwoordelijkheid bij het signaleren, monitoren en tegengaan van cyberaanvallen die de nationale veiligheid onder druk zetten.
+
+  h2 Lijsten
+  ul
+    li ul. De ontwikkelingen op het gebied van sensortechnologie
+    li Het toepassen van <a href="#">Big Data</a>
+    li Het plaatsen van zonnepanelen voor een duurzamer en uiteindelijk energieneutraal netwerk
+    li Het hergebruik van de fundering en het asfalt van de weg bij groot onderhoud
+    li Het onderzoeken van mogelijkheden voor bermgras als biobrandstof.
+  
+  ol
+    li ol. De ontwikkelingen op het gebied van sensortechnologie
+    li Het toepassen van Big Data
+    li Het plaatsen van zonnepanelen voor een duurzamer en uiteindelijk energieneutraal netwerk
+    li Het hergebruik van de fundering en het asfalt van de weg bij groot onderhoud
+    li Het onderzoeken van mogelijkheden voor bermgras als biobrandstof.
+
+  h2 Tabellen
+    
+  table
+    thead
+      tr
+        th Data startmoment april
+        th Data startmoment april
+    tbody
+      tr
+        td 1 maart: Deadline solliciteren
+        td 1 maart: Deadline solliciteren
+      tr
+        td 15 maart: Selectiedag
+        td 15 maart: Selectiedag
+      tr
+        td 1 april: Startdatum nieuwe traineegroep
+        td 1 april: Startdatum nieuwe traineegroep
+      
+  table
+    tbody
+      tr
+        th Datum
+        td 14 februari 2019 tot 16 februari
+      tr 
+        th Locatie
+        td Hoofdkantoor Rijkswaterstaat, Griffioenlaan 2, Utrecht
+      tr 
+        th Tijd
+        td 13:00 - 21:00 uur

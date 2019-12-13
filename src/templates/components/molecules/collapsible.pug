@@ -1,0 +1,20 @@
+//- @pugdoc
+  name: Uitklapper
+  arguments: 
+    - {string} title
+    - {boolean} open  
+  capture: none
+
+mixin collapsible(title, open)
+    - var cls = ['js-collapsible'];
+
+    if open
+      - cls.push('is-open');
+
+    .collapsible(class=cls)
+      button.collapsible__button(type='button', class='js-collapsible__toggle')
+        h3.collapsible__button__title #{title}
+        +icon#chevron
+      .collapsible__content(class='js-collapsible__content')
+        +richtext
+          block

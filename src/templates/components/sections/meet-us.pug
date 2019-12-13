@@ -1,0 +1,150 @@
+//- @pugdoc
+  name: Sectie (Maak kennis)
+  examples:
+    - 
+      name: Sectie (Maak kennis, alles)
+      example: |
+        include ./meet-us
+        +section-meet-us()
+    - 
+      name: Sectie (Maak kennis, artikelen)
+      example: |
+        include ./meet-us
+        +section-meet-us({ noEvents: true, branchLabel: "<h1>Artikelen</h1> over" })
+    - 
+      name: Sectie (Maak kennis, agenda)
+      example: |
+        include ./meet-us
+        +section-meet-us({ category: "evenement", branchLabel: "<h1>Agenda</h1> voor" })
+
+mixin section-meet-us(options)
+  include ./_setup
+  include ../molecules/notification
+  include ../molecules/card-meet-us
+  include ../atoms/filter-select
+
+  -
+    options = Object.assign({
+      category: null,
+      dataUrl: "/.netlify/functions/meet-us",
+      branchLabel: "<h1>Maak kennis</h1> met", 
+      excludeCategories: []
+    }, options);
+
+    var data = Object.assign(self.dataMeetUs);
+    var featured = data.filter(function(item) {
+      if (options.category)
+        return options.category == locals[item.category] && item.featured;
+      else 
+        return item.featured
+    }).slice(0, 2);
+
+  +section(class='section--meet-us layout-l')
+    
+    .meet-us(class="js-meet-us")
+
+      .meet-us__filters
+        .meet-us__filters__label(for="branch") !{options.branchLabel}
+
+        - var items = [];
+        - items.push({ value: "", label: "alle vakgebieden" })
+        - items.push({ value: "verkoop", label: "verkoop" })
+        - items.push({ value: "techniek", label: "techniek" })
+        - items.push({ value: "ICT", label: "ICT" })
+        - items.push({ value: "bedrijfsvoering", label: "bedrijfsvoering" })
+        - items.push({ value: "waterverkeersleiding", label: "water (verkeersleiding)" })
+        - items.push({ value: "overige-vakgebieden", label: "overige vakgebieden" })
+        +filter-select("branch", items, "")
+
+        if !options.category
+          .meet-us__filters__label(for="category") in
+
+          - var items = [];
+          - items.push({ value: "", label: "alle categorieën" })
+          - if (!options.noEvents) items.push({ value: "evenement", label: "evenementen" })
+          - items.push({ value: "project", label: "projecten" })
+          - items.push({ value: "interview", label: "interviews" })
+          - items.push({ value: "webinar", label: "webinars" })
+          - items.push({ value: "podcast", label: "podcasts" })
+          - items.push({ value: "vlog", label: "vlogs" })
+          +filter-select("category", items, "")
+          
+        else 
+          input(type="hidden", class="js-meet-us-param", name="category", value=options.category)
+
+        if options.noEvents
+          input(type="hidden", class="js-meet-us-param", name="noEvents", value="1")
+        
+        input(type="hidden", class="js-meet-us-param", name="p1", value="123")
+        input(type="hidden", class="js-meet-us-param", name="p2", value="abc")
+
+      .meet-us__error
+        +notification
+          p Er ging iets mis met het ophalen van de informatie. 
+            button.notification__content__btn(class="js-meet-us-retry-btn") Probeer het nog eens
+            |, of 
+            button.notification__content__btn(class="js-meet-us-clear-btn") wis alle filters
+            |.
+
+      .meet-us__grid(class="js-meet-us-content", data-url=options.dataUrl)
+
+      .meet-us__footer(class="js-meet-us-footer", hidden)
+        button.meet-us__footer__more(class="js-meet-us-more-btn", data-load-label="Laden...", data-default-label="+ Toon meer") + Toon meer
+
+      template(class='js-card-meet-us-template', type='rws/template')
+        .meet-us__grid__item
+          +card-meet-us({ title: "${title}", linkToSelf: "${linkToSelf}", teaserIntro: "${text}", teaserImage: { url: "${image}?${imgixParams}" }, date: { from: "${dateFromDay} ${dateFromMonth}", to: "${dateToDay} ${dateToMonth}" }, category: "${category}", multimediaIcon: "${icon}" })
+
+      template(class='js-card-meet-us-featured-template', type='rws/template')
+        .meet-us__grid__item.meet-us__grid__item--featured
+          +card-meet-us-featured({ title: "${title}", linkToSelf: "${linkToSelf}", teaserImage: { url: "${image}?${imgixParams}" }, date: { from: "${dateFromDay} ${dateFromMonth}", to: "${dateToDay} ${dateToMonth}" }, category: "${category}", multimediaIcon: "${icon}" })
+
+      template(class='js-meet-us-empty-template', type='rws/template')
+        .meet-us__grid__item(class="meet-us__grid__item--empty")
+          p Helaas… Het lijkt erop dat we geen resultaten konden vinden. 
+            button.meet-us-clear-btn(class="js-meet-us-clear-btn") Filters wissen
+            |?
+
+//- @pugdoc
+  name: Sectie (Maak kennis, statisch)
+  examples:
+    - 
+      name: Sectie (Maak kennis, statisch)
+      example: |
+        include ./meet-us
+        +section-meet-us-static()
+
+mixin section-meet-us-static(items)
+  include ./_setup
+  include ../atoms/button
+  include ../molecules/card-meet-us
+
+  -
+    var data = Object.assign(self.dataMeetUs);
+    var featured = data.filter(function(item) {
+      return item.featured
+    }).slice(0, 2);
+
+    var items = data.filter(function(item) {
+      return !item.featured;
+    }).slice(0, 9);
+
+  +section(class='section--meet-us layout-l')
+    
+    .meet-us(class="meet-us--static")
+
+      .meet-us__grid
+
+        each item in featured
+
+          .meet-us__grid__item(class="meet-us__grid__item--featured")
+            +card-meet-us-featured(item)
+
+        each item in items
+
+          .meet-us__grid__item
+
+              +card-meet-us(item)
+
+      .meet-us__footer
+        +button("Meer artikelen en evenementen", "/maak-kennis.html")

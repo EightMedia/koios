@@ -1,0 +1,18 @@
+extends _base
+include ../components/heroes/hero-vacancies
+include ../components/sections/react-vacancies
+include ../components/sections/line
+
+block append vars
+  - pageTitle.push("Vacatures");
+  - pagePath = ["Vacatures"];
+
+block main
+  +hero-vacancies("werken-bij-rijkswaterstaat.jpg")
+  +section-react-vacancies
+
+block append scripts
+  script window.pro6ppApiEndpoint = "YPIHCmxKVjcd1a9m";
+  script
+    include ../../../data/vacancies.js
+  script(src=`${self.JS_URL}bundle.v${self.version}.js`, defer)

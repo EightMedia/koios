@@ -1,0 +1,225 @@
+@mixin richtext-link {
+  a {
+    color: $rws-blue;
+    text-decoration: underline;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+}
+
+@mixin richtext {
+  @include base;
+  @include richtext-link;
+
+  &.richtext--lead {
+    p {
+      &:first-of-type {
+        @include lead;
+      }
+    }
+  }
+
+  h1 {
+    @include h1;
+    margin-top: 42px;
+  }
+
+  h2 {
+    @include h2;
+    margin-top: 42px;
+  }
+
+  h3 {
+    @include h3;
+    margin-top: 42px;
+  }
+
+  h4 {
+    @include h4;
+    margin-top: 42px;
+  }
+
+  h5 {
+    @include h5;
+    margin-top: 42px;
+  }
+
+  p {
+    @include p;
+    margin-top: 16px;
+  }
+
+  // less margin for paragraphs after headings
+  h3 + p,
+  h4 + p,
+  h5 + p,
+  h6 + p {
+    margin-top: 11px;
+  }
+
+  // more margin for paragraph after paragraph or list
+  p + p,
+  ul + p,
+  ol + p {
+    margin-top: 24px;
+  }
+
+  strong {
+    font-weight: bold;
+  }
+
+  small {
+    font-size: 0.8em;
+  }
+
+  i {
+    font-style: italic;
+  }
+
+  ol {
+    margin-left: 16px;
+  }
+
+  ul,
+  ol {
+    margin-top: 12px;
+
+    li {
+      @include p;
+      margin-bottom: 12px;
+      text-align: left;
+    }
+
+    h3,
+    h4,
+    h5,
+    h6 {
+      color: $black;
+    }
+  }
+
+  // more margin for lists after list or paragraph
+  ul + ul,
+  ol + ul,
+  ol + ol,
+  ul + ol,
+  p + ul,
+  p + ol {
+    margin-top: 24px;
+  }
+
+  // less margin for lists after headings
+  h3 + ul,
+  h4 + ul,
+  h5 + ul,
+  h6 + ul,
+  h3 + ol,
+  h4 + ol,
+  h5 + ol,
+  h6 + ol {
+    margin-top: 4px;
+  }
+
+  ul {
+    li {
+      position: relative;
+      padding-left: 16px;
+
+      &::before {
+        content: "";
+        background-color: $rh-grey-10;
+        position: absolute;
+        left: 0;
+        top: 12px;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+      }
+    }
+  }
+
+  table {
+    width: 100%;
+    margin-top: 16px;
+    border: 0;
+    border-spacing: 0;
+    border-collapse: collapse;
+
+    & + table {
+      margin-top: 40px;
+    }
+
+    caption {
+      text-align: left;
+      font-family: $rijksoverheid-sans;
+      padding-bottom: 8px;
+    }
+
+    th {
+      font-family: $rijksoverheid-sans;
+      font-weight: bold;
+      vertical-align: top;
+      color: $rh-grey-10;
+      background-color: $rh-grey-1;
+      border-top: 1px solid $rh-grey-3;
+      border-bottom: 1px solid $rh-grey-3;
+    }
+
+    td {
+      color: $rh-grey-10;
+      background-color: $white;
+      border-top: 1px solid $rh-grey-3;
+      border-bottom: 1px solid $rh-grey-3;
+    }
+
+    th,
+    td {
+      padding: 10px;
+      text-align: left;
+      border-left: 0;
+      border-right: 0;
+    }
+  }
+
+  hr {
+    margin-top: 32px;
+  }
+
+  blockquote {
+    margin-top: 32px;
+    font-family: $rijksoverheid-serif;
+    font-size: 22px;
+    line-height: 1.4;
+    border-left: 6px solid $rws-yellow;
+    padding-left: 30px;
+
+    & + p {
+      margin-top: 32px;
+    }
+
+    @include breakpoint($bp-m) {
+      font-size: 28px;
+      margin-top: 40px;
+
+      & + p {
+        margin-top: 40px;
+      }
+    }
+  }
+
+  .table-wrapper {
+    & + .table-wrapper table {
+      margin-top: 40px;
+    }
+  }
+
+  > :first-child {
+    margin-top: 0 !important;
+  }
+}
+
+.richtext {
+  @include richtext;
+}

@@ -1,0 +1,9 @@
+.cta {
+  text-align: center;
+
+  .button {
+    .takeover & {
+      @include button-medium;
+    }
+  }
+}

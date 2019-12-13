@@ -1,0 +1,50 @@
+//- @pugdoc
+  name: Atoom (Filter select)
+  examples:
+    -
+      name: Atoom (Filter select, 1)
+      example: |
+        div(style="padding: 30px;")
+          - var options = [];
+          - options.push({ value: "", label: "alle vakgebieden" })
+          - options.push({ value: "verkoop", label: "verkoop" })
+          - options.push({ value: "techniek", label: "techniek" })
+          - options.push({ value: "ICT", label: "ICT" })
+          - options.push({ value: "bedrijfsvoering", label: "bedrijfsvoering" })
+          - options.push({ value: "waterverkeersleiding", label: "water (verkeersleiding)" })
+          - options.push({ value: "overige-vakgebieden", label: "overige vakgebieden" })
+          +filter-select("branch", options, "ICT")
+    
+    -
+      name: Atoom (Filter select, 2)
+      example: |
+        div(style="padding: 30px;")
+          - var options = [];
+          - options.push({ value: "", label: "alle categorieën" })
+          - options.push({ value: self.EVENT, label: "evenementen" })
+          - options.push({ value: "interview", label: "interviews" })
+          - options.push({ value: WEBINAR, label: "webinars" })
+          - options.push({ value: "podcast", label: "podcasts" })
+          - options.push({ value: "vlog", label: "vlogs" })
+          +filter-select("category", options, self.EVENT)
+
+mixin filter-select(name, options, selected)
+  include ../../icons/_icon
+
+  -
+    var objOptions = options.reduce(function(map, obj) {
+      map[obj.value] = obj.label;
+      return map;
+    }, {});
+
+  .filter-select(class="js-filter-select", aria-haspopup="true")
+    button.filter-select__toggle(class="js-filter-select__toggle")
+      .filter-select__toggle__label(class="js-filter-select__toggle__label")
+      +icon#chevron
+    
+    .filter-select__menu(class="js-filter-select__menu")
+      .filter-select__menu-inner
+        each option in options
+          button.filter-select__menu__item(data-value=option.value, class="js-filter-select__menu__item") #{option.label}
+
+    input.filter-select__input(type="hidden", name=name, class="js-filter-select__input", value=selected)

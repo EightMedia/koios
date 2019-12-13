@@ -1,0 +1,70 @@
+// sass-lint:disable force-pseudo-nesting
+
+.rv__filter-form {
+  background-color: $rh-grey-1;
+  border: 1px solid $rh-grey-3;
+  border-radius: 4px;
+  padding: 24px;
+}
+
+.rv__filter__group {
+  padding-bottom: 15px;
+}
+
+.rv__filter__group-item {
+  display: flex;
+  margin: 8px 0;
+  line-height: 130%;
+  font-size: 16px;
+  cursor: pointer;
+
+  @include breakpoint($bp-m) {
+    font-size: 18px;
+  }
+}
+
+.rv__filter__title,
+.rv__filter__title-distance {
+  @include h3;
+  margin-bottom: 12px;
+}
+
+.rv__filter__distance-input-wrapper {
+  display: grid;
+  grid-auto-rows: auto;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 15px;
+
+  input,
+  select {
+    width: 100%;
+    background-color: $white;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid $rh-grey-5;
+  }
+
+  select {
+    padding-right: 28px;
+    background: url("../images/select-chevron.svg") no-repeat right 5px center #fff;
+
+    -webkit-appearance: none; // disable default styling in webkit
+    -moz-appearance: none; // disable default styling in ff
+    appearance: none;
+
+    &:-moz-focusring {
+      // disable ugly ass outline in firefox
+      color: transparent;
+      text-shadow: 0 0 0 $black;
+    }
+
+    &::-ms-expand {
+      display: none;
+    }
+  }
+}
+
+.rv__filter__clear-button {
+  margin-top: 25px;
+  color: $rh-blue;
+}

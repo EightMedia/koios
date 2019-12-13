@@ -1,0 +1,58 @@
+extends _base
+
+include ../components/general/fixed-cta
+include ../components/heroes/superhero
+include ../components/sections/richtext
+include ../components/sections/intro
+include ../components/sections/highlight
+include ../components/sections/featured-vacancies
+include ../components/sections/callout-quote
+include ../components/sections/related-articles
+include ../components/sections/line
+include ../components/sections/featured-testimonials
+include ../components/sections/contact-share
+include ../components/sections/callout-billboard
+include ../components/general/takeover
+
+block append vars
+  - pageTitle.push("Vakgebied Techniek");
+  - pagePath = ["Vakgebieden", "Techniek"];
+
+block main
+  - var button = {label: "Bekijk vacatures techniek", link: "#", number: "18"}
+  +superhero(self.VIDEO, {video: "/static/video/rws-film.mp4", poster: "rws-yt.png"}, "Een slimme, veilige en duurzame infrastructuur", button)
+
+  +section-intro("Techniek bij Rijkswaterstaat")
+    p Bij Rijkswaterstaat werk je met de nieuwste diensten, producten en methodieken, want we innoveren constant. Je prikkelt de markt om slimme oplossingen te bedenken die de veiligheid, bereikbaarheid en duurzaamheid van Nederland verbeteren. Denk bijvoorbeeld aan de inzet van innovatieve sensorsystemen die de staat van bruggen en sluizen real-time monitoren, zodat storingen vroeg verholpen kunnen worden. Of aan onderzoek naar de inzet van bermgras als biobrandstof, waarmee je bijdraagt aan onze ambitie om netwerken energieneutraal te laten draaien. Denk jij graag een stap vooruit? Lees meer over onze technische vacatures.
+
+  - var item = {type: self.IMAGE, media: "smart-mobility.jpg", quote: "", title: "", text: ""};
+  - item.quote = "Onze technici zorgen dat het Lekkanaal klaar is voor de toekomst";
+  - item.title = "Project 3e kolk Beatrixsluis";
+  - item.text = "Steeds meer en grotere schepen passeren het Lekkanaal. Om te zorgen dat dat kan, leggen we aan de oostelijke zijde van de Prinses Beatrixsluis een 3e kolk aan. We verbreden de voorhavens en creëren extra ligplaatsen. Een project met een enorme omvang: de kolk is zo’n 300 meter lang en 25 meter breed en biedt ruimte voor het tegelijkertijd schutten van twee schepen van ieder 135 meter lang. Dat betekent ook dat de omgeving opnieuw moet worden ingericht en dat wegen moeten worden omgeleid - en dat alles met zo min mogelijk overlast voor de omgeving. Om dit in goede banen te leiden werken onze technici nauw samen met andere betrokken partijen."
+  - item.link = null;
+  
+  +section-highlight(item)
+
+  - var item = {type: self.IMAGE, media: "tunnel-velsen.jpg", quote: "", title: "", text: ""};
+  - item.quote = "De Hollandsche IJsselkering, een compacte kering: uitdagend en mooi tegelijk";
+  - item.title = "Hollandsche IJsselkering";
+  - item.text = "Achter de constructie van de Hollandsche IJsselkering is een schat aan techniek te vinden. De mechanisch-elektrische aandrijfsystemen in de heftorens laten via stalen kabels de schuiven van zo’n 300 ton op en neer bewegen. De kering bestaat ook uit de beweegbare Algerabrug, waar de scheepvaart ook tijdens hoogwaterstanden de kering passeren via de sluis. Naast de reguliere onderhoudswerkzaamheden, is Rijkswaterstaat volop aan het werk. Samen met marktpartijen verstevigen we bijvoorbeeld alle damwanden door het plaatsen van groutankers. Een andere marktpartij verzorgt een upgrade van het aandrijfmechanisme hoog in de benedenstroomstoren. Op die manier kan het aandrijfmechanisme nog minstens zo lang als de kering bestaat doorgaan met keren."
+  - item.link = null;
+  
+  +section-highlight(item, true)
+
+  +section-callout-quote('andre-ploeg.jpg', 'Eén van de innovaties is de digitale tunneltweeling. En we gaan een stap verder: er zijn ook mogelijkheden voor simulaties en virtual reality.', {name: 'Jan Slager', position: 'Directeur Vervanging en Renovatie', avatar: 'avatar-andreploeg.jpg'}, {label: 'Lees zijn verhaal', link: '#'})
+
+  //- featured vacancies
+  - var cards = [];
+  - cards.push({ title: "Changemanager tunnels, elektrotechniek en industriële automatisering", link: ".", location: "Amsterdam", hours: "32 - 40 uur per week", degree: "Bachelor - HBO" })
+  - cards.push({ title: "Adviseur watermodellen en -applicaties", link: ".", location: "Utrecht", hours: "40 uur per week", degree: "Bachelor - HBO, Master / doctoraal" })
+  - cards.push({ title: "BIG Data Database administrator", link: ".", location: "Utrecht", hours: "40 uur per week", degree: "Master / doctoraal" })
+  +section-featured-vacancies("Onze ICT-vacatures", 'Wij hebben regelmatig vacatures in de volgende vakgebieden: <a href="#">Big data</a> industriële automatisering, <a href="#">service management</a>, <a href="#">applicatiemanagement</a> en projectmanagement.', cards, {label: "Bekijk alle ICT-vacatures", link: ".", number: "18"})
+
+  - var person = {title: 'Vragen over ICT vacatures?', subtitle: 'Stel ze aan <strong>André Baars</strong> (Recruiter ICT)', avatar: 'avatar-andrebaars.jpg', phone: '06-29 95 69 44', whatsapp: '0629956944', email: 'andre.baars@rws.nl'};
+  +section-contact-share(person)
+
+block append modals
+
+  +fixed-cta("Techniek bij Rijkswaterstaat", {label: "Vacatures techniek", link: "#", number: "18"})

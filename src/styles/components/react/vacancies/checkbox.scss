@@ -1,0 +1,100 @@
+.rv__filter__item {
+  display: flex;
+  cursor: pointer;
+  margin: 8px 0;
+
+  &:hover {
+    .rv__filter__item__check {
+      .icon {
+        display: block !important;
+      }
+    }
+  }
+}
+
+/**
+ * Input checkbox
+ */
+
+.rv__filter__item__input {
+  position: absolute;
+  left: -100px;
+
+  &:not(:checked) {
+    & + .rv__filter__item__check {
+      .icon {
+        display: none;
+      }
+    }
+  }
+
+  &:checked {
+    & + .rv__filter__item__check {
+      background-color: $rws-blue;
+      border-color: $rws-blue;
+
+      .icon {
+        display: block;
+        color: $white;
+      }
+    }
+  }
+
+  //sass-lint:disable force-pseudo-nesting
+  &:focus:not(.focus--mouse) {
+    outline: 0;
+
+    & + .rv__filter__item__check {
+      //sass-lint:disable no-duplicate-properties
+      outline: 1px dotted #212121;
+      outline: 5px auto -webkit-focus-ring-color;
+
+      .icon {
+        display: block;
+        color: $rh-grey-2;
+      }
+    }
+
+    &:checked {
+      & + .rv__filter__item__check {
+        .icon {
+          color: $white;
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Visual check
+ */
+
+.rv__filter__item__check {
+  display: inline-block;
+  position: relative;
+  flex-grow: 0;
+  flex-shrink: 0;
+  border: 1px solid $rh-grey-5;
+  background-color: $white;
+  border-radius: 4px;
+  margin-right: 10px;
+  width: 20px;
+  height: 20px;
+
+  .icon {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: $rh-grey-2;
+  }
+}
+
+/**
+ * Label text
+ */
+
+.rv__filter__item__label {
+  @include p;
+  line-height: 1.3;
+}

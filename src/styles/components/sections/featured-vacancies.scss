@@ -1,0 +1,28 @@
+.featured-vancancies {
+  @include cards-scroll;
+}
+
+.featured-vacancies__item {
+  @include cards-scroll-item;
+}
+
+.featured-vancancies-more {
+  margin-top: 10px;
+  padding-left: $outside-gutter-s + $grid-item-spacing-s;
+  padding-right: $outside-gutter-s + $grid-item-spacing-s;
+
+  @include breakpoint($bp-s) {
+    text-align: center;
+  }
+
+  @include breakpoint($bp-m) {
+    padding-left: $outside-gutter-m + $grid-item-spacing-m;
+    padding-right: $outside-gutter-m + $grid-item-spacing-m;
+  }
+
+  @include breakpoint($bp-scrolltrack) {
+    margin-top: 56px;
+    padding-left: 0;
+    padding-right: 0;
+  }
+}

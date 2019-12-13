@@ -1,0 +1,28 @@
+.button-link {
+  .button {
+    @include button-medium;
+
+    & + .button {
+      margin-top: 14px;
+    }
+
+    & + .stronglink {
+      margin-top: 24px;
+    }
+  }
+
+  .stronglink {
+    & + .stronglink {
+      margin-top: 16px;
+    }
+
+    & + .button {
+      margin-top: 24px;
+    }
+  }
+
+  .button,
+  .stronglink {
+    display: table;
+  }
+}

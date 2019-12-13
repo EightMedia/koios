@@ -1,0 +1,31 @@
+.timeline-about__content {
+  @include richtext;
+}
+
+.timeline-about__link {
+  margin-top: 24px;
+}
+
+.timeline-about__people {
+  margin-top: 40px;
+}
+
+.timeline-about__people__title {
+  @include h2;
+  margin-bottom: 24px;
+}
+
+.timeline-about__people__grid {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.timeline-about__people__grid__item {
+  flex-basis: 100%;
+  margin-bottom: 16px;
+
+  @include breakpoint($bp-m) {
+    flex-basis: 50%;
+    margin-bottom: 24px;
+  }
+}

@@ -1,0 +1,79 @@
+//- @pugdoc
+  name: Sectie (Uitgelichte testimonials)
+  examples:
+    - 
+      name: Sectie (Uitgelichte testimonials, 1)
+      example: |
+          include ../general/videobox
+          - var cards = [];
+          - cards.push({ type: self.VIDEO, image: "vlog-melissa.jpg", title: "5 vragen aan Melissa", link: "#v-melissa", videobox: { title: "5 vragen aan Melissa", url: "//vjs.zencdn.net/v/oceans.mp4" } })
+          +section-featured-testimonials("Worden dit jouw collega's?", cards)
+
+          <!-- plaats dit na div#content -->
+
+          +videobox
+    - 
+      name: Sectie (Uitgelichte testimonials, 2)
+      example: |
+          include ../general/takeover
+          include ../general/videobox
+          - var cards = [];
+          - cards.push({ type: self.TESTIMONIAL, image: "knooppunt.jpg", avatar: "avatar-andreploeg.jpg", quote: "Met mooi weer zien we zeehonden. Bij storm vliegen de computers door de stuurhut", name: "Florus Noordhoek", description: "Kapitein betonningsvaartuig", btn: { label: "Lees zijn verhaal", link: "#AndrePloeg" }})
+          - cards.push({ type: self.VIDEO, image: "vlog-melissa.jpg", title: "5 vragen aan Melissa", link: "#v-melissa", videobox: { title: "5 vragen aan Melissa", url: "//vjs.zencdn.net/v/oceans.mp4" } })
+          +section-featured-testimonials("Worden dit jouw collega's?", cards)
+
+          <!-- plaats dit na div#content -->
+
+          +videobox
+
+          +takeover-testimonial("knooppunt.jpg", {avatar: "avatar-andreploeg.jpg", name: "André Ploeg", position: "Kapitein betonningsvaartuig"})#AndrePloeg
+            p André Ploeg is technisch manager bij Rijkswaterstaat (RWS). Haar werk is deels technisch, maar vraagt ook om overleg met experts uit verrassende vakgebieden. Bij de versterking van de Afsluitdijk heeft Marieke bijvoorbeeld contact met ecologen en visdeskundigen.
+            blockquote ‘Ik adviseer over effecten van ingrepen in het watersysteem op voldoende en schoon water’
+            h2 De vorderingen bekijken
+            p Sinds 2010 ben ik in vaste dienst bij RWS. 1 van mijn huidige projecten draait om de <a href="#">versterking van de Afsluitdijk</a>, zodat hij de komende 50 jaar superstorm-bestendig zal zijn. Om de waterstanden in het IJsselmeer goed te kunnen regelen gaan we ook grote pompen installeren in de spuisluizen bij Den Oever. Het project moet in 2022 zijn voltooid, en zit nu nog in de planfase. Ik help het managementteam te bepalen hoe we technische problemen kunnen oplossen.
+            p De komende jaren richt ik me ook op de herstelwerkzaamheden aan de Nijkerkerbrug, die Gelderland met Flevoland verbindt. RWS besteedt dit project op bijzondere manier aan onder de naam Project DOEN. We kiezen de aannemer met wie we de beste samenwerking denken te kunnen aangaan, en we laten hem veel ruimte om na te denken hoe hij dingen wil gaan oplossen.
+
+    - 
+      name: Sectie (Uitgelichte testimonials, 3)
+      example: |
+          include ../general/takeover
+          include ../general/videobox
+          - var cards = [];
+          - cards.push({ type: self.TESTIMONIAL, image: "florus_noordhoek.jpg", avatar: "avatar-radhajharap.jpg", quote: "Ik adviseer over effecten van ingrepen in het watersysteem op voldoende en schoon water", name: "Radha Jharap", description: "Technisch manager", btn: { label: "Lees haar verhaal", link: "#RadhaJharap" }})
+          - cards.push({ type: self.TESTIMONIAL, image: "knooppunt.jpg", avatar: "avatar-andreploeg.jpg", quote: "Met mooi weer zien we zeehonden. Bij storm vliegen de computers door de stuurhut. Dit gebeurt er als deze quote langer is dan die van mijn buurvrouw.", name: "Florus Noordhoek", description: "Kapitein betonningsvaartuig", btn: { label: "Lees zijn verhaal", link: "#AndrePloeg" }})
+          - cards.push({ type: self.VIDEO, image: "vlog-melissa.jpg", title: "5 vragen aan Melissa", link: "#v-melissa", videobox: { title: "5 vragen aan Melissa", url: "//vjs.zencdn.net/v/oceans.mp4" } })
+          +section-featured-testimonials("Worden dit jouw collega's?", cards)
+          
+          <!-- plaats dit na div#content -->
+
+          +videobox
+          
+          +takeover-testimonial("florus_noordhoek.jpg", {avatar: "avatar-radhajharap.jpg", name: "Radha Jharap", position: "Technisch manager"})#RadhaJharap
+            p Radha Jharap is technisch manager bij <a href="#">Rijkswaterstaat (RWS)</a>. Haar werk is deels technisch, maar vraagt ook om overleg met experts uit verrassende vakgebieden. Bij de versterking van de Afsluitdijk heeft Marieke bijvoorbeeld contact met ecologen en visdeskundigen.
+            blockquote ‘Ik adviseer over effecten van ingrepen in het watersysteem op voldoende en schoon water’
+            h2 De vorderingen bekijken
+            p Sinds 2010 ben ik in vaste dienst bij RWS. 1 van mijn huidige projecten draait om de versterking van de Afsluitdijk, zodat hij de komende 50 jaar superstorm-bestendig zal zijn. Om de waterstanden in het IJsselmeer goed te kunnen regelen gaan we ook grote pompen installeren in de spuisluizen bij Den Oever. Het project moet in 2022 zijn voltooid, en zit nu nog in de planfase. Ik help het managementteam te bepalen hoe we technische problemen kunnen oplossen.
+            h2 Minimale verspilling van tijd en geld
+            p De komende jaren richt ik me ook op de herstelwerkzaamheden aan de Nijkerkerbrug, die Gelderland met Flevoland verbindt. RWS besteedt dit project op bijzondere manier aan onder de naam Project DOEN. We kiezen de aannemer met wie we de beste samenwerking denken te kunnen aangaan, en we laten hem veel ruimte om na te denken hoe hij dingen wil gaan oplossen.
+
+          +takeover-testimonial("knooppunt.jpg", {avatar: "avatar-andreploeg.jpg", name: "André Ploeg", position: "Kapitein betonningsvaartuig"})#AndrePloeg
+            p André Ploeg is technisch manager bij Rijkswaterstaat (RWS). Haar werk is deels technisch, maar vraagt ook om overleg met experts uit verrassende vakgebieden. Bij de versterking van de Afsluitdijk heeft Marieke bijvoorbeeld contact met ecologen en visdeskundigen.
+            blockquote ‘Ik adviseer over effecten van ingrepen in het watersysteem op voldoende en schoon water’
+            h2 De vorderingen bekijken
+            p Sinds 2010 ben ik in vaste dienst bij RWS. 1 van mijn huidige projecten draait om de <a href="#">versterking van de Afsluitdijk</a>, zodat hij de komende 50 jaar superstorm-bestendig zal zijn. Om de waterstanden in het IJsselmeer goed te kunnen regelen gaan we ook grote pompen installeren in de spuisluizen bij Den Oever. Het project moet in 2022 zijn voltooid, en zit nu nog in de planfase. Ik help het managementteam te bepalen hoe we technische problemen kunnen oplossen.
+            p De komende jaren richt ik me ook op de herstelwerkzaamheden aan de Nijkerkerbrug, die Gelderland met Flevoland verbindt. RWS besteedt dit project op bijzondere manier aan onder de naam Project DOEN. We kiezen de aannemer met wie we de beste samenwerking denken te kunnen aangaan, en we laten hem veel ruimte om na te denken hoe hij dingen wil gaan oplossen.
+
+
+mixin section-featured-testimonials(title, cards)
+  include ./_setup
+  include ../molecules/card-video
+  include ../molecules/card-testimonial
+
+  +section(title)(class='section--featured-testimonials layout-z')
+    .featured-testimonials
+      each card in cards
+        .featured-testimonials__item
+          if card.type === self.TESTIMONIAL
+            +card-testimonial(card)
+          else if card.type === self.VIDEO
+            +card-video(card)

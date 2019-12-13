@@ -1,0 +1,24 @@
+//- @pugdoc
+  name: Sectie (Waar en wanneer)
+  example: |
+    +section-where-when("Hoofdkantoor Rijkswaterstaat, Griffioenlaan 2, Utrecht", "14 februari 2019, 12:00 - 14:00 uur tot 16 februari 2019, 12:00 - 14:00")
+
+mixin section-where-when(where, when)
+  include ./_setup
+  include ../../icons/_icon
+
+  +section(class='section--where-when layout-m')
+    .where-when
+      .where-when__block(class="where-when__block--where")
+        span.where-when__block__icon
+          +icon#marker
+        h3.where-when__block__title Locatie
+        .where-when__block__text 
+          p #{where}
+
+      .where-when__block(class="where-when__block--when")
+        span.where-when__block__icon
+          +icon#clock
+        h3.where-when__block__title Wanneer
+        .where-when__block__text 
+          p #{when}

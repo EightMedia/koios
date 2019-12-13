@@ -1,0 +1,162 @@
+@keyframes animate-videobox-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes animate-videobox-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+.videobox {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  transform: scale3d(0, 0, 0);
+  align-items: center;
+  display: flex;
+  opacity: 0;
+  z-index: 1000;
+
+  &.is-open {
+    transform: scale3d(1, 1, 1);
+
+    animation-name: animate-videobox-in;
+    animation-fill-mode: forwards;
+    animation-timing-function: "ease";
+    animation-duration: 0.4s;
+    animation-delay: 0;
+  }
+
+  &.is-closing {
+    transform: scale3d(1, 1, 1);
+
+    animation-name: animate-videobox-out;
+    animation-fill-mode: forwards;
+    animation-timing-function: "ease";
+    animation-duration: 0.4s;
+    animation-delay: 0;
+  }
+
+  &.is-closed {
+    z-index: 200;
+    transform: scale3d(0, 0, 0);
+  }
+}
+
+/**
+ * Black fading background
+ */
+
+.videobox__background {
+  display: block;
+  z-index: 199;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: $black;
+  opacity: 0.8;
+  width: 100%;
+  height: 100%;
+  transition: background-color 0.15s;
+
+  &:focus {
+    & ~ .videobox__close {
+      @include focus-outline($rws-blue, 1px, 3px);
+    }
+  }
+}
+
+/**
+ * Close button
+ */
+
+.videobox__close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 208;
+  background-color: rgba($black, 0.4);
+  width: 43px;
+  height: 43px;
+  transition: background-color 0.15s ease;
+  border-radius: 50%;
+
+  &:hover,
+  &:focus {
+    background-color: $black;
+  }
+
+  .icon-cross {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    fill: $white;
+    width: 24px;
+    height: 24px;
+  }
+
+  @include breakpoint($bp-m) {
+    top: 15px;
+    right: 30px;
+  }
+}
+
+/**
+ * Content area
+ */
+
+.videobox__content {
+  pointer-events: none;
+  background-color: transparent;
+  z-index: 204;
+  position: relative;
+  backface-visibility: hidden;
+  display: inline-block;
+  height: auto;
+  width: 100%;
+  max-width: $bp-l;
+  transform: scale3d(0, 0, 0);
+  margin: 0 auto;
+
+  .is-open & {
+    transform: scale3d(1, 1, 1);
+  }
+
+  .is-closed & {
+    transform: scale3d(0, 0, 0);
+    overflow: hidden;
+  }
+
+  .video-wrapper {
+    pointer-events: auto;
+  }
+}
+
+/**
+ * Title
+ */
+
+.videobox__content__title {
+  font-size: 28px;
+  color: $white;
+  text-align: center;
+  margin-bottom: 24px;
+  padding: 0 15px;
+}

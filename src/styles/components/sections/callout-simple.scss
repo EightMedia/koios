@@ -1,0 +1,30 @@
+.callout-simple {
+  background-color: $rws-yellow;
+  padding: 16px;
+
+  .button {
+    @include button-medium;
+  }
+
+  @include breakpoint($bp-m) {
+    padding: 24px;
+  }
+}
+
+.callout-simple__title {
+  font-family: $rijksoverheid-serif;
+  font-weight: bold;
+  font-size: 28px;
+  line-height: 1.3;
+  color: $rh-grey-10;
+  margin-bottom: 9px;
+
+  @include breakpoint($bp-m) {
+    font-size: 32px;
+  }
+}
+
+.callout-simple__text {
+  @include p;
+  margin-bottom: 18px;
+}

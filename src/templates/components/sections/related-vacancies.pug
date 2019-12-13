@@ -1,0 +1,35 @@
+//- @pugdoc
+  name: Sectie (Gerelateerde vacatures)
+  examples:
+    - 
+      name: Sectie (Gerelateerde vacatures, 1)
+      example: |
+        - var cards = [];
+        - cards.push({ title: "BIG Data Database administrator", link: ".", location: "Utrecht", hours: "40 uren per week", degree: "Master / doctoraal" })
+        +section-related-vacancies("Onze ICT-vacatures", cards)
+    - 
+      name: Sectie (Gerelateerde vacatures, 2)
+      example: |
+        - var cards = [];
+        - cards.push({ title: "Adviseur watermodellen en -applicaties", link: ".", location: "Utrecht", hours: "40 uren per week", degree: "Bachelor - HBO, Master / doctoraal" })
+        - cards.push({ title: "BIG Data Database administrator", link: ".", location: "Utrecht", hours: "40 uren per week", degree: "Master / doctoraal" })
+        +section-related-vacancies("Onze ICT-vacatures", cards)
+    - 
+      name: Sectie (Gerelateerde vacatures, 3)
+      example: |
+        - var cards = [];
+        - cards.push({ title: "Changemanager tunnels, elektrotechniek en industriële automatisering", link: ".", location: "Amsterdam", hours: "32 - 40 uren per week", degree: "Bachelor - HBO" })
+        - cards.push({ title: "Adviseur watermodellen en -applicaties", link: ".", location: "Utrecht", hours: "40 uren per week", degree: "Bachelor - HBO, Master / doctoraal" })
+        - cards.push({ title: "BIG Data Database administrator", link: ".", location: "Utrecht", hours: "40 uren per week", degree: "Master / doctoraal" })
+        +section-related-vacancies("Onze ICT-vacatures", cards)
+
+mixin section-related-vacancies(title, cards)
+  include ./_setup
+  include ../atoms/button
+  include ../molecules/card-vacancy
+
+  +section(title)(class='section--related-vacancies layout-xl')
+    .related-vancancies
+      each card in cards
+        .related-vacancies__item
+          +card-vacancy(card)

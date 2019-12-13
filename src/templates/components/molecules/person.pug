@@ -1,0 +1,14 @@
+//- @pugdoc
+  name: Molecuul (Persoon)
+  capture: none
+
+mixin person(avatar, name, description, link)
+  include ../../utils/srcset
+
+  .person(class="js-click-block")
+    picture.person__avatar
+      +srcset(avatar, self.imageSizes["person-avatar"])
+
+    .person__body
+      a.person__body__name(href="#"+link) #{name}
+      span.person__body__description #{description}

@@ -1,0 +1,74 @@
+//- @pugdoc
+  name: Kaart (ontmoet ons, uitgelicht)
+  capture: 0
+
+mixin card-meet-us-featured(item)
+  include ../../utils/srcset
+  include ../atoms/label
+  include ../atoms/date
+
+  .card-meet-us-featured(class="js-click-block")
+
+    .card-meet-us-featured__body
+
+      if item.category === "${category}"
+
+        .card-meet-us-featured__body__date
+          +isoDate(item.date)
+      
+        .card-meet-us-featured__body__label
+          +label(item.category, item.multimediaIcon)
+      
+      else if item.category === "evenement"
+      
+        .card-meet-us-featured__body__date
+          +isoDate(item.date)
+      
+      else
+
+        .card-meet-us-featured__body__label
+          +label(item.category, item.multimediaIcon)
+
+      a.card-meet-us-featured__body__title(href=item.linkToSelf) #{item.title}
+
+    picture.card-meet-us-featured__image
+      +srcset(item.teaserImage.url, self.imageSizes["card-meet-us-featured"])(data-object-fit='cover')
+
+//- @pugdoc
+  name: Kaart (ontmoet ons)
+  capture: 0
+
+mixin card-meet-us(item)
+  include ../../utils/srcset
+  include ../atoms/label
+  include ../atoms/date
+
+  .card-meet-us(class="js-click-block")
+
+    .card-meet-us__body
+      a.card-meet-us__body__title(href=item.linkToSelf) #{item.title}
+
+      if item.teaserIntro
+        .card-meet-us__body__text 
+          p #{item.teaserIntro}
+
+    //- head
+    .card-meet-us__head
+      picture.card-meet-us__head__image
+        - var sizes = []
+        +srcset(item.teaserImage.url, self.imageSizes["card-meet-us"])(data-object-fit='cover')
+        
+      if item.category === "${category}"
+        .card-meet-us__head__date
+          +isoDate(item.date)
+
+        .card-meet-us__head__label
+          +label(item.category, item.multimediaIcon)
+
+      else if item.category === "evenement"
+        .card-meet-us__head__date
+          +isoDate(item.date)
+
+      else
+        .card-meet-us__head__label
+          +label(item.category, item.multimediaIcon)

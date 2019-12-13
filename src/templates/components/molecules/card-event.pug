@@ -1,0 +1,21 @@
+//- @pugdoc
+  name: Kaart (event)
+
+mixin card-event(card)
+  include ../../utils/srcset
+  include ../atoms/date
+
+  .card-event(class="js-click-block")
+    //- body
+    .card-event__body
+      a.card-event__body__title(href=card.link) #{card.title}
+      .card-event__body__text 
+        p #{card.text}
+
+    //- head
+    .card-event__head
+      picture.card-event__head__image
+        +srcset(card.image, self.imageSizes["card-event"])
+
+      .card-event__head__date
+        +date(card.date)

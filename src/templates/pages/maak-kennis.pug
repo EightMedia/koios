@@ -1,0 +1,31 @@
+extends _base
+
+include ../components/sections/meet-us
+include ../components/sections/callout-billboard
+include ../components/sections/highlight
+
+block append vars
+  - pageTitle.push("Maak kennis");
+  - pagePath = ["Maak kennis"];
+
+block main
+
+  +section-meet-us
+
+  +section-callout-billboard('waterweg.jpg', 'Pak jij uit met een nieuwe carrière in 2019?', 'Werk mee aan de industriële automatisering van onze infrastructuur.', {label: 'Bekijk de mogelijkheden', link: '#'})
+
+  - var item = {type: self.IMAGE, media: "werken-bij-rijkswaterstaat.jpg", quote: "", title: "", text: ""};
+  - item.quote = "Samen met 8700 collega's werken aan de toekomst van Nederland";
+  - item.title = "Wie is Rijkswaterstaat?";
+  - item.text = "Rijkswaterstaat is de uitvoeringsorganisatie van het ministerie van Infrastructuur en Waterstaat en werkt dagelijks aan een veilig, leefbaar en bereikbaar Nederland."
+  - item.link = {label: "Meer over ons", href: "#" };
+
+  +section-highlight(item)
+
+  - var item = {type: self.IMAGE, media: "dienend-leiderschap.jpg", quote: "", title: "", text: ""};
+  - item.quote = "Onze recruiters helpen je graag verder met jouw zoektocht naar een perfecte baan die bij jouw past.";
+  - item.title = "Heb je nog vragen?";
+  - item.text = "Er zijn verschillende manieren om met ons in contact te komen en te blijven. Bij al onze openstaande vacatures staan contactpersonen aan wie je je vragen kan stellen."
+  - item.link = {label: "Neem contact met ons op", href: "#"};
+  
+  +section-highlight(item, true)

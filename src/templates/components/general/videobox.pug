@@ -1,0 +1,30 @@
+//- @pugdoc
+  name: Algemeen (Videobox)
+  examples: 
+    - |
+      include ../atoms/button
+
+      <!-- Ter voorbeeld -->
+      .button-link
+        a.button(href="#v-rws", data-videobox={title: "RWS film", url: "/static/video/rws-film.mp4", captions: "/static/video/rws-film.vtt"}) Open RWS film
+        a.button(href="#v-big-data", data-videobox={title: "Opening tunnel", url: "https://www.rovid.nl/ienm/rws/2016/ienm-rws-20161216-idzp549cx-web-hd.mp4", captions: "https://www.rovid.nl/ienm/rws/2016/ienm-rws-20161216-idzp549cx-ondertiteling.vtt", audio: "https://www.rovid.nl/ienm/rws/2016/ienm-rws-20161216-idzp549cx-audio.mp3"}) Opening tunnel (met audio-omschrijving)
+
+      div(style="height: 450px")
+
+      <!-- Vanaf hier overnemen -->
+      +videobox
+
+mixin videobox
+  include ../../icons/_icon
+
+  .videobox(class="js-videobox", hidden, role="dialog", aria-modal="true", data-modal="videobox")
+    button.videobox__background(type="button", aria-label="Video sluiten", aria-expanded="false", aria-controls="videobox", class="js-videobox-close")
+
+    .videobox__content
+      .videobox__content__title(class="js-videobox-title")
+      .video-wrapper
+        video.video-js(class="vjs-rws-skin", controls)
+        audio.vjs-audio-track(preload="auto")
+    
+    button.videobox__close(type="button", aria-label="Video sluiten", aria-expanded="false", aria-controls="videobox", class="js-videobox-close")
+      +icon#cross

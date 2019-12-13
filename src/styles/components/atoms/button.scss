@@ -1,0 +1,167 @@
+/**
+ * Large button (default)
+ */
+
+@mixin button {
+  display: inline-block;
+  padding: 12px 24px;
+  border: 1px solid $rws-blue;
+  border-radius: 4px;
+
+  font-family: $rijksoverheid-sans;
+  font-size: 16px;
+  font-weight: bold;
+
+  background-color: $rws-blue;
+  color: $white;
+  text-decoration: none;
+
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+
+  @include breakpoint($bp-xs) {
+    font-size: 18px;
+  }
+
+  @include breakpoint($bp-m) {
+    padding: 15px 32px;
+    font-size: 20px;
+  }
+
+  &:hover {
+    background-color: $rws-blue-dark;
+  }
+
+  .icon-external {
+    fill: $white;
+    margin-top: -3px;
+    margin-bottom: -3px;
+  }
+
+  .button__number {
+    padding: 3px 5px;
+  }
+}
+
+/**
+ * Medium button
+ */
+
+@mixin button-medium {
+  padding: 10px 16px;
+  font-size: 16px;
+
+  @include breakpoint($bp-m) {
+    padding: 12px 24px;
+    font-size: 18px;
+  }
+}
+
+/**
+ * Small button
+ */
+
+@mixin button-small {
+  padding: 6px 12px;
+  font-size: 14px;
+
+  @include breakpoint($bp-m) {
+    padding: 10px 16px;
+    font-size: 16px;
+  }
+}
+
+/**
+ * Yellow button
+ */
+
+@mixin button-yellow {
+  background-color: $rws-yellow-light;
+  border-color: $rws-yellow-light;
+  color: $black;
+
+  &:hover {
+    background-color: $rws-yellow-dark;
+    border-color: $rws-yellow-dark;
+  }
+
+  .button__number {
+    background-color: $rws-blue;
+    color: $white;
+    font-size: 12px;
+    transform: translateY(-1px);
+  }
+}
+
+/**
+ * Outline button
+ */
+
+@mixin button-outline {
+  border: 1px solid $rws-blue;
+  background-color: $white;
+  color: $rws-blue;
+
+  &:hover {
+    background-color: rgba($rws-blue, 0.05);
+    border-color: $rws-blue-dark;
+    color: $rws-blue-dark;
+  }
+}
+
+/**
+ * Basic markup
+ */
+
+.button {
+  @include button;
+}
+
+.button__number {
+  display: inline-block;
+  background-color: rgba($white, 0.15);
+  padding: 5px;
+  border-radius: 3px;
+  font-size: 14px;
+  margin: -3px 0 -3px 8px;
+
+  @include breakpoint($bp-m) {
+    font-size: 15px;
+  }
+}
+
+/**
+ * Examples
+ */
+
+.button-example {
+  display: flex;
+  padding: 5px;
+
+  .button {
+    margin-right: 5px;
+  }
+}
+
+.button-example--yellow {
+  .button {
+    @include button-yellow;
+  }
+}
+
+.button-example--outline {
+  .button {
+    @include button-outline;
+  }
+}
+
+.button-example--m {
+  .button {
+    @include button-medium;
+  }
+}
+
+.button-example--s {
+  .button {
+    @include button-small;
+  }
+}

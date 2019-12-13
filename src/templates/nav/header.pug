@@ -1,0 +1,144 @@
+//- @pugdoc
+  name: Nav (Header menu)
+  capture: none
+
+mixin header-menu(path, isHome)
+  include ../icons/_icon
+
+  if !path
+    - path = ['', '']
+
+  //- Items
+
+  - var items = [];
+  - items.push({label: "Vacatures", link: "./vacatures.html", number: 60});
+  
+  - var subItems = [];
+  - subItems.push({label: "Verkoop", link: "./vakgebied.html"});
+  - subItems.push({label: "Techniek", link: "./vakgebied-techniek.html"});
+  - subItems.push({label: "ICT", link: "./vakgebied.html"});
+  - subItems.push({label: "Bedrijfsvoering", link: "./vakgebied.html"});
+  - subItems.push({label: "(Water) Verkeersleiding", link: "./vakgebied.html"});
+  - subItems.push({label: "Overige vakgebieden", link: "./vakgebied.html"});
+  - items.push({label: "Vakgebieden", link: "./vakgebieden.html", submenu: subItems});
+  
+  - items.push({label: "Studenten", link: "./studenten.html"});
+
+  - var subItems = [];
+  - subItems.push({label: "Professionals programma", link: "#"});
+  - subItems.push({label: "Trainees", link: "#"});
+  - subItems.push({label: "Sollicitatieprocedure", link: "#"});
+  - subItems.push({label: "Arbeidsvoorwaarden", link: "#"});
+  - items.push({label: "Professionals", link: "#", submenu: subItems});
+  
+  - var subItems = [];
+  - subItems.push({label: "Artikelen", link: "./artikelen.html"});
+  - subItems.push({label: "Agenda", link: "./agenda.html"});
+  - subItems.push({label: "Over ons", link: "./over-ons.html"});
+  - items.push({label: "Maak kennis", link: "./maak-kennis.html", submenu: subItems});
+
+  - items.push({label: "Contact", link: "./contact.html"});
+
+  //- Markup
+
+  nav.menu(role="navigation", class="js-menu")
+
+    button.menu__bg(class="js-menu-close", hidden, aria-expanded="false", tabindex="-1")
+      span.accessibility Sluit menu
+
+    .menu__head
+      button.menu__head__toggle(class="js-menu-toggle", aria-expanded="false")
+        .hamburger
+          span.hamburger__line
+          span.hamburger__line
+          span.hamburger__line
+        span.menu__head__toggle__label Menu
+
+      if isHome
+        h1.menu__head__title Werken bij Rijkswaterstaat
+      else
+        a.menu__head__title(href="/home.html", tabindex="-1") Werken bij Rijkswaterstaat
+
+    .menu__body-wrap
+      .menu__body-wrap-scroll(class="js-nav-scroll")
+        ul.menu__body(class="js-menu-body")
+          each item in items
+
+            - var cls = ["js-menu-body-item"];
+
+            if item.label === path[0]
+              - cls.push("is-active");
+
+            li.menu__body__item(class=cls)
+              a.menu__body__item__link(href=item.link) 
+
+                | #{item.label}
+
+                if item.number
+                  span.menu__body__item__link__number #{item.number}
+
+              if item.submenu
+
+                .menu-sub(class="js-menu-sub")
+                  ul.menu-sub__body
+
+                    each subItem in item.submenu
+                            
+                      - var cls = ["js-menu-sub-item"];
+
+                      if subItem.label === path[1]
+                        - cls.push("is-active");
+                  
+                      li.menu-sub__body__item(class=cls)
+                        a.menu-sub__body__item__link(href=subItem.link) #{subItem.label}
+
+          li.menu__body__item(class="menu__body__item--search")
+            form.menu-search(method="get", action="vacatures.html")
+              label.accessibility(for="menuSearch") Zoek vacatures
+              input.menu-search__input(type="search", name="searchString", placeholder="Zoek vacatures", autocomplete="off", id="menuSearch")
+              button.menu-search__button(type="submit", tabindex="-1")
+                +icon#search
+
+//- @pugdoc
+  name: Navigatie (Header)
+  examples:
+    -
+      name: Navigatie (Header, home)
+      example: |
+        include ./header
+        div(style="height:480px; position: relative;")
+          <!-- Vanaf hier overnemen -->
+          +header(null, true)
+    -
+      name: Navigatie (Header, vakgebieden)
+      example: |
+        include ./header
+        div(style="height:480px; position: relative;")
+          <!-- Vanaf hier overnemen -->
+          +header(["Vakgebieden"])
+    -
+      name: Navigatie (Header, ICT)
+      example: |
+        include ./header
+        div(style="height:480px; position: relative;")
+          <!-- Vanaf hier overnemen -->
+          +header(["Vakgebieden", "ICT"])
+
+mixin header(path, isHome)
+ 
+  header.header
+    
+    .header__banner(role="banner")
+      .header__banner-inner
+
+        a.header__banner__logo(href="/")
+          picture.header__banner__logo__image
+            source(srcset="/static/images/logo-nl@2x.png 540w", media="(min-width: 768px) and (-webkit-min-device-pixel-ratio: 1.25), (min-width: 768px) and (min-resolution: 120dpi)", sizes="(min-width: 768px) 270px", data-width="270", data-height="72")
+            source(srcset="/static/images/logo-nl.png 270w", media="(min-width: 768px)", sizes="(min-width: 768px) 270px", data-width="270", data-height="72")
+            source(srcset="/static/images/logo-mobile-nl@2x.png 540w", media="(min-width: 1px) and (-webkit-min-device-pixel-ratio: 1.25), (min-width: 1px) and (min-resolution: 120dpi)", sizes="(min-width: 1px) 270px", data-width="270", data-height="72")
+            source(srcset="/static/images/logo-mobile-nl.png 270w", media="(min-width: 1px)", sizes="(min-width: 1px) 270px", data-width="270", data-height="72")
+
+            img(src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==", alt="Rijkswaterstaat, Ministerie van Infrastructuur en Waterstaat")
+
+    .header__menu
+      +header-menu(path, isHome)

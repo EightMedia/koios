@@ -1,0 +1,18 @@
+//- @pugdoc
+  name: Sectie (Volg banen)
+  examples:
+    - 
+      name: Sectie (Volg banen)
+      example: |
+        +section-follow-jobs("Op de hoogte blijven van onze vactures?")
+
+mixin section-follow-jobs(title)
+  include ./_setup
+  include ../../icons/_icon
+
+  +section(title)(class='section--follow-jobs layout-l')
+    .follow-jobs
+      a.button(class='button--linkedin', href='#')
+        +icon#linkedin
+        |Onze vacatures op LinkedIn
+        
