@@ -27,7 +27,10 @@ paths.DST.pages = `${paths.DST.root}`;
 paths.locals = {
   CSS_URL: "/assets/css/",
   JS_URL: "/assets/js/",
-  IMG_URL: "/img/"
+  IMG_URL: "/static/images/",
+  FONTS_URL: "/static/fonts/",
+  VIDEOS_URL: "/static/video/",
+  TEMPLATES_PATH: paths.SRC.templates
 };
 
 module.exports = paths;

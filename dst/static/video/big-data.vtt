@@ -1,0 +1,299 @@
+WEBVTT FILE
+
+1
+00:00:09.208 --> 00:00:11.988
+Ik was heel bewust op zoek naar een 
+Data Science plek...
+
+2
+00:00:12.070 --> 00:00:15.379
+...en bij heel veel bedrijven zie je dat
+dat gevraagd wordt...
+
+3
+00:00:15.414 --> 00:00:18.451
+...maar dan vooral om te zorgen dat
+mensen meer op jouw banners klikken...
+
+4
+00:00:18.463 --> 00:00:20.463
+...en meer inkomsten 
+binnen te halen.
+
+5
+00:00:20.486 --> 00:00:22.573
+Ik wilde juist wat meer inhoud. 
+
+6
+00:00:22.595 --> 00:00:25.706
+Dat je echt iets doet dat goed 
+is voor de samenleving.
+
+7
+00:00:27.591 --> 00:00:31.048
+We werken hier aan analyses 
+en visualisaties...
+
+8
+00:00:31.071 --> 00:00:35.384
+...voor politie, OM en allerlei andere 
+partners binnen de veiligheidsketen.
+
+9
+00:00:38.004 --> 00:00:40.720
+We doen strafzaken, 
+projecten en onderzoek.
+
+10
+00:00:40.757 --> 00:00:43.570
+Een strafzaak is precies wat je 
+denkt dat het is.
+
+11
+00:00:43.582 --> 00:00:45.582
+Strafzaken, moord, echt zware dingen.
+
+12
+00:00:47.958 --> 00:00:51.425
+Er zijn stukken bewijs gevonden
+ en dat moeten wij als NFI...
+
+13
+00:00:51.472 --> 00:00:55.290
+...interpreteren en uitspraak doen 
+over wat het bewijs precies zegt...
+
+14
+00:00:55.337 --> 00:00:57.337
+...en in hoeverre dat voor- of 
+tegen- de verdachte spreekt.
+
+15
+00:00:57.829 --> 00:00:59.829
+Ook aan de opsporingskant 
+werken we mee.
+
+16
+00:01:00.192 --> 00:01:01.778
+Als de politie heel veel 
+data verzameld heeft...
+
+17
+00:01:01.790 --> 00:01:03.790
+...en ze kunnen er eigenlijk niet 
+meer mee uit de voeten... 
+
+18
+00:01:03.813 --> 00:01:06.739
+...dan komen wij langs om het 
+inzichtelijker te maken...
+
+19
+00:01:06.763 --> 00:01:09.694
+...om ze daarbij te helpen en ook om 
+analyses te doen...
+
+20
+00:01:09.717 --> 00:01:11.717
+...om het opsporingswerk 
+te ondersteunen.
+
+21
+00:01:13.817 --> 00:01:16.341
+Iedereen gebruik mobieltjes, 
+voor criminelen is dat niet anders...
+
+22
+00:01:16.374 --> 00:01:17.958
+...ze hebben er vaak 
+zelfs meer dan één.
+
+23
+00:01:18.066 --> 00:01:20.478
+Daar kan je heel veel 
+gegevens over opvragen...
+
+24
+00:01:20.642 --> 00:01:23.647
+...over waar die mobieltjes geweest zijn
+en wat dat betekent.
+
+25
+00:01:23.823 --> 00:01:25.916
+Dat kan je dan combineren 
+met andere gegevens...
+
+26
+00:01:25.946 --> 00:01:29.481
+...zoals kentekenregistraties of
+andere gegevens over waar...
+
+27
+00:01:29.516 --> 00:01:31.854
+...criminelen vaak komen 
+of wie hun contactpersonen zijn...
+
+28
+00:01:32.023 --> 00:01:35.109
+...en dan kan je een heel beeld 
+opbouwen, een patroon van die mensen...
+
+29
+00:01:35.136 --> 00:01:37.998
+...hoe ze zich bewegen en daar hopelijk 
+interessante dingen uit halen.
+
+30
+00:01:40.925 --> 00:01:44.498
+Alles wat we doen is maatwerk, 
+het is altijd veel werk om...
+
+31
+00:01:44.498 --> 00:01:47.811
+...alles goed bij elkaar te krijgen en 
+netjes in de database te stoppen.
+
+32
+00:01:47.830 --> 00:01:50.889
+Voor echt het analysewerk zijn er 
+allerlei open source-tooltjes...
+
+33
+00:01:50.911 --> 00:01:52.188
+...die we daarvoor gebruiken.
+
+34
+00:01:52.218 --> 00:01:55.922
+We gebruiken voornamelijk Python en 
+alle libraries die daar aan vast zitten.
+
+35
+00:01:56.220 --> 00:02:00.769
+Dus veel in scikit-learn en 
+in TensorFlow en dat soort dingen...
+
+36
+00:02:00.783 --> 00:02:03.336
+Machine Learning gebruiken we om 
+statistische analyses bouwen...
+
+37
+00:02:03.376 --> 00:02:05.186
+...om echt op het goede 
+antwoord uit te komen.
+
+38
+00:02:05.232 --> 00:02:07.232
+Waarbij je weet dat het 
+belangrijk is, want iemand kan...
+
+39
+00:02:07.273 --> 00:02:11.447
+...naar de gevangenis gaan of niet, 
+op basis van jouw antwoord.
+
+40
+00:02:13.896 --> 00:02:15.869
+Het belangrijkste om hier 
+te werken is...
+
+41
+00:02:15.869 --> 00:02:18.457
+...dat je interesse hebt 
+in puzzels oplossen.
+
+42
+00:02:18.457 --> 00:02:20.940
+Programmeren, een beetje 
+software engineering moet je hebben...
+
+43
+00:02:20.986 --> 00:02:23.137
+...statistiek, Machine Learning, 
+wiskunde...
+
+44
+00:02:23.137 --> 00:02:24.895
+...maar dat gezegd hebbende 
+is het heel breed.
+
+45
+00:02:24.926 --> 00:02:26.926
+Het is een vrij nieuwe discipline; 
+Data Science...
+
+46
+00:02:26.926 --> 00:02:28.926
+...en we hebben een aantal mensen 
+vanuit de computerwereld...
+
+47
+00:02:28.926 --> 00:02:30.926
+...een aantal mensen uit de 
+natuurkunde en wiskunde...
+
+48
+00:02:30.926 --> 00:02:33.302
+... maar ook mensen die psychologie 
+gedaan hebben en...
+
+49
+00:02:33.302 --> 00:02:35.302
+...zichzelf de rest van de 
+skills bijgeleerd hebben.
+
+50
+00:02:35.344 --> 00:02:37.711
+De forensische kant 
+leer je meestal hier.
+
+51
+00:02:40.794 --> 00:02:44.008
+Behalve de technische dingen, 
+moet je in een team kunnen werken.
+
+52
+00:02:44.036 --> 00:02:46.036
+Niet iedereen kan dat, maar dat is 
+hier wel echt heel belangrijk...
+
+53
+00:02:46.093 --> 00:02:47.713
+...dat je kritiek kan geven maar ook
+kritiek kan krijgen...
+
+54
+00:02:47.741 --> 00:02:49.741
+...en samen een product bouwen.
+
+55
+00:02:49.755 --> 00:02:52.832
+Daarbij, omdat het forensisch is, 
+moet je echt betrouwbaar zijn.
+
+56
+00:02:52.846 --> 00:02:56.476
+Je werkt met vertrouwelijke gegevens,
+dus daar moet je je wel van bewust zijn.
+
+57
+00:02:56.532 --> 00:02:59.088
+Ik vind juist het leuke aan data science
+dat je zó veel...
+
+58
+00:02:59.116 --> 00:03:01.687
+...verschillende mensen hebt, met
+zó veel verschillende achtergronden.
+
+59
+00:03:01.687 --> 00:03:04.635
+Je kan veel meer leren als mensen
+een hele andere achtergrond hebben...
+
+60
+00:03:04.650 --> 00:03:06.650
+...dan als ze allemaal 
+hetzelfde zijn als jij.
+
+

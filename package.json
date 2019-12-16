@@ -9,9 +9,7 @@
     "build:scripts": "node tasks/run scripts",
     "build:templates": "node tasks/run templates",
     "build": "run-s clean build:* --silent",
-    "serve": "node tasks/run serve",
-    "watch": "node tasks/run watch",
-    "start": "run-p serve watch --silent"
+    "start": "node tasks/run server"
   },
   "author": "hylmar@eight.nl",
   "license": "ISC",
@@ -61,6 +59,7 @@
     "moment": "^2.24.0",
     "object-assign": "^4.1.1",
     "objectFitPolyfill": "^2.3.0",
+    "ora": "^4.0.3",
     "photoswipe": "^4.1.3",
     "picturefill": "^3.0.3",
     "promise-polyfill": "^8.1.3",
