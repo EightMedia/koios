@@ -4,12 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "serve": "node tasks/run serve",
     "clean": "node tasks/run clean",
     "build:styles": "node tasks/run styles",
     "build:scripts": "node tasks/run scripts",
     "build:templates": "node tasks/run templates",
     "build": "run-s clean build:* --silent",
+    "serve": "node tasks/run serve",
     "watch": "node tasks/run watch",
     "start": "run-p serve watch --silent"
   },

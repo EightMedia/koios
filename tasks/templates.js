@@ -15,9 +15,8 @@ const locals = Object.assign(
     version: process.env.npm_package_version,
     imageSizes: require(paths.SRC.data + "image-sizes.json"),
     dataMeetUs: require(paths.SRC.data + "maak-kennis-items.json"),
-    self: true
   },
-  require(paths.SRC.data + "maak-kennis-items.json"),
+  require(paths.SRC.data + "template-locals.js"),
   paths.locals
 );
 
@@ -58,7 +57,7 @@ function render(src) {
   return new Promise(function (resolve, reject) {
     pug.renderFile(
       src,
-      locals,
+      Object.assign(locals, { self: true } ),
       function(err, html) {
         if (err) reject(err);
         else resolve(html);

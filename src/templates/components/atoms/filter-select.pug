@@ -21,12 +21,12 @@
         div(style="padding: 30px;")
           - var options = [];
           - options.push({ value: "", label: "alle categorieën" })
-          - options.push({ value: self.EVENT, label: "evenementen" })
+          - options.push({ value: self.self.EVENT, label: "evenementen" })
           - options.push({ value: "interview", label: "interviews" })
           - options.push({ value: WEBINAR, label: "webinars" })
           - options.push({ value: "podcast", label: "podcasts" })
           - options.push({ value: "vlog", label: "vlogs" })
-          +filter-select("category", options, self.EVENT)
+          +filter-select("category", options, self.self.EVENT)
 
 mixin filter-select(name, options, selected)
   include ../../icons/_icon

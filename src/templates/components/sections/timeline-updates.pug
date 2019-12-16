@@ -48,7 +48,7 @@
             }
           });
           items.push({
-            type: GALLERY, 
+            type: self.GALLERY, 
             date: "4 september 2019", 
             title: "Aanleg van 5 rotondes op Schouwen-Duiveland", 
             author: people[1], 
@@ -61,7 +61,7 @@
             related: { category: "interview", title: "'Rijkswaterstaat van start met grootste onderhoudsopgave ooit'", image: "marion-straatman.jpg", link: "#" }
           });
           items.push({
-            type: PODCAST, 
+            type: self.PODCAST, 
             date: "6 augustus 2019",
             title: "Podcast reparatie aan de Kreekraksluizen ", 
             author: people[2], 
@@ -69,7 +69,7 @@
             audio: { chapeau: "Aflevering 1", title: "Leon Wijnker, Technisch manager", subtitle: "Renovatie en innovatie Beatrixsluis", posterImg: "antenna.jpg" },
           });
           items.push({
-            type: QUOTE, 
+            type: self.QUOTE, 
             date: "2 juli 2019",
             title: "De reacties van een bruggenexpert", 
             author: people[3], 
@@ -78,7 +78,7 @@
             related: { category: "interview", title: "'Rijkswaterstaat van start met grootste onderhoudsopgave ooit'", image: "marion-straatman.jpg", link: "#" }
           });
           items.push({
-            type: GALLERY, 
+            type: self.GALLERY, 
             date: "3 juni 2019", 
             title: "De reacties van een bruggenexpert", 
             author: people[1],
@@ -86,7 +86,7 @@
             images: [ { src: "rws-zeeland.jpg", dimensions: "1440x800" } ]
           });
           items.push({
-            type: NEWS, 
+            type: self.NEWS, 
             date: "5 mei 2019", 
             title: "Wat kan je verwachten bij deze 'nieuwsfeed'?", 
             author: people[2],
@@ -125,13 +125,13 @@ mixin section-timeline-updates(id, items)
             
             - var cls = [];
 
-            if item.type == GALLERY 
+            if item.type == self.GALLERY 
               - cls.push("timeline-update--gallery")
             else if item.type == self.VIDEO 
               - cls.push("timeline-update--video")
-            else if item.type == PODCAST
+            else if item.type == self.PODCAST
               - cls.push("timeline-update--podcast")
-            else if item.type == QUOTE
+            else if item.type == self.QUOTE
               - cls.push("timeline-update--quote")
 
             .timeline-update(class=cls)
@@ -139,13 +139,13 @@ mixin section-timeline-updates(id, items)
               .timeline-update__head
               
                 .timeline-update__head__icon
-                  if item.type == GALLERY
+                  if item.type == self.GALLERY
                     +icon#timeline-gallery
                   else if item.type == self.VIDEO 
                     +icon#timeline-video
-                  else if item.type == PODCAST
+                  else if item.type == self.PODCAST
                     +icon#timeline-audio
-                  else if item.type == QUOTE
+                  else if item.type == self.QUOTE
                     +icon#timeline-quote
                   else
                     +icon#timeline-news
@@ -160,20 +160,20 @@ mixin section-timeline-updates(id, items)
               .timeline-update__text
                 | !{item.text}
 
-              if item.type != NEWS
+              if item.type != self.NEWS
 
                 .timeline-update__body
                   
-                  if item.type == GALLERY
+                  if item.type == self.GALLERY
                     +gallery(item.images)
                   
                   else if item.type == self.VIDEO 
                     +video(item.video)
                   
-                  else if item.type == PODCAST
+                  else if item.type == self.PODCAST
                     +audio(item.audio)
                   
-                  else if item.type == QUOTE
+                  else if item.type == self.QUOTE
                     +quote(item.quote)
 
               if item.related

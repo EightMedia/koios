@@ -41,7 +41,7 @@ mixin srcset-source(image, params, sizesAttr, mediaAttr)
 
   -
     var attrs = {};
-    
+
     if (image == "${image}?${imgixParams}") {
       attrs.srcset = "${image}?${imgixParams}" + "&";
       delete params.fit;

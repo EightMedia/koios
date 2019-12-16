@@ -25,4 +25,5 @@ mixin card-testimonial(card)
 
     //- footer
     .card-testimonial__footer
-      +button(card.btn.label, card.btn.link)
+      if card.btn
+        +button(card.btn.label, card.btn.link)
