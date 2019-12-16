@@ -67,19 +67,25 @@ function minify(css) {
 }
 
 /**
- * Main module function called by run.js
+ * Entry point for run.js
  * $ node tasks/run styles
  */
 
-function styles() {
+exports.default = function styles(changed) {
   const filename = "all"; // TEMP STATIC SOLUTION
 
   return new Promise((resolve, reject) => {
-    const src = path.resolve(__dirname, `../${paths.SRC.styles}${filename}.scss`);
-    const dst = path.resolve(__dirname, `../${paths.DST.styles}${filename}.v${process.env.npm_package_version}.css`);
+    const src = path.resolve(
+      __dirname,
+      `../${paths.SRC.styles}${filename}.scss`
+    );
+    const dst = path.resolve(
+      __dirname,
+      `../${paths.DST.styles}${filename}.v${process.env.npm_package_version}.css`
+    );
 
     // make sure the destination exists
-    mkdirp(path.dirname(dst), function (err) {
+    mkdirp(path.dirname(dst), function(err) {
       if (err) reject(err);
     });
 
@@ -88,7 +94,7 @@ function styles() {
       .then(scss => compile(scss))
       .then(css => pp.preprocess(css, paths.locals, { type: "css" }))
       .then(css => minify(css))
-      .then(css => `/* ${process.env.npm_package_name} v${process.env.npm_package_version} */ ` + css)
+      .then(css => `/* ${process.env.npm_package_name} v${process.env.npm_package_version} */ ${css}`)
       .then(css =>
         fs.writeFile(dst, css, err => {
           if (err) reject(err);
@@ -98,6 +104,4 @@ function styles() {
       )
       .catch(err => reject(err));
   });
-}
-
-exports.default = styles;
+};

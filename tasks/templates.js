@@ -5,6 +5,7 @@ const pathDiff = require("./path-diff");
 const fs = require("fs");
 const mkdirp = require("mkdirp");
 const path = require("path");
+const ora = require("ora");
 
 const glob = require("glob-all");
 const pug = require("pug");
@@ -67,7 +68,7 @@ function buildPage(src) {
     render(src)
       .then(
         html =>
-          `<!-- ${process.env.npm_package_name} v${process.env.npm_package_version} -->\n ${html}`
+          `<!-- ${process.env.npm_package_name} v${process.env.npm_package_version} --> ${html}`
       )
       .then(html =>
         fs.writeFile(dst, html, err => {
@@ -80,10 +81,11 @@ function buildPage(src) {
 }
 
 /**
- * Build templates
+ * Entry point for run.js
+ * $ node tasks/run templates
  */
 
-function templates(changed) {
+exports.default = function templates (changed) {
   return new Promise(async (resolve, reject) => {
     const globs = [
       `${paths.SRC.pages}**${path.sep}*.pug`,
@@ -95,23 +97,25 @@ function templates(changed) {
 
     if (fileList.length > 0) {
       let buildPromises = [];
-      
+
       fileList.forEach(src => {
         // check if src is inside "components" or "pages"
-        const type = pathDiff(paths.SRC.templates, src).split(path.sep).shift();
+        const type = pathDiff(paths.SRC.templates, src)
+          .split(path.sep)
+          .shift();
         // check type and build accordingly
         if (type === paths.SRC.pagesFolder) buildPromises.push(buildPage(src));
       });
 
       // resolve entire build when all build promises are done
-      Promise.all(buildPromises).then(function(results) {
-        console.log("> " + results.join("\n> "));
-        resolve(results);
-      }).catch(err => reject(err));
+      Promise.all(buildPromises)
+        .then(function(results) {
+          console.log("> " + results.join("\n> "));
+          resolve(results);
+        })
+        .catch(err => reject(err));
     } else {
       reject(new Error(`No templates inside ${paths.SRC.pages}`));
     }
   });
-}
-
-exports.default = templates;
+};

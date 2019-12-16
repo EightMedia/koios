@@ -73,7 +73,7 @@ function buildScript(folder) {
     // read and process the file
     bundle(src, babelifyPresets)
       .then(js => minify(js))
-      .then(js => `/* ${process.env.npm_package_name} v${process.env.npm_package_version} */ ` + js)
+      .then(js => `/* ${process.env.npm_package_name} v${process.env.npm_package_version} */ ${js}`)
       .then(js =>
         fs.writeFile(dst, js, err => {
           if (err) reject(err);
@@ -85,29 +85,36 @@ function buildScript(folder) {
 }
  
 /**
- * Build
+ * Entry point for run.js
+ * $ node tasks/run scripts
  */
 
-function scripts(changed) {
+exports.default = function scripts(changed) {
   return new Promise(async (resolve, reject) => {
-    let folderList = changed ? Array.of(pathDiff(paths.SRC.scripts, changed).split(path.sep).shift()) : await getFolderList(paths.SRC.scripts);
+    let folderList = changed
+      ? Array.of(
+          pathDiff(paths.SRC.scripts, changed)
+            .split(path.sep)
+            .shift()
+        )
+      : await getFolderList(paths.SRC.scripts);
 
     if (folderList.length > 0) {
       let buildPromises = [];
-      
+
       folderList.forEach(src => {
         buildPromises.push(buildScript(src));
       });
 
       // resolve entire build when all build promises are done
-      Promise.all(buildPromises).then(function(results) {
-        console.log("> " + results.join("\n> "));
-        resolve(results);
-      }).catch(err => reject(err));
+      Promise.all(buildPromises)
+        .then(function(results) {
+          console.log("> " + results.join("\n> "));
+          resolve(results);
+        })
+        .catch(err => reject(err));
     } else {
       reject(new Error(`No folders inside ${paths.SRC.scripts}`));
     }
   });
-}
-
-exports.default = scripts;
+};

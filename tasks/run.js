@@ -23,20 +23,12 @@ function convertMs(ms) {
   d = Math.floor(h / 24);
   h = h % 24;
 
-  const obj = {
-    d: d,
-    h: h,
-    m: m,
-    s: s,
-    ms: ms
-  };
-
   let str = "";
-  if (obj.d > 0) str += obj.d + "d ";
-  if (obj.h > 0) str += obj.h + "h ";
-  if (obj.m > 0) str += obj.m + "m ";
-  if (obj.s > 0) str += obj.s + "s ";
-  if (obj.ms > 0) str += obj.ms + "ms ";
+  if (d > 0) str += `${d}s `;
+  if (h > 0) str += `${h}s `;
+  if (m > 0) str += `${m}s `;
+  if (s > 0) str += `${s}.${ms}s`;
+  else str += `${ms}ms`;
 
   return str;
 }
@@ -48,7 +40,7 @@ function convertMs(ms) {
 function run(fn, options) {
   const task = typeof fn.default === "undefined" ? fn : fn.default;
   const start = new Date();
-  
+
   console.info(
     `[${chalk.dim(format(start))}] Starting '${chalk.bold.yellowBright(task.name)}${
       options ? ` (${options})` : ""
@@ -59,9 +51,9 @@ function run(fn, options) {
     const end = new Date();
     const time = convertMs(end.getTime() - start.getTime());
     console.info(
-      `[${chalk.dim(format(end))}] Finished '${chalk.bold.greenBright(task.name)}${
-        options ? ` (${options})` : ""
-      }' after ${time}`
+      `[${chalk.dim(format(end))}] Finished '${chalk.bold.greenBright(
+        task.name
+      )}${options ? ` (${options})` : ""}' after ${time}`
     );
     return resolution;
   });
