@@ -1,5 +1,6 @@
 const paths = require("./paths");
 const chalk = require("chalk");
+const pathDiff = require("./path-diff");
 
 const fs = require("fs");
 const mkdirp = require("mkdirp");
@@ -21,28 +22,14 @@ const locals = Object.assign(
 );
 
 /**
- * Get difference between paths
- */
-
-function pathDiff(a, b) {
-  a = a.split(path.sep);
-  b = b.split(path.sep);
-
-  return a
-    .filter((x, i) => i > b.length || (b[i] != x && x != ""))
-    .concat(b.filter((x, i) => i > a.length || (a[i] != x && x != "")))
-    .join(path.sep);
-}
-
-/**
  * Get file list in a Glob manner
  */
 
 async function getFileList(globs) {
   globs = [].concat(globs);
 
-  return new Promise(function (resolve, reject) {
-    glob(globs, function(err, files) {
+  return new Promise((resolve, reject) => {
+    glob(globs, (err, files) => {
       if (err) reject(err);
       resolve(files);
     });
@@ -54,7 +41,7 @@ async function getFileList(globs) {
  */
 
 function render(src) {
-  return new Promise(function (resolve, reject) {
+  return new Promise((resolve, reject) => {
     pug.renderFile(
       src,
       Object.assign(locals, { self: true } ),
@@ -88,7 +75,7 @@ function buildPage(src) {
           else resolve(chalk.greenBright(dst));
         })
       )
-      .catch(err => reject(`${chalk.redBright(src)} (${err})\n`));
+      .catch(err => reject(`${chalk.redBright(src)}\n  (${err})\n`));
   }).catch(err => err); // this catch prevents breaking the Promise.all
 }
 
