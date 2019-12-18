@@ -1,11 +1,10 @@
 const paths = require("./paths");
-const chalk = require("chalk");
 const pathDiff = require("./path-diff");
+const SpinLog = require("./spinlog");
 
-const fs = require("fs");
-const mkdirp = require("mkdirp");
+const chalk = require("chalk");
+const fsp = require("fs").promises;
 const path = require("path");
-const ora = require("ora");
 
 const glob = require("glob-all");
 const pug = require("pug");
@@ -63,21 +62,19 @@ function buildPage(src) {
     const dir = path.normalize(paths.DST.pages + path.dirname(pathDiff(paths.SRC.pages, src)));
     const dst = dir + path.sep + path.basename(src, ".pug") + ".html";
 
-    mkdirp.sync(dir);
-
-    render(src)
-      .then(
-        html =>
-          `<!-- ${process.env.npm_package_name} v${process.env.npm_package_version} --> ${html}`
-      )
-      .then(html =>
-        fs.writeFile(dst, html, err => {
-          if (err) reject(err);
-          else resolve(chalk.greenBright(dst));
-        })
-      )
-      .catch(err => reject(`${chalk.redBright(src)}\n  (${err})\n`));
-  }).catch(err => err); // this catch prevents breaking the Promise.all
+    fsp.mkdir(dir, { recursive: true })
+      .then(() => render(src))
+      .then(html => `<!-- ${process.env.npm_package_name} v${process.env.npm_package_version} --> ${html}`)
+      .then(html => fsp.open(dst, "w").then(fileHandle => fileHandle.writeFile(html)))
+      .then(() => {
+        console.log(`${chalk.greenBright(dst)}`);
+        resolve(dst);
+      })
+      .catch(err => {
+        console.log(`${chalk.redBright(dst)} (${err})`);
+        reject();
+      })
+  });
 }
 
 /**
@@ -93,6 +90,7 @@ exports.default = function templates (changed) {
       `${paths.SRC.components}**${path.sep}*.pug`,
       `!${paths.SRC.components}**${path.sep}_*.pug`
     ];
+
     const fileList = changed ? Array.of(changed) : await getFileList(globs);
 
     if (fileList.length > 0) {
@@ -108,12 +106,9 @@ exports.default = function templates (changed) {
       });
 
       // resolve entire build when all build promises are done
-      Promise.all(buildPromises)
-        .then(function(results) {
-          console.log("> " + results.join("\n> "));
-          resolve(results);
-        })
-        .catch(err => reject(err));
+      Promise.allSettled(buildPromises).then(result => {
+        resolve(result);
+      });
     } else {
       reject(new Error(`No templates inside ${paths.SRC.pages}`));
     }

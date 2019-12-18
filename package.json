@@ -37,7 +37,6 @@
     "preprocess": "^3.1.0",
     "pug": "^2.0.4",
     "pug-doc": "^2.15.0",
-    "uglify": "^0.1.5",
     "uglify-es": "^3.3.9"
   },
   "dependencies": {
@@ -47,6 +46,7 @@
     "core-js": "^3.5.0",
     "debounce": "^1.2.0",
     "delegate-events": "^1.1.1",
+    "draftlog": "^1.0.12",
     "find-parent": "^2.0.2",
     "focus-trap": "^5.1.0",
     "fuse.js": "^3.4.6",
@@ -56,10 +56,10 @@
     "keymirror": "^0.1.1",
     "lory.js": "^2.5.3",
     "mdn-polyfills": "^5.19.0",
+    "mkdirp-promise": "^5.0.1",
     "moment": "^2.24.0",
     "object-assign": "^4.1.1",
     "objectFitPolyfill": "^2.3.0",
-    "ora": "^4.0.3",
     "photoswipe": "^4.1.3",
     "picturefill": "^3.0.3",
     "promise-polyfill": "^8.1.3",
