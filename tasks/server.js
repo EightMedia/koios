@@ -11,6 +11,10 @@ const chokidar = require("chokidar");
 
 function server() {
   return new Promise(function(resolve, reject) {
+    /**
+     * Run BrowserSync
+     */
+
     bs.init({
       server: {
         baseDir: paths.DST.pages,
@@ -21,6 +25,10 @@ function server() {
       port: 8000,
       open: false
     });
+
+    /**
+     * Watch changes inside SRC and run tasks accordingly
+     */
 
     const tasks = {
       scss: require(`./styles.js`).default,

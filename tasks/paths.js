@@ -11,7 +11,7 @@ paths.SRC.scripts = `${paths.SRC.root}scripts${S}`;
 paths.SRC.data = `${process.cwd()}${S}${paths.SRC.root}data${S}`;
 
 paths.SRC.templates = `${paths.SRC.root}templates${S}`;
-paths.SRC.pagesFolder = "components";
+paths.SRC.componentsFolder = "components";
 paths.SRC.components = `${paths.SRC.templates}${paths.SRC.componentsFolder}${S}`;
 paths.SRC.pagesFolder = "pages";
 paths.SRC.pages = `${paths.SRC.templates}${paths.SRC.pagesFolder}${S}`;

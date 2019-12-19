@@ -59,10 +59,10 @@ function render(src) {
 }
 
 /**
- * Process src
+ * Compiles source pug to destination html
  */
 
-function buildPage(src) {
+const pageBuilder = function(src) {
   return new Promise((resolve, reject) => {
     const dir = path.normalize(paths.DST.pages + path.dirname(pathDiff(paths.SRC.pages, src)));
     const dst = dir + path.sep + path.basename(src, ".pug") + ".html";
@@ -71,15 +71,46 @@ function buildPage(src) {
       .then(() => render(src))
       .then(html => `<!-- ${process.env.npm_package_name} v${process.env.npm_package_version} --> ${html}`)
       .then(html => fsp.open(dst, "w").then(fileHandle => fileHandle.writeFile(html)))
-      .then(() => {
-        console.log(`${chalk.greenBright(dst)}`);
-        resolve(dst);
-      })
+      .then(() => console.log(`${chalk.greenBright(dst)}`))
+      .then(() => resolve(dst))
       .catch(err => {
-        console.log(`${chalk.redBright(dst)} (${err})`);
+        console.log(`${chalk.redBright(dst)}\n${err.stack}`);
         reject();
       })
   });
+}
+
+const componentBuilder = function(src) {
+  return new Promise((resolve, reject) => {
+    pugdoc({
+      input: src,
+      output: "components.json",
+      locals: locals,
+      complete: resolve
+    });
+  });
+}
+
+/**
+ * Process changed file given by watch task
+ */
+
+function processChanged(file) {
+  const type = pathDiff(paths.SRC.templates, file)
+    .split(path.sep)
+    .shift();
+  if (type === paths.SRC.pagesFolder) return pageBuilder(file).catch(err => err);
+  else if (type === paths.SRC.componentsFolder) return componentBuilder(file).catch(err => err);
+}
+
+/**
+ * Process batch according to glob and builder
+ */
+
+async function processBatch(glob, builder) {
+  const fileList = await getFileList(glob);
+  const promises = fileList.map(file => builder(file));
+  return Promise.allSettled(promises);
 }
 
 /**
@@ -88,34 +119,25 @@ function buildPage(src) {
  */
 
 exports.default = function templates (changed) {
-  return new Promise(async (resolve, reject) => {
-    const globs = [
-      `${paths.SRC.pages}**${path.sep}*.pug`,
-      `!${paths.SRC.pages}**${path.sep}_*.pug`,
-      `${paths.SRC.components}**${path.sep}*.pug`,
-      `!${paths.SRC.components}**${path.sep}_*.pug`
-    ];
-
-    const fileList = changed ? Array.of(changed) : await getFileList(globs);
-
-    if (fileList.length > 0) {
-      let buildPromises = [];
-
-      fileList.forEach(src => {
-        // check if src is inside "components" or "pages"
-        const type = pathDiff(paths.SRC.templates, src)
-          .split(path.sep)
-          .shift();
-        // check type and build accordingly
-        if (type === paths.SRC.pagesFolder) buildPromises.push(buildPage(src));
-      });
-
-      // resolve entire build when all build promises are done
-      Promise.allSettled(buildPromises).then(result => {
-        resolve(result);
-      });
-    } else {
-      reject(new Error(`No templates inside ${paths.SRC.pages}`));
-    }
+  return new Promise((resolve, reject) => {
+    
+    // check if watcher invoked this task with a changed file
+    if (changed) return processChanged(changed).then(resolve);
+  
+    // process "templates" and "components"
+    Promise.allSettled(
+      [
+        // process all pug templates in "pages"
+        processBatch([
+          `${paths.SRC.pages}**${path.sep}*.pug`,
+          `!${paths.SRC.pages}**${path.sep}_*.pug`
+        ], pageBuilder),
+      
+        // process all pug templates in "components"
+        processBatch([
+          `${paths.SRC.components}**${path.sep}*.pug`,
+          `!${paths.SRC.components}**${path.sep}_*.pug`
+        ], componentBuilder)
+    ]).then(result => resolve(result)).catch(err => reject(err));
   });
 };
