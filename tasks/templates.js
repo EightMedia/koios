@@ -11,6 +11,11 @@ const pug = require("pug");
 const pugdoc = require("pug-doc");
 const discodip = require("discodip");
 
+/**
+ * The locals attribute for pug rendering
+ * access through self.variable
+ */
+
 const locals = Object.assign(
   {
     version: process.env.npm_package_version,
