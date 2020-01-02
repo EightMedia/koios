@@ -8,7 +8,7 @@ const path = require("path");
 
 const glob = require("glob-all");
 const pug = require("pug");
-const pugdoc = require("pug-doc");
+const pugdocParser = require("../node_modules/pug-doc/lib/parser");
 const discodip = require("discodip");
 
 /**
@@ -59,6 +59,17 @@ function render(src) {
 }
 
 /**
+ * Pug doc parser
+ */
+
+function pugdoc(pug, filename) {
+  return new Promise((resolve, reject) => {
+    const pd = pugdocParser.getPugdocDocuments(pug, filename, Object.assign(locals, { self: true }));
+    resolve(pd);
+  });
+}
+
+/**
  * Compiles source pug to destination html
  */
 
@@ -71,10 +82,10 @@ const pageBuilder = function(src) {
       .then(() => render(src))
       .then(html => `<!-- ${process.env.npm_package_name} v${process.env.npm_package_version} --> ${html}`)
       .then(html => fsp.open(dst, "w").then(fileHandle => fileHandle.writeFile(html)))
-      .then(() => console.log(`${chalk.greenBright(dst)}`))
+      .then(() => console.log(`> ${chalk.greenBright(dst)}`))
       .then(() => resolve(dst))
       .catch(err => {
-        console.log(`${chalk.redBright(dst)}\n${err.stack}`);
+        console.log(`> ${chalk.redBright(dst)}\n${err.stack}`);
         reject();
       })
   });
@@ -82,12 +93,19 @@ const pageBuilder = function(src) {
 
 const componentBuilder = function(src) {
   return new Promise((resolve, reject) => {
-    pugdoc({
-      input: src,
-      output: "components.json",
-      locals: locals,
-      complete: resolve
-    });
+    const dir = path.normalize(paths.DST.components + path.dirname(pathDiff(paths.SRC.components, src)));
+    const dst = dir + path.sep + path.basename(src, ".pug") + ".html";
+    
+    fsp.open(src)
+      .then(fileHandle => fileHandle.readFile({ encoding: "UTF8" }))
+      .then((pug) => pugdoc(pug, src))
+      .then((obj) => console.log(obj))
+      .then(() => console.log(`> ${chalk.magenta(dst)}`))
+      .then(() => resolve(dst))
+      .catch(err => {
+        console.log(`> ${chalk.redBright(dst)}\n${err.stack}`);
+        reject();
+      })
   });
 }
 

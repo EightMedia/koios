@@ -37,17 +37,17 @@ html(lang="nl")
       link(rel="stylesheet", href=`${self.CSS_URL}all.v${self.version}.css`)
       link(rel="stylesheet", href=`${self.CSS_URL}print.v${self.version}.css`, media="print")
 
-      link(rel="apple-touch-icon", sizes="180x180", href=`${self.self.IMAGES_URL}favicons/apple-touch-icon.png`)
-      link(rel="icon", type="image/png", sizes="32x32", href=`${self.self.IMAGES_URL}favicons/favicon-32x32.png`)
-      link(rel="icon", type="image/png", sizes="16x16", href=`${self.self.IMAGES_URL}favicons/favicon-16x16.png`)
+      link(rel="apple-touch-icon", sizes="180x180", href=`${self.IMAGES_URL}favicons/apple-touch-icon.png`)
+      link(rel="icon", type="image/png", sizes="32x32", href=`${self.IMAGES_URL}favicons/favicon-32x32.png`)
+      link(rel="icon", type="image/png", sizes="16x16", href=`${self.IMAGES_URL}favicons/favicon-16x16.png`)
       meta(name="msapplication-TileColor", content="#0073bf")
       meta(name="theme-color", content="#ffffff")
-      link(rel="mask-icon", href=`${self.self.IMAGES_URL}favicons/safari-pinned-tab.svg`, color="#000000")
-      link(rel="shortcut icon", href=`${self.self.IMAGES_URL}favicons/favicon.ico`)
-      meta(name="msapplication-config", content=`${self.self.IMAGES_URL}favicons/browserconfig.xml`)
+      link(rel="mask-icon", href=`${self.IMAGES_URL}favicons/safari-pinned-tab.svg`, color="#000000")
+      link(rel="shortcut icon", href=`${self.IMAGES_URL}favicons/favicon.ico`)
+      meta(name="msapplication-config", content=`${self.IMAGES_URL}favicons/browserconfig.xml`)
       link(rel="manifest", href="./manifest.json")
 
-      meta(property="og:image", content=`${self.self.IMAGES_URL}favicons/og-image.png`)
+      meta(property="og:image", content=`${self.IMAGES_URL}favicons/og-image.png`)
       meta(property="og:image:width", content="280")
       meta(property="og:image:height", content="280")
       meta(property="og:title", content=pageTitle.join(" - "))
@@ -58,7 +58,7 @@ html(lang="nl")
   body
 
     script
-      | var xhr=new XMLHttpRequest;xhr.open("GET","#{self.self.IMAGES_URL}_symbols.v#{self.version}.html",!0),xhr.onreadystatechange=function(){4===xhr.readyState&&200===xhr.status&&document.body.insertAdjacentHTML("afterbegin",xhr.responseText)},xhr.send();
+      | var xhr=new XMLHttpRequest;xhr.open("GET","#{self.IMAGES_URL}_symbols.v#{self.version}.html",!0),xhr.onreadystatechange=function(){4===xhr.readyState&&200===xhr.status&&document.body.insertAdjacentHTML("afterbegin",xhr.responseText)},xhr.send();
 
     block skiplinks
       .skiplinks
@@ -80,7 +80,7 @@ html(lang="nl")
     block scripts
       script.
         var OLDIE_MESSAGE = "Rijkswaterstaat omarmt moderne standaarden en technieken.<br>Uw webbrowser ondersteunt deze standaarden niet. Stap daarom over op een recente browser.";
-        var CARD_self.self.EVENT_CATEGORY = "Evenement";
+        var CARD_self.EVENT_CATEGORY = "Evenement";
 
       script(src=`${self.JS_URL}lib.v${self.version}.js`, defer)
       script(src=`${self.JS_URL}app.v${self.version}.js`, defer)
