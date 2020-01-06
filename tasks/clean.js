@@ -1,4 +1,4 @@
-const paths = require("./paths");
+const paths = require("./settings/paths");
 const chalk = require("chalk");
 
 const del = require("del");
@@ -8,7 +8,7 @@ async function clean() {
     paths.DST.styles + "*.css",
     paths.DST.scripts + "*.js",
     paths.DST.pages + "**/*.html",
-    "!" + paths.DST.components + "**/*.html"
+    "!" + paths.DST.static + "**/*"
   ]);
 
   console.log("> " + deleted.join("\n> "));

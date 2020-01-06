@@ -1,25 +1,13 @@
-const paths = require("./paths");
-const chalk = require("chalk");
+const paths = require("./settings/paths");
 
-const fs = require('fs');
-const mkdirp = require("mkdirp");
+const fsp = require('fs').promises;
 const path = require("path");
-
+const chalk = require("chalk");
 const sass = require("node-sass");
 const pp = require("preprocess");
 const postcss = require("postcss");
 const autoprefixer = require("autoprefixer");
 const cssnano = require("cssnano");
-
-/**
- * Read file 
- */
-
-function read(file) {
-  return new Promise((resolve, reject) => {
-    fs.readFile(file, (err, content) => err ? reject(err) : resolve(content.toString()));
-  });
-}
  
 /**
  * Compile using node-sass
@@ -84,24 +72,17 @@ exports.default = function styles(changed) {
       `../${paths.DST.styles}${filename}.v${process.env.npm_package_version}.css`
     );
 
-    // make sure the destination exists
-    mkdirp(path.dirname(dst), function(err) {
-      if (err) reject(err);
-    });
-
     // read and process the file
-    read(src)
+    fsp.mkdir(path.dirname(dst), { recursive: true })
+      .then(() => fsp.open(src))
+      .then(fh => fh.readFile({ encoding: "UTF8" }))
       .then(scss => compile(scss))
       .then(css => pp.preprocess(css, paths.locals, { type: "css" }))
       .then(css => minify(css))
       .then(css => `/* ${process.env.npm_package_name} v${process.env.npm_package_version} */ ${css}`)
-      .then(css =>
-        fs.writeFile(dst, css, err => {
-          if (err) reject(err);
-          console.log(`> ${dst}`);
-          resolve();
-        })
-      )
+      .then(css => fsp.open(dst, "w").then(fh => fh.writeFile(css)))
+      .then(() => console.log(`> ${chalk.greenBright(dst)}`))
+      .then(() => resolve())
       .catch(err => reject(err));
   });
 };

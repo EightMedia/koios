@@ -1,27 +1,21 @@
-const paths = require("./paths");
-const chalk = require("chalk");
-const pathDiff = require("./path-diff");
+const paths = require("./settings/paths");
 
-const fs = require("fs");
-const mkdirp = require("mkdirp");
+const pathDiff = require("./utils/path-diff");
+
+const fsp = require("fs").promises;
 const path = require("path");
-
+const chalk = require("chalk");
 const browserify = require("browserify");
 const babelify = require("babelify");
 const envify = require("envify");
 const uglify = require("uglify-es");
 
 /**
- * Get folder list
+ * Get folder list (exclude files)
  */
 
 function getFolderList(src) {
-  return new Promise((resolve, reject) => {
-    fs.readdir(src, (err, items) => {
-      if (err) reject(err);
-      else resolve(items.filter(item => fs.lstatSync(src + item).isDirectory()));
-    });
-  });
+  return fsp.readdir(src, { withFileTypes: true }).then(items => items.filter(item => { return item.isDirectory() }).map(item => item.name));
 }
 
 /**
@@ -60,9 +54,6 @@ function buildScript(folder) {
     const src = `${process.cwd()}${path.sep}${paths.SRC.scripts}${folder}${path.sep}index.js`;
     const dst = `${process.cwd()}${path.sep}${paths.DST.scripts}${folder}.v${process.env.npm_package_version}.js`;
 
-    // make sure the destination exists
-    mkdirp.sync(path.dirname(dst));
-
     // set presets for babelify (check if folder starts with "react-")
     const babelifyPresets = [ ["@babel/preset-env",  {
       "useBuiltIns": "entry",
@@ -71,15 +62,13 @@ function buildScript(folder) {
     if (folder.substr(0, 6) === "react-") babelifyPresets.push("@babel/preset-react");
   
     // read and process the file
-    bundle(src, babelifyPresets)
+    fsp.mkdir(path.dirname(dst), { recursive: true })
+      .then(() => bundle(src, babelifyPresets))
       .then(js => minify(js))
       .then(js => `/* ${process.env.npm_package_name} v${process.env.npm_package_version} */ ${js}`)
-      .then(js =>
-        fs.writeFile(dst, js, err => {
-          if (err) reject(err);
-          else resolve(chalk.greenBright(dst));
-        })
-      )
+      .then(js => fsp.open(dst, "w").then(fh => fh.writeFile(js)))
+      .then(() => console.log(`> ${chalk.greenBright(dst)}`))
+      .then(() => resolve())
       .catch(err => reject(`${chalk.redBright(src)}\n  (${err})\n`));
   }).catch(err => err); // this catch prevents breaking the Promise.all
 }
@@ -100,19 +89,8 @@ exports.default = function scripts(changed) {
       : await getFolderList(paths.SRC.scripts);
 
     if (folderList.length > 0) {
-      let buildPromises = [];
-
-      folderList.forEach(src => {
-        buildPromises.push(buildScript(src));
-      });
-
-      // resolve entire build when all build promises are done
-      Promise.all(buildPromises)
-        .then(function(results) {
-          console.log("> " + results.join("\n> "));
-          resolve(results);
-        })
-        .catch(err => reject(err));
+      const promises = folderList.map(folder => buildScript(folder));
+      return Promise.allSettled(promises).then(result => resolve(result)).catch(err => reject(err));
     } else {
       reject(new Error(`No folders inside ${paths.SRC.scripts}`));
     }

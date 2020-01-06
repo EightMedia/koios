@@ -1,4 +1,4 @@
-const paths = require("./paths");
+const paths = require("./settings/paths");
 const run = require("./run").default;
 
 const path = require("path");
@@ -39,7 +39,8 @@ function server() {
     const watcher = chokidar.watch([
       `${paths.SRC.styles}**/*.scss`,
       `${paths.SRC.scripts}**/*.js`,
-      `${paths.SRC.templates}**/*.pug`
+      `${paths.SRC.templates}**/*.pug`,
+      `!${paths.SRC.templates}**/_*.pug`
     ]);
 
     watcher.on("change", function(file) {
