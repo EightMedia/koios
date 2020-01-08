@@ -8,8 +8,7 @@
     "build:styles": "node tasks/run styles",
     "build:scripts": "node tasks/run scripts",
     "build:templates": "node tasks/run templates",
-    "prebuild": "npm run clean",
-    "build": "run-p build:* --silent",
+    "build": "run-s clean build:* --silent",
     "start": "node tasks/run server"
   },
   "author": "hylmar@eight.nl",

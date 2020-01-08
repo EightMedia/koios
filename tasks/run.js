@@ -42,7 +42,7 @@ function run(fn, options) {
   const start = new Date();
 
   console.info(
-    `[${chalk.dim(format(start))}] Starting '${chalk.bold.yellowBright(task.name)}${
+    `[${chalk.dim(format(start))}] Running '${chalk.bold.blueBright(task.name)}${
       options ? ` (${options})` : ""
     }'...`
   );

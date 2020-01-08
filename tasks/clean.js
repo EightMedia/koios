@@ -11,7 +11,7 @@ async function clean() {
     "!" + paths.DST.static + "**/*"
   ]);
 
-  console.log("> " + deleted.join("\n> "));
+  Promise.resolve(deleted);
 };
 
 exports.default = clean;

@@ -4,14 +4,15 @@ const TPL_COMPONENT = require("./settings/tpl-component");
 const pathDiff = require("./utils/path-diff");
 const slugify = require("./utils/slugify");
 
-const chalk = require("chalk");
 const fs = require("fs");
 const path = require("path");
-
 const glob = require("glob-all");
 const pug = require("pug");
 const { getPugdocDocuments } = require("../node_modules/pug-doc/lib/parser");
 const resolveDependencies = require("pug-dependencies");
+
+const { Signale } = require("signale");
+const logger = new Signale({ interactive: true });
 
 /**
  * The locals attribute for pug rendering
@@ -92,11 +93,12 @@ function pugdoc(pug, filename) {
  */
 
 function writeComponent(component) {
-  const dst = path.normalize(paths.DST.components + path.sep + slugify(component.meta.name) + ".html");
+  const filename = slugify(component.meta.name) + ".html";
+  const dst = path.normalize(paths.DST.components + path.sep + filename);
   const html = TPL_COMPONENT.replace("{{output}}", component.output || "").replace("{{title}}", component.meta.name);
   return fs.promises.open(dst, "w")
     .then(fh => fh.writeFile(`<!-- ${process.env.npm_package_name} v${process.env.npm_package_version} --> ${html}`).then(() => fh.close()))
-    .then(() => chalk.greenBright(dst));
+    .then(() => filename);
 }
 
 /**
@@ -106,6 +108,7 @@ function writeComponent(component) {
 function build(src) {
   const builders = {
     pages: function(src) {
+      
       return new Promise(async (resolve, reject) => {
         const dir = path.normalize(paths.DST.pages + path.dirname(pathDiff(paths.SRC.pages, src)));
         const dst = dir + path.sep + path.basename(src, ".pug") + ".html";
@@ -113,8 +116,6 @@ function build(src) {
         await fs.promises.mkdir(dir, { recursive: true });
         const fh = await fs.promises.open(src);
         
-        console.log(`process ${src}`);
-
         fh.readFile({ encoding: "UTF8" })
           .then((pug) => {
             fh.close();
@@ -122,12 +123,9 @@ function build(src) {
           })
           .then(html => `<!-- ${process.env.npm_package_name} v${process.env.npm_package_version} --> ${html}`)
           .then(html => fs.promises.open(dst, "w").then(fh => fh.writeFile(html).then(() => fh.close())))
-          .then(() => {
-            console.log(`> ${chalk.brightGreen(dst)}`);
-            resolve();
-          })
+          .then(() => resolve(dst))
           .catch(err => reject(err))
-      }).catch(err => console.log(`> ${chalk.redBright(src)}\n${err.stack}`)); // prevents hickups in parent Promise.all
+      }).catch(err => err); // prevents hickups in parent Promise.all
     },
 
     components: function(src) {
@@ -135,38 +133,45 @@ function build(src) {
         await fs.promises.mkdir(paths.DST.components, { recursive: true });
         const fh = await fs.promises.open(src);
 
-        console.log(`process ${src}`);
-
         fh.readFile({ encoding: "UTF8" })
           .then((pug) => {
             fh.close();
             return pugdoc(pug, src);
           })
           .then((pd) => {
-            if (!pd) return true; // silent resolve when pug-doc is empty
+            if (!pd) return; // silent resolve when pug-doc is empty
             const promises = [writeComponent(pd)];
             if (pd.fragments) pd.fragments.forEach(fragment => promises.push(writeComponent(fragment)));
             return Promise.all(promises);
           })
-          .then((result) => {
-            if (Array.isArray(result)) console.log(`> ${result.join("\n> ")}`);
-            resolve(result);
-          })
+          .then((result) => resolve(result))
           .catch(err => reject(err))
-      }).catch(err => console.log(`> ${chalk.redBright(src)}\n${err.stack}`)); // prevents hickups in parent Promise.all
+      }).catch(err => err); // prevents hickups in parent Promise.all
     }
   }
 
   // get first foldername inside templates path and use the corresponding builder
   const type = pathDiff(paths.SRC.templates, src).split(path.sep).shift();
   if (builders[type]) return builders[type](src);
-  else Promise.reject(new Error("No builder defined for " + type)).catch(err => console.log(`> ${chalk.redBright(src)}\n${err}`));
+  else return new Promise((resolve, reject) => reject(new Error("No builder defined for " + type))).catch(err => err);
 }
 
 /**
  * Entry point for run.js
  * $ node tasks/run templates
  */
+
+function promiseProgress(promises, cb) {
+  let i = 0;
+  cb(0);
+  for (const p of promises) {
+    p.then(() => {
+      i++;
+      cb(i);
+    });
+  }
+  return Promise.allSettled(promises);
+}
 
 exports.default = function templates (changed) {
   return new Promise(async (resolve, reject) => {
@@ -193,7 +198,13 @@ exports.default = function templates (changed) {
       fileList.forEach(file => promises.push(build(file)));
     }
 
+    logger.await(`[%d/${promises.length}] Processing`, 1);
+
     // process promises
-    return Promise.allSettled(promises).then(result => resolve(result)).catch(err => reject(err));
+    return promiseProgress(promises, (i) => logger.await(`[%d/${promises.length}] Processing`, i))
+      .then(result => {
+        logger.success(`Processed ${result.length} templates`);
+        resolve();
+      }).catch(err => reject(err));
   });
 };
