@@ -2,7 +2,7 @@ const paths = require("./settings/paths");
 
 const pathDiff = require("./utils/path-diff");
 
-const fsp = require("fs").promises;
+const fs = require("fs");
 const path = require("path");
 const chalk = require("chalk");
 const browserify = require("browserify");
@@ -11,11 +11,11 @@ const envify = require("envify");
 const uglify = require("uglify-es");
 
 /**
- * Get folder list (exclude files)
+ * Get folder list (check for directories and return array of names)
  */
 
 function getFolderList(src) {
-  return fsp.readdir(src, { withFileTypes: true }).then(items => items.filter(item => { return item.isDirectory() }).map(item => item.name));
+  return fs.promises.readdir(src, { withFileTypes: true }).then(items => items.filter(item => { return item.isDirectory() }).map(item => item.name));
 }
 
 /**
@@ -62,11 +62,11 @@ function buildScript(folder) {
     if (folder.substr(0, 6) === "react-") babelifyPresets.push("@babel/preset-react");
   
     // read and process the file
-    fsp.mkdir(path.dirname(dst), { recursive: true })
+    fs.promises.mkdir(path.dirname(dst), { recursive: true })
       .then(() => bundle(src, babelifyPresets))
       .then(js => minify(js))
       .then(js => `/* ${process.env.npm_package_name} v${process.env.npm_package_version} */ ${js}`)
-      .then(js => fsp.open(dst, "w").then(fh => fh.writeFile(js)))
+      .then(js => fs.promises.open(dst, "w").then(fh => fh.writeFile(js)))
       .then(() => console.log(`> ${chalk.greenBright(dst)}`))
       .then(() => resolve())
       .catch(err => reject(`${chalk.redBright(src)}\n  (${err})\n`));

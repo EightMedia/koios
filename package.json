@@ -8,7 +8,8 @@
     "build:styles": "node tasks/run styles",
     "build:scripts": "node tasks/run scripts",
     "build:templates": "node tasks/run templates",
-    "build": "run-s clean build:* --silent",
+    "prebuild": "npm run clean",
+    "build": "run-p build:* --silent",
     "start": "node tasks/run server"
   },
   "author": "hylmar@eight.nl",
@@ -37,6 +38,7 @@
     "preprocess": "^3.1.0",
     "pug": "^2.0.4",
     "pug-doc": "^2.15.0",
+    "signale": "^1.4.0",
     "uglify-es": "^3.3.9"
   },
   "dependencies": {

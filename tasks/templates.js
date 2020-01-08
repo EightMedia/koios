@@ -5,7 +5,7 @@ const pathDiff = require("./utils/path-diff");
 const slugify = require("./utils/slugify");
 
 const chalk = require("chalk");
-const fsp = require("fs").promises;
+const fs = require("fs");
 const path = require("path");
 
 const glob = require("glob-all");
@@ -65,11 +65,11 @@ async function getDependencies(filter) {
  * Compile pug into html
  */
 
-function render(src) {
+function pug2html(code, filename) {
   return new Promise((resolve, reject) => {
-    pug.renderFile(
-      src,
-      Object.assign(locals, { self: true } ),
+    pug.render(
+      code,
+      Object.assign(locals, { self: true, filename } ),
       function(err, html) {
         if (err) reject(err);
         else resolve(html);
@@ -94,8 +94,8 @@ function pugdoc(pug, filename) {
 function writeComponent(component) {
   const dst = path.normalize(paths.DST.components + path.sep + slugify(component.meta.name) + ".html");
   const html = TPL_COMPONENT.replace("{{output}}", component.output || "").replace("{{title}}", component.meta.name);
-  return fsp.open(dst, "w")
-    .then(fh => fh.writeFile(html))
+  return fs.promises.open(dst, "w")
+    .then(fh => fh.writeFile(`<!-- ${process.env.npm_package_name} v${process.env.npm_package_version} --> ${html}`).then(() => fh.close()))
     .then(() => chalk.greenBright(dst));
 }
 
@@ -106,49 +106,61 @@ function writeComponent(component) {
 function build(src) {
   const builders = {
     pages: function(src) {
-      return new Promise((resolve, reject) => {
+      return new Promise(async (resolve, reject) => {
         const dir = path.normalize(paths.DST.pages + path.dirname(pathDiff(paths.SRC.pages, src)));
         const dst = dir + path.sep + path.basename(src, ".pug") + ".html";
 
-        fsp.mkdir(dir, { recursive: true })
-          .then(() => render(src))
-          .then(html => `<!-- ${process.env.npm_package_name} v${process.env.npm_package_version} --> ${html}`)
-          .then(html => fsp.open(dst, "w").then(fileHandle => fileHandle.writeFile(html)))
-          .then(() => console.log(`> ${chalk.greenBright(dst)}`))
-          .then(() => resolve(dst))
-          .catch(err => {
-            console.log(`> ${chalk.redBright(dst)}\n${err.stack}`);
-            reject();
+        await fs.promises.mkdir(dir, { recursive: true });
+        const fh = await fs.promises.open(src);
+        
+        console.log(`process ${src}`);
+
+        fh.readFile({ encoding: "UTF8" })
+          .then((pug) => {
+            fh.close();
+            return pug2html(pug, src);
           })
-      }).catch(err => err); // prevents hickups in parent Promise.all
+          .then(html => `<!-- ${process.env.npm_package_name} v${process.env.npm_package_version} --> ${html}`)
+          .then(html => fs.promises.open(dst, "w").then(fh => fh.writeFile(html).then(() => fh.close())))
+          .then(() => {
+            console.log(`> ${chalk.brightGreen(dst)}`);
+            resolve();
+          })
+          .catch(err => reject(err))
+      }).catch(err => console.log(`> ${chalk.redBright(src)}\n${err.stack}`)); // prevents hickups in parent Promise.all
     },
 
     components: function(src) {
-      return new Promise((resolve, reject) => {
-        fsp.mkdir(paths.DST.components, { recursive: true })
-          .then(() => fsp.open(src))
-          .then(fh => fh.readFile({ encoding: "UTF8" }))
-          .then((pug) => pugdoc(pug, src))
+      return new Promise(async (resolve, reject) => {
+        await fs.promises.mkdir(paths.DST.components, { recursive: true });
+        const fh = await fs.promises.open(src);
+
+        console.log(`process ${src}`);
+
+        fh.readFile({ encoding: "UTF8" })
+          .then((pug) => {
+            fh.close();
+            return pugdoc(pug, src);
+          })
           .then((pd) => {
             if (!pd) return true; // silent resolve when pug-doc is empty
             const promises = [writeComponent(pd)];
             if (pd.fragments) pd.fragments.forEach(fragment => promises.push(writeComponent(fragment)));
             return Promise.all(promises);
           })
-          .then((result) => Array.isArray(result) ? console.log(`> ${result.join("\n> ")}`) : null)
-          .then(() => resolve(src))
-          .catch(err => {
-            console.log(`> ${chalk.redBright(src)}\n${err.stack}`);
-            reject();
+          .then((result) => {
+            if (Array.isArray(result)) console.log(`> ${result.join("\n> ")}`);
+            resolve(result);
           })
-      }).catch(err => err); // prevents hickups in parent Promise.all
+          .catch(err => reject(err))
+      }).catch(err => console.log(`> ${chalk.redBright(src)}\n${err.stack}`)); // prevents hickups in parent Promise.all
     }
   }
 
   // get first foldername inside templates path and use the corresponding builder
   const type = pathDiff(paths.SRC.templates, src).split(path.sep).shift();
   if (builders[type]) return builders[type](src);
-  else Promise.reject(new Error("No builder defined for " + type));
+  else Promise.reject(new Error("No builder defined for " + type)).catch(err => console.log(`> ${chalk.redBright(src)}\n${err}`));
 }
 
 /**
@@ -158,7 +170,7 @@ function build(src) {
 
 exports.default = function templates (changed) {
   return new Promise(async (resolve, reject) => {
-    
+
     // holds build promises
     const promises = [];
 

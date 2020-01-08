@@ -1,6 +1,6 @@
 const paths = require("./settings/paths");
 
-const fsp = require('fs').promises;
+const fs = require('fs');
 const path = require("path");
 const chalk = require("chalk");
 const sass = require("node-sass");
@@ -73,14 +73,14 @@ exports.default = function styles(changed) {
     );
 
     // read and process the file
-    fsp.mkdir(path.dirname(dst), { recursive: true })
-      .then(() => fsp.open(src))
+    fs.promises.mkdir(path.dirname(dst), { recursive: true })
+      .then(() => fs.promises.open(src))
       .then(fh => fh.readFile({ encoding: "UTF8" }))
       .then(scss => compile(scss))
       .then(css => pp.preprocess(css, paths.locals, { type: "css" }))
       .then(css => minify(css))
       .then(css => `/* ${process.env.npm_package_name} v${process.env.npm_package_version} */ ${css}`)
-      .then(css => fsp.open(dst, "w").then(fh => fh.writeFile(css)))
+      .then(css => fs.promises.open(dst, "w").then(fh => fh.writeFile(css)))
       .then(() => console.log(`> ${chalk.greenBright(dst)}`))
       .then(() => resolve())
       .catch(err => reject(err));
