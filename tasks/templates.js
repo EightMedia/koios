@@ -44,6 +44,24 @@ async function getFileList(globs) {
 }
 
 /**
+ * Get dependencies for pug files
+ */
+
+async function getDependencies(filter) {
+  const fileList = await getFileList(`${paths.SRC.pages}**${path.sep}*.pug`);
+  let dependencies = fileList.map(file => {
+    return { file: file, dependencies: resolveDependencies(file) };
+  });
+
+  if (filter) {
+    filter = path.resolve(filter).slice(0, -4);
+    dependencies = dependencies.filter(item => item.dependencies.includes(filter)).map(item => item.file);
+  }
+
+  return dependencies;
+}
+
+/**
  * Compile pug into html
  */
 
@@ -85,84 +103,52 @@ function writeComponent(component) {
  * Compiles source pug to destination html
  */
 
-const pageBuilder = function(src) {
-  return new Promise((resolve, reject) => {
-    const dir = path.normalize(paths.DST.pages + path.dirname(pathDiff(paths.SRC.pages, src)));
-    const dst = dir + path.sep + path.basename(src, ".pug") + ".html";
+function build(src) {
+  const builders = {
+    pages: function(src) {
+      return new Promise((resolve, reject) => {
+        const dir = path.normalize(paths.DST.pages + path.dirname(pathDiff(paths.SRC.pages, src)));
+        const dst = dir + path.sep + path.basename(src, ".pug") + ".html";
 
-    fsp.mkdir(dir, { recursive: true })
-      .then(() => render(src))
-      .then(html => `<!-- ${process.env.npm_package_name} v${process.env.npm_package_version} --> ${html}`)
-      .then(html => fsp.open(dst, "w").then(fileHandle => fileHandle.writeFile(html)))
-      .then(() => console.log(`> ${chalk.greenBright(dst)}`))
-      .then(() => resolve(dst))
-      .catch(err => {
-        console.log(`> ${chalk.redBright(dst)}\n${err.stack}`);
-        reject();
-      })
-  });
-}
+        fsp.mkdir(dir, { recursive: true })
+          .then(() => render(src))
+          .then(html => `<!-- ${process.env.npm_package_name} v${process.env.npm_package_version} --> ${html}`)
+          .then(html => fsp.open(dst, "w").then(fileHandle => fileHandle.writeFile(html)))
+          .then(() => console.log(`> ${chalk.greenBright(dst)}`))
+          .then(() => resolve(dst))
+          .catch(err => {
+            console.log(`> ${chalk.redBright(dst)}\n${err.stack}`);
+            reject();
+          })
+      }).catch(err => err); // prevents hickups in parent Promise.all
+    },
 
-const componentBuilder = function(src) {
-  return new Promise((resolve, reject) => {
-    fsp.mkdir(paths.DST.components, { recursive: true })
-      .then(() => fsp.open(src))
-      .then(fh => fh.readFile({ encoding: "UTF8" }))
-      .then((pug) => pugdoc(pug, src))
-      .then((pd) => {
-        if (!pd) return true; // silent resolve when pug-doc is empty
-        if (!pd.fragments) pd.fragments = [];
-        const promises = [].concat(writeComponent(pd), pd.fragments.map(writeComponent));
-        return Promise.all(promises);
-      })
-      .then((result) => Array.isArray(result) ? console.log(`> ${result.join("\n> ")}`) : null)
-      .then(() => resolve(src))
-      .catch(err => {
-        console.log(`> ${chalk.redBright(src)}\n${err.stack}`);
-        reject();
-      })
-  });
-}
-
-/**
- * Process changed file given by watch task
- */
-
-function processChanged(file) {
-  const type = pathDiff(paths.SRC.templates, file)
-    .split(path.sep)
-    .shift(); // get first foldername inside templates path
-  if (type === paths.SRC.pagesFolder) return pageBuilder(file).catch(err => err);
-  else if (type === paths.SRC.componentsFolder) return componentBuilder(file).catch(err => err);
-  else return Promise.reject(file);
-}
-
-/**
- * Process batch according to glob and builder
- */
-
-async function processBatch(glob, builder) {
-  const fileList = await getFileList(glob);
-  const buildPromises = fileList.map(file => builder(file));
-  return Promise.allSettled(buildPromises);
-}
-
-/**
- * Get dependencies for pug files
- */
-
-async function getDependencies(filter) {
-  const fileList = await getFileList(`${paths.SRC.pages}**${path.sep}*.pug`);
-  let dependencies = fileList.map(file => {
-    return { file: file, dependencies: resolveDependencies(file) };
-  });
-
-  if (filter) {
-    dependencies = dependencies.filter(item => item.dependencies.includes(filter))
-                              .map(item => item.file);
+    components: function(src) {
+      return new Promise((resolve, reject) => {
+        fsp.mkdir(paths.DST.components, { recursive: true })
+          .then(() => fsp.open(src))
+          .then(fh => fh.readFile({ encoding: "UTF8" }))
+          .then((pug) => pugdoc(pug, src))
+          .then((pd) => {
+            if (!pd) return true; // silent resolve when pug-doc is empty
+            const promises = [writeComponent(pd)];
+            if (pd.fragments) pd.fragments.forEach(fragment => promises.push(writeComponent(fragment)));
+            return Promise.all(promises);
+          })
+          .then((result) => Array.isArray(result) ? console.log(`> ${result.join("\n> ")}`) : null)
+          .then(() => resolve(src))
+          .catch(err => {
+            console.log(`> ${chalk.redBright(src)}\n${err.stack}`);
+            reject();
+          })
+      }).catch(err => err); // prevents hickups in parent Promise.all
+    }
   }
-  
-  return dependencies;
+
+  // get first foldername inside templates path and use the corresponding builder
+  const type = pathDiff(paths.SRC.templates, src).split(path.sep).shift();
+  if (builders[type]) return builders[type](src);
+  else Promise.reject(new Error("No builder defined for " + type));
 }
 
 /**
@@ -173,31 +159,29 @@ async function getDependencies(filter) {
 exports.default = function templates (changed) {
   return new Promise(async (resolve, reject) => {
     
-    const dependencies = await getDependencies(path.resolve(changed));
-    console.log(dependencies);
+    // holds build promises
+    const promises = [];
 
-    // check if watcher invoked this task with a changed file
+    // only process the changed file or process all templates
     if (changed) {
-      return processChanged(changed)
-        .then(result => resolve(result))
-        .catch(err => err);
+      promises.push(build(changed));
+      const dependencies = await getDependencies(changed);
+      if (dependencies.length > 0) dependencies.forEach(file => promises.push(build(file)));
+    } else {
+      const glob = [
+        `${paths.SRC.pages}**${path.sep}*.pug`,
+        `!${paths.SRC.pages}**${path.sep}_*.pug`,
+        `${paths.SRC.components}**${path.sep}*.pug`,
+        `!${paths.SRC.components}**${path.sep}_*.pug`,
+        `${paths.SRC.templates}icons${path.sep}_symbols.pug`
+      ];
+
+      const fileList = await getFileList(glob);
+
+      fileList.forEach(file => promises.push(build(file)));
     }
-  
-    // process "pages" and "components"
-    Promise.allSettled(
-      [
-        // process all pug templates in "pages"
-        processBatch([
-          `${paths.SRC.pages}**${path.sep}*.pug`,
-          `!${paths.SRC.pages}**${path.sep}_*.pug`,
-          `${paths.SRC.templates}icons${path.sep}_symbols.pug`
-        ], pageBuilder),
-      
-        // process all pug templates in "components"
-        processBatch([
-          `${paths.SRC.components}**${path.sep}*.pug`,
-          `!${paths.SRC.components}**${path.sep}_*.pug`
-        ], componentBuilder)
-    ]).then(result => resolve(result)).catch(err => reject(err));
+
+    // process promises
+    return Promise.allSettled(promises).then(result => resolve(result)).catch(err => reject(err));
   });
 };

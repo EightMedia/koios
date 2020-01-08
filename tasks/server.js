@@ -40,7 +40,6 @@ function server() {
       `${paths.SRC.styles}**/*.scss`,
       `${paths.SRC.scripts}**/*.js`,
       `${paths.SRC.templates}**/*.pug`,
-      `!${paths.SRC.templates}**/_*.pug`
     ]);
 
     watcher.on("change", function(file) {
