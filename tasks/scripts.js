@@ -12,7 +12,7 @@ const envify = require("envify");
 const uglify = require("uglify-es");
 
 const { Signale } = require("signale");
-const logger = new Signale({ scope: "scripts", interactive: true });
+const logger = new Signale({ scope: "scripts", interactive: false });
 
 /**
  * Get folder list (check for directories and return array of names)
@@ -71,9 +71,9 @@ function buildScript(folder) {
       .then(js => minify(js))
       .then(js => `/* ${process.env.npm_package_name} v${process.env.npm_package_version} */ ${js}`)
       .then(js => fs.promises.open(dst, "w").then(fh => fh.writeFile(js).then(() => fh.close())))
-      .then(() => resolve(dst))
+      .then(() => resolve({ src, dst }))
       .catch(err => reject(err));
-  }).catch(err => err); // this catch prevents breaking the Promise.all
+  }).catch(err => { src, err }); // this catch prevents breaking the Promise.all
 }
 
 /**
@@ -93,10 +93,20 @@ exports.default = function scripts(changed) {
 
     const promises = folderList.map(folder => buildScript(folder));
 
-    return promiseProgress(promises, (i) => logger.await(`[%d/${promises.length}] Processing`, i))
-      .then(result => {
-        logger.success(`[${result.length}/${result.length}] Finished`);
-        resolve();
-      }).catch(err => reject(err));
+    return promiseProgress(promises, (i, item) => {
+      if (item.err) {
+        item.err.message = `[${i}/${promises.length}] ${path.basename(item.src)} → ${item.err.message}`;
+        logger.error(item.err);
+      }
+      else logger.success(`[${i}/${promises.length}] ${item.dst}`, (Array.isArray(item.dst) && item.dst.length > 1 ? `(${item.dst.length} fragments)` : ""));
+    }).then(result => {
+      let errors = result.filter(item => item.err);
+
+      if (errors.length > 0) {
+        logger.warn(`Reported ${errors.length} error${errors.length !== 1 ? "s" : ""}`);
+      }
+
+      resolve();
+    }).catch(err => reject(err));
   });
 };
