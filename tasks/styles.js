@@ -2,13 +2,15 @@ const paths = require("./settings/paths");
 
 const fs = require('fs');
 const path = require("path");
-const chalk = require("chalk");
 const sass = require("node-sass");
 const pp = require("preprocess");
 const postcss = require("postcss");
 const autoprefixer = require("autoprefixer");
 const cssnano = require("cssnano");
- 
+
+const { Signale } = require("signale");
+const logger = new Signale({ scope: "scripts", interactive: true });
+
 /**
  * Compile using node-sass
  */
@@ -72,6 +74,8 @@ exports.default = function styles(changed) {
       `../${paths.DST.styles}${filename}.v${process.env.npm_package_version}.css`
     );
 
+    logger.await(`[%d/1] Processing`, 1);
+
     // read and process the file
     fs.promises.mkdir(path.dirname(dst), { recursive: true })
       .then(() => fs.promises.open(src))
@@ -80,9 +84,9 @@ exports.default = function styles(changed) {
       .then(css => pp.preprocess(css, paths.locals, { type: "css" }))
       .then(css => minify(css))
       .then(css => `/* ${process.env.npm_package_name} v${process.env.npm_package_version} */ ${css}`)
-      .then(css => fs.promises.open(dst, "w").then(fh => fh.writeFile(css)))
-      .then(() => console.log(`> ${chalk.greenBright(dst)}`))
-      .then(() => resolve())
+      .then(css => fs.promises.open(dst, "w").then(fh => fh.writeFile(css).then(() => fh.close())))
+      .then(() => logger.success(`[1/1] Finished`))
+      .then(() => resolve(dst))
       .catch(err => reject(err));
   });
 };

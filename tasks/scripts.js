@@ -1,6 +1,7 @@
 const paths = require("./settings/paths");
 
 const pathDiff = require("./utils/path-diff");
+const promiseProgress = require("./utils/promise-progress");
 
 const fs = require("fs");
 const path = require("path");
@@ -9,6 +10,9 @@ const browserify = require("browserify");
 const babelify = require("babelify");
 const envify = require("envify");
 const uglify = require("uglify-es");
+
+const { Signale } = require("signale");
+const logger = new Signale({ scope: "scripts", interactive: true });
 
 /**
  * Get folder list (check for directories and return array of names)
@@ -66,13 +70,12 @@ function buildScript(folder) {
       .then(() => bundle(src, babelifyPresets))
       .then(js => minify(js))
       .then(js => `/* ${process.env.npm_package_name} v${process.env.npm_package_version} */ ${js}`)
-      .then(js => fs.promises.open(dst, "w").then(fh => fh.writeFile(js)))
-      .then(() => console.log(`> ${chalk.greenBright(dst)}`))
-      .then(() => resolve())
-      .catch(err => reject(`${chalk.redBright(src)}\n  (${err})\n`));
+      .then(js => fs.promises.open(dst, "w").then(fh => fh.writeFile(js).then(() => fh.close())))
+      .then(() => resolve(dst))
+      .catch(err => reject(err));
   }).catch(err => err); // this catch prevents breaking the Promise.all
 }
- 
+
 /**
  * Entry point for run.js
  * $ node tasks/run scripts
@@ -88,11 +91,12 @@ exports.default = function scripts(changed) {
         )
       : await getFolderList(paths.SRC.scripts);
 
-    if (folderList.length > 0) {
-      const promises = folderList.map(folder => buildScript(folder));
-      return Promise.allSettled(promises).then(result => resolve(result)).catch(err => reject(err));
-    } else {
-      reject(new Error(`No folders inside ${paths.SRC.scripts}`));
-    }
+    const promises = folderList.map(folder => buildScript(folder));
+
+    return promiseProgress(promises, (i) => logger.await(`[%d/${promises.length}] Processing`, i))
+      .then(result => {
+        logger.success(`[${result.length}/${result.length}] Finished`);
+        resolve();
+      }).catch(err => reject(err));
   });
 };
