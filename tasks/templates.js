@@ -56,7 +56,7 @@ async function getDependencies(filter) {
  * Compile pug into html
  */
 
-function pug2html(code, filename) {
+function pugToHtml(code, filename) {
   return new Promise((resolve, reject) => {
     pug.render(code, Object.assign(locals, { self: true, filename }), function(
       err,
@@ -87,16 +87,7 @@ function writeComponent(component) {
   const html = htmlComponent
     .replace("{{output}}", component.output || "")
     .replace("{{title}}", component.meta.name);
-  return fs.promises
-    .open(dst, "w")
-    .then(fh =>
-      fh
-        .writeFile(
-          `<!-- ${process.env.npm_package_name} v${process.env.npm_package_version} --> ${html}`
-        )
-        .then(() => fh.close())
-    )
-    .then(() => filename);
+  return simpleStream.write(`<!-- ${process.env.npm_package_name} v${process.env.npm_package_version} --> ${html}`, dst);
 }
 
 /**
@@ -116,7 +107,7 @@ function build(src) {
 
         simpleStream
           .read(src)
-          .then(pug => pug2html(pug, src))
+          .then(pug => pugToHtml(pug, src))
           .then(
             html =>
               `<!-- ${process.env.npm_package_name} v${process.env.npm_package_version} --> ${html}`

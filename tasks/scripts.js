@@ -2,14 +2,16 @@ const paths = require("./settings/paths");
 
 const pathDiff = require("./utils/path-diff");
 const promiseProgress = require("./utils/promise-progress");
+const simpleStream = require("./utils/simple-stream");
 
 const fs = require("fs");
 const path = require("path");
-const chalk = require("chalk");
-const browserify = require("browserify");
-const babelify = require("babelify");
-const envify = require("envify");
-const uglify = require("uglify-es");
+
+const rollup = require("rollup");
+const nodeResolve = require("@rollup/plugin-node-resolve");
+const builtins = require("rollup-plugin-node-builtins");
+const commonjs = require("@rollup/plugin-commonjs");
+const terser = require("terser");
 
 const { Signale } = require("signale");
 const logger = new Signale({ scope: "scripts", interactive: false });
@@ -23,18 +25,16 @@ function getFolderList(src) {
 }
 
 /**
- * Bundle javascript using Browserify
+ * Bundle the entrypoint src
  */
 
-function bundle(src, babelifyPresets) {
-  return new Promise((resolve, reject) => {
-    browserify(src)
-      .transform(envify, babelify.configure({ presets: babelifyPresets }))
-      .bundle((err, js) => {
-        if (err) reject(err);
-        else resolve(js.toString());
-      });
+async function bundle(src) {
+  const bundle = await rollup.rollup({
+    input: src,
+    plugins: [builtins(), nodeResolve({ preferBuiltins: true }), commonjs()]
   });
+  const { output } = await bundle.generate({ format: "iife", sourcemap: true });
+  return output[0].code;
 }
 
 /**
@@ -43,7 +43,7 @@ function bundle(src, babelifyPresets) {
 
 function minify(js) {
   return new Promise((resolve, reject) => {
-    var result = uglify.minify(js);
+    var result = terser.minify(js);
     if (result.error) reject(result.error);
     else resolve(result.code);
   });
@@ -54,26 +54,20 @@ function minify(js) {
  */
 
 function buildScript(folder) {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     const src = `${process.cwd()}${path.sep}${paths.SRC.scripts}${folder}${path.sep}index.js`;
     const dst = `${process.cwd()}${path.sep}${paths.DST.scripts}${folder}.v${process.env.npm_package_version}.js`;
 
-    // set presets for babelify (check if folder starts with "react-")
-    const babelifyPresets = [ ["@babel/preset-env",  {
-      "useBuiltIns": "entry",
-      "corejs": 3.5
-    } ] ];
-    if (folder.substr(0, 6) === "react-") babelifyPresets.push("@babel/preset-react");
-  
+    await fs.promises.mkdir(path.dirname(dst), { recursive: true });
+
     // read and process the file
-    fs.promises.mkdir(path.dirname(dst), { recursive: true })
-      .then(() => bundle(src, babelifyPresets))
+    bundle(src)
       .then(js => minify(js))
       .then(js => `/* ${process.env.npm_package_name} v${process.env.npm_package_version} */ ${js}`)
-      .then(js => fs.promises.open(dst, "w").then(fh => fh.writeFile(js).then(() => fh.close())))
+      .then(js => simpleStream.write(js, dst))
       .then(() => resolve({ src, dst }))
-      .catch(err => reject(err));
-  }).catch(err => { src, err }); // this catch prevents breaking the Promise.all
+      .catch(err => reject({ src, err }));
+  }).catch(err => err); // this catch prevents breaking the Promise.all
 }
 
 /**
@@ -93,20 +87,24 @@ exports.default = function scripts(changed) {
 
     const promises = folderList.map(folder => buildScript(folder));
 
+    // process promises
     return promiseProgress(promises, (i, item) => {
       if (item.err) {
-        item.err.message = `[${i}/${promises.length}] ${path.basename(item.src)} → ${item.err.message}`;
+        item.err.message = `[${i}/${promises.length}] ${path.basename(path.dirname(item.src))} → ${item.err.message}`;
         logger.error(item.err);
+      } else {
+        logger.success(`[${i}/${promises.length}] ${item.dst}`);
       }
-      else logger.success(`[${i}/${promises.length}] ${item.dst}`, (Array.isArray(item.dst) && item.dst.length > 1 ? `(${item.dst.length} fragments)` : ""));
-    }).then(result => {
-      let errors = result.filter(item => item.err);
+    })
+      .then(result => {
+        let errors = result.filter(item => item.err);
 
-      if (errors.length > 0) {
-        logger.warn(`Reported ${errors.length} error${errors.length !== 1 ? "s" : ""}`);
-      }
+        if (errors.length > 0) {
+          logger.warn(`Reported ${errors.length} error${errors.length !== 1 ? "s" : ""}`);
+        }
 
-      resolve();
-    }).catch(err => reject(err));
+        resolve();
+      })
+      .catch(err => reject(err));
   });
 };
