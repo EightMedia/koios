@@ -4,7 +4,6 @@ if (!window.RWS) {
 
 window.RWS.constants = require("./constants");
 window.RWS.breakpoint = require("./ui/breakpoint");
-window.RWS.breakpoint = require("./ui/breakpoint");
 
 require("./content/header");
 require("./content/click-block");

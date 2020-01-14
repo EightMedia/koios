@@ -1,5 +1,7 @@
 const { Signale } = require("signale");
 const logger = new Signale();
+const promiseProgress = require("./utils/promise-progress");
+const path = require("path");
 
 /**
  * Format time string to 2 digits
@@ -43,13 +45,35 @@ function run(fn, options) {
   const start = new Date();
 
   const log = logger.scope(task.name);
-  log.pending(`Started at ${format(start)} for`, options || "all files");
+  log.pending(`Started at ${format(start)} for`, options || `all ${task.name}`);
 
-  return task(options).then(resolution => {
-    const end = new Date();
-    const time = convertMs(end.getTime() - start.getTime());
-    log.complete(`Finished after ${time}`);
-    return resolution;
+  return task(options).then(promises => {
+    return promiseProgress(promises, (i, item) => {
+      if (item.err) {
+        item.err.message = `[${i}/${promises.length}] ${item.src} → ${item.err.message}`;
+        logger.error(item.err);
+      } else if (item.warn) {
+        const msg = `[${i}/${promises.length}] ${item.dst}`];
+        item.warn.forEach(w => msg.push(w));
+        logger.warn(msg);
+      } else {
+        logger.success(`[${i}/${promises.length}] ${item.dst}`);
+      }
+    })
+    .then(result => {
+      let errors = result.filter(item => item.err);
+
+      if (errors.length > 0) {
+        logger.warn(`Reported ${errors.length} error${errors.length !== 1 ? "s" : ""}`);
+      }
+
+      const end = new Date();
+      const time = convertMs(end.getTime() - start.getTime());
+      log.complete(`Finished after ${time}`);
+
+      return;
+    })
+    .catch(err => reject(err));
   });
 }
 

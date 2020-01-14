@@ -4,7 +4,6 @@ const htmlComponent = require("./settings/html-component");
 
 const pathDiff = require("./utils/path-diff");
 const slugify = require("./utils/slugify");
-const promiseProgress = require("./utils/promise-progress");
 const simpleStream = require("./utils/simple-stream");
 
 const fs = require("fs");
@@ -13,9 +12,6 @@ const glob = require("glob-all");
 const pug = require("pug");
 const { getPugdocDocuments } = require("./utils/pugdoc-parser");
 const resolveDependencies = require("pug-dependencies");
-
-const { Signale } = require("signale");
-const logger = new Signale({ scope: "templates", interactive: false });
 
 /**
  * Get file list in a Glob manner
@@ -87,7 +83,7 @@ function writeComponent(component) {
   const html = htmlComponent
     .replace("{{output}}", component.output || "")
     .replace("{{title}}", component.meta.name);
-  return simpleStream.write(`<!-- ${process.env.npm_package_name} v${process.env.npm_package_version} --> ${html}`, dst);
+  return simpleStream.write(`<!-- ${process.env.npm_package_name} v${process.env.npm_package_version} --> ${html}`, dst).then(() => dst);
 }
 
 /**
@@ -134,7 +130,7 @@ function build(src) {
               );
             return Promise.all(promises);
           })
-          .then(result => resolve({ src: src, dst: result }))
+          .then(result => resolve({ src , dst: result }))
           .catch(err => reject(err));
       });
     }
@@ -185,32 +181,6 @@ exports.default = function templates(changed) {
       fileList.forEach(file => promises.push(build(file)));
     }
 
-    // process promises
-    return promiseProgress(promises, (i, item) => {
-      if (item.err) {
-        item.err.message = `[${i}/${promises.length}] ${path.basename(
-          item.src
-        )} → ${item.err.message}`;
-        logger.error(item.err);
-      } else
-        logger.success(
-          `[${i}/${promises.length}] ${item.src}`,
-          Array.isArray(item.dst) && item.dst.length > 1
-            ? `(${item.dst.length} fragments)`
-            : ""
-        );
-    })
-      .then(result => {
-        let errors = result.filter(item => item.err);
-
-        if (errors.length > 0) {
-          logger.warn(
-            `Reported ${errors.length} error${errors.length !== 1 ? "s" : ""}`
-          );
-        }
-
-        resolve();
-      })
-      .catch(err => reject(err));
+    return resolve(promises);
   });
 };

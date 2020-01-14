@@ -10,25 +10,25 @@ const finished = util.promisify(stream.finished);
  * Read the stream as an async iterable
  */
 
-async function read(src) {
-  const readStream = fs.createReadStream(src, { encoding: 'utf8' });
+async function read(obj) {
+  const readStream = fs.createReadStream(obj.src, { encoding: 'utf8' });
 
-  let result = '';
+  obj.content = "";
   for await (const chunk of readStream) {
-    result += chunk;
+    obj.content += chunk;
   }
 
-  return result;
+  return obj;
 }
 
 /**
  * Write 
  */
 
-async function write(data, dst) {
-  const writeStream = fs.createWriteStream(dst, { encoding: 'utf8' });
+async function write(obj) {
+  const writeStream = fs.createWriteStream(obj.dst, { encoding: 'utf8' });
   
-  for await (const chunk of data) {
+  for await (const chunk of obj.content) {
     if (!writeStream.write(chunk)) {
       // Handle backpressure
       await once(writeStream, 'drain');
@@ -37,7 +37,7 @@ async function write(data, dst) {
   writeStream.end();
 
   // wait until writing is done
-  await finished(writeStream);
+  return finished(writeStream).then(() => obj);
 }
 
 module.exports = { read, write }

@@ -1,5 +1,7 @@
 const paths = require("./settings/paths");
 
+const simpleStream = require("./utils/simple-stream");
+
 const fs = require('fs');
 const path = require("path");
 const sass = require("node-sass");
@@ -8,52 +10,96 @@ const postcss = require("postcss");
 const autoprefixer = require("autoprefixer");
 const cssnano = require("cssnano");
 
-const { Signale } = require("signale");
-const logger = new Signale({ scope: "scripts", interactive: true });
+/**
+ * Get folder list (check for directories and return array of names)
+ */
+
+function getFileList(src) {
+  return fs.promises.readdir(src, { withFileTypes: true }).then(items => items.filter(item => { return !item.isDirectory() & item.name.charAt(0) !== "." }).map(item => item.name));
+}
 
 /**
  * Compile using node-sass
  */
 
-function compile(scss) {
+function compile(obj) {
   return new Promise((resolve, reject) => {
     sass.render({
-      data: scss,
+      data: obj.content,
       outputStyle: "expanded",
       includePaths: [paths.SRC.styles]
     },
-      (err, result) => err ? reject(err) : resolve(result.css));
+      (err, result) => {
+        if (err) {
+          obj.err = err;
+          return reject(obj); 
+        }
+
+        obj.content = result.css;
+        return resolve(obj);
+      });
   });
 }
 
 /**
  * Minify (and autoprefix) using cssnano
  */
- 
-function minify(css) {
+
+function minify(obj) {
   return new Promise((resolve, reject) => {
     postcss([
-    autoprefixer({
-      cascade: false
-    }),
-    cssnano({
-      zindex: false,
-      discardComments: {
-        removeAll: true
-      },
-      discardDuplicates: true,
-      discardEmpty: true,
-      minifyFontValues: true,
-      minifySelectors: true
-    })
-  ]).process(css, { from: undefined })
+      autoprefixer({
+        cascade: false
+      }),
+      cssnano({
+        zindex: false,
+        discardComments: {
+          removeAll: true
+        },
+        discardDuplicates: true,
+        discardEmpty: true,
+        minifyFontValues: true,
+        minifySelectors: true
+      })
+  ]).process(obj.content, { from: undefined })
     .then(result => {
-      result.warnings().forEach(warn => {
-        console.warn(chalk.yellow(warn.toString()));
-      });
-      resolve(result.css);
+      obj.warn = result.warnings();
+      obj.content = result.css;
+      resolve(obj);
     })
+    .catch(err => {
+      obj.err = err;
+      reject(obj);
+    });
   });
+}
+
+/**
+ * Build
+ */
+
+function buildStyle(filename) {
+  return new Promise(async (resolve, reject) => {
+    const obj = {
+      src: `${paths.SRC.styles}${filename}`,
+      dst: `${paths.DST.styles}${path.basename(filename, ".scss")}.v${process.env.npm_package_version}.css`
+    }
+
+    await fs.promises.mkdir(path.dirname(obj.dst), { recursive: true });
+ 
+    // read and process the file
+    simpleStream.read(obj)
+      .then(obj => compile(obj))
+      // .then(obj => pp.preprocess(obj.content, paths.locals, { type: "css" }))
+      .then(obj => minify(obj))
+      .then(obj => {
+        obj.content = `/* ${process.env.npm_package_name} v${process.env.npm_package_version} */ ${obj.content}`;
+        return obj;
+      })
+      .then(obj => simpleStream.write(obj))
+      .then((obj) => resolve(obj))
+      .catch(obj => reject(obj));
+  }).catch(err => err); // this catch prevents breaking the Promise.all
 }
 
 /**
@@ -62,31 +108,11 @@ function minify(css) {
  */
 
 exports.default = function styles(changed) {
-  const filename = "all"; // TEMP STATIC SOLUTION
+  return new Promise(async (resolve, reject) => {
+    let fileList = changed ? Array.of(pathDiff(paths.SRC.styles, changed).split(path.sep).shift()) : await getFileList(paths.SRC.styles);
 
-  return new Promise((resolve, reject) => {
-    const src = path.resolve(
-      __dirname,
-      `../${paths.SRC.styles}${filename}.scss`
-    );
-    const dst = path.resolve(
-      __dirname,
-      `../${paths.DST.styles}${filename}.v${process.env.npm_package_version}.css`
-    );
+    const promises = fileList.map(file => buildStyle(file));
 
-    logger.await(`[%d/1] Processing`, 1);
-
-    // read and process the file
-    fs.promises.mkdir(path.dirname(dst), { recursive: true })
-      .then(() => fs.promises.open(src))
-      .then(fh => fh.readFile({ encoding: "UTF8" }))
-      .then(scss => compile(scss))
-      .then(css => pp.preprocess(css, paths.locals, { type: "css" }))
-      .then(css => minify(css))
-      .then(css => `/* ${process.env.npm_package_name} v${process.env.npm_package_version} */ ${css}`)
-      .then(css => fs.promises.open(dst, "w").then(fh => fh.writeFile(css).then(() => fh.close())))
-      .then(() => logger.success(`[1/1] Finished`))
-      .then(() => resolve(dst))
-      .catch(err => reject(err));
+    return resolve(promises);
   });
 };
