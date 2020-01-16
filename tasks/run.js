@@ -58,7 +58,8 @@ function run(fn, options) {
         logger.warn(msg);
       } else {
         item.log = item.log || path.format(item.dst);
-        logger.success(`[${i}/${promises.length}] ${item.log}`);
+        if (typeof item.log === "string") item.log = { type: "success", msg: item.log };
+        logger[item.log.type](`[${i}/${promises.length}] ${item.log.msg}`);
       }
     })
     .then(result => {

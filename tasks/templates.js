@@ -6,7 +6,6 @@ const pathDiff = require("./utils/path-diff");
 const slugify = require("./utils/slugify");
 const simpleStream = require("./utils/simple-stream");
 
-const fs = require("fs");
 const path = require("path");
 const glob = require("glob-all");
 const pug = require("pug");
@@ -72,7 +71,10 @@ function pugToHtml(obj) {
 function pugdoc(obj) {
   return new Promise((resolve, reject) => {
     const component = getPugdocDocuments(obj.data, path.format(obj.src), locals)[0];
-    if (!component) resolve(obj); // silent resolve when pug-doc is empty
+    if (!component) {
+      obj.log = { type: "info", msg: `no pug-doc in ${path.format(obj.src)}` };
+      resolve(obj); // silent resolve when pug-doc is empty
+    }
 
     const promises = [writeFragment(component)];
     if (component.fragments) component.fragments.forEach(fragment => promises.push(writeFragment(fragment)));
@@ -80,7 +82,7 @@ function pugdoc(obj) {
     Promise.all(promises)
       .then((fragments) => {
         obj.log = path.format(obj.dst) + ` (${fragments.length} fragments)`;
-        resolve(obj)
+        resolve(obj);
       })
       .catch(err => reject(err));
   });
@@ -116,10 +118,9 @@ function sourceType(src) {
  */
 
 function addBanner(obj) {
-  obj.data = `<!-- ${process.env.npm_package_name} v${process.env.npm_package_version} --> ${obj.data}`;
+  obj.data = `<!-- ${process.env.npm_package_name} v${process.env.npm_package_version} --> ${obj.data}\n`;
   return obj;
 }
-
 
 /**
  * Compiles source pug to destination html

@@ -1,3 +1,4 @@
+const S = require("path").sep;
 const paths = require("./paths");
 
 /**
@@ -8,9 +9,9 @@ const paths = require("./paths");
 module.exports = Object.assign(
   {
     version: process.env.npm_package_version,
-    imageSizes: require(paths.SRC.data + "image-sizes.json"),
-    dataMeetUs: require(paths.SRC.data + "maak-kennis-items.json"),
+    imageSizes: require(`${process.cwd()}${S}${paths.SRC.data}image-sizes.json`),
+    dataMeetUs: require(`${process.cwd()}${S}${paths.SRC.data}maak-kennis-items.json`),
   },
-  require(paths.SRC.data + "template-locals.js"),
+  require(`${process.cwd()}${S}${paths.SRC.data}template-locals.js`),
   paths.locals
 );
