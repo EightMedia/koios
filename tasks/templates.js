@@ -173,31 +173,29 @@ function build(inputPath) {
  * $ node tasks/run templates
  */
 
-exports.default = function templates(changed) {
-  return new Promise(async (resolve, reject) => {
-    // holds build promises
-    const promises = [];
+exports.default = async function templates(changed) {
+  // holds build promises
+  const promises = [];
 
-    // only process the changed file or process all templates
-    if (changed) {
-      promises.push(build(changed));
-      const dependencies = await getDependencies(changed);
-      if (dependencies.length > 0)
-        dependencies.forEach(file => promises.push(build(file)));
-    } else {
-      const glob = [
-        `${paths.SRC.pages}**${path.sep}*.pug`,
-        `!${paths.SRC.pages}**${path.sep}_*.pug`,
-        `${paths.SRC.components}**${path.sep}*.pug`,
-        `!${paths.SRC.components}**${path.sep}_*.pug`,
-        `${paths.SRC.templates}icons${path.sep}_symbols.pug`
-      ];
+  // only process the changed file or process all templates
+  if (changed) {
+    promises.push(build(changed));
+    const dependencies = await getDependencies(changed);
+    if (dependencies.length > 0)
+      dependencies.forEach(file => promises.push(build(file)));
+  } else {
+    const glob = [
+      `${paths.SRC.pages}**${path.sep}*.pug`,
+      `!${paths.SRC.pages}**${path.sep}_*.pug`,
+      `${paths.SRC.components}**${path.sep}*.pug`,
+      `!${paths.SRC.components}**${path.sep}_*.pug`,
+      `${paths.SRC.templates}icons${path.sep}_symbols.pug`
+    ];
 
-      const fileList = await getFileList(glob);
+    const fileList = await getFileList(glob);
 
-      fileList.forEach(file => promises.push(build(file)));
-    }
+    fileList.forEach(file => promises.push(build(file)));
+  }
 
-    return resolve(promises);
-  });
-};
+  return Promise.resolve(promises);
+}

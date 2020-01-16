@@ -103,12 +103,8 @@ function buildScript(folder) {
  * $ node tasks/run scripts
  */
 
-exports.default = function scripts(changed) {
-  return new Promise(async (resolve, reject) => {
-    let folderList = changed ? Array.of(pathDiff(paths.SRC.scripts, changed).split(path.sep).shift()) : await getFolderList(paths.SRC.scripts);
-
-    const promises = folderList.map(folder => buildScript(folder));
-
-    return resolve(promises);
-  });
-};
+exports.default = async function scripts(changed) {
+  let folderList = changed ? Array.of(pathDiff(paths.SRC.scripts, changed).split(path.sep).shift()) : await getFolderList(paths.SRC.scripts);
+  const promises = folderList.map(folder => buildScript(folder));
+  return Promise.resolve(promises);
+}

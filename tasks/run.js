@@ -40,14 +40,14 @@ function convertMs(ms) {
  * Run a task
  */
 
-function run(fn, options) {
+function run(fn, input) {
   const task = typeof fn.default === "undefined" ? fn : fn.default;
   const start = new Date();
 
   const log = logger.scope(task.name);
-  log.pending(`Started at ${format(start)} for`, options || `all ${task.name}`);
+  log.pending(`Started at ${format(start)} for`, input || ` ${task.name}`);
 
-  return task(options).then(promises => {
+  return task(input).then(promises => {
     return promiseProgress(promises, (i, item) => {
       if (item.err) {
         item.err.message = `[${i}/${promises.length}] ${path.format(item.src)} → ${item.err.message}`;
