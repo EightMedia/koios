@@ -50,7 +50,7 @@ function run(fn, options) {
   return task(options).then(promises => {
     return promiseProgress(promises, (i, item) => {
       if (item.err) {
-        item.err.message = `[${i}/${promises.length}] ${item.src} → ${item.err.message}`;
+        item.err.message = `[${i}/${promises.length}] ${path.format(item.src)} → ${item.err.message}`;
         logger.error(item.err);
       } else if (item.warn) {
         const msg = [`[${i}/${promises.length}] ${path.format(item.dst)}]`];

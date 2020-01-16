@@ -25,7 +25,7 @@ function getFileList(src) {
 function compile(obj) {
   return new Promise((resolve, reject) => {
     sass.render({
-      data: obj.content,
+      data: obj.data,
       outputStyle: "expanded",
       includePaths: [paths.SRC.styles]
     },
@@ -35,7 +35,7 @@ function compile(obj) {
           return reject(obj); 
         }
 
-        obj.content = result.css;
+        obj.data = result.css;
         return resolve(obj);
       });
   });
@@ -61,10 +61,9 @@ function minify(obj) {
         minifyFontValues: true,
         minifySelectors: true
       })
-  ]).process(obj.content, { from: undefined })
+  ]).process(obj.data, { from: undefined })
     .then(result => {
-      obj.warn = result.warnings();
-      obj.content = result.css;
+      obj.data = result.css;
       resolve(obj);
     })
     .catch(err => {
@@ -75,30 +74,33 @@ function minify(obj) {
 }
 
 /**
+ * Banner
+ */
+
+function addBanner(obj) {
+  obj.data = `/* ${process.env.npm_package_name} v${process.env.npm_package_version} */ ${obj.data}`;
+  return obj;
+}
+
+/**
  * Build
  */
 
-function buildStyle(filename) {
+function buildStyle(entrypoint) {
   return new Promise(async (resolve, reject) => {
-    const obj = {
-      src: `${paths.SRC.styles}${filename}`,
-      dst: `${paths.DST.styles}${path.basename(filename, ".scss")}.v${process.env.npm_package_version}.css`
-    }
-
-    await fs.promises.mkdir(path.dirname(obj.dst), { recursive: true });
+    const src = path.parse(paths.SRC.styles + entrypoint);
+    const dst = path.parse(`${paths.DST.styles}${src.name}.v${process.env.npm_package_version}.css`);
  
     // read and process the file
-    simpleStream.read(obj)
+    new simpleStream(src, dst)
+      .read()
       .then(obj => compile(obj))
       // .then(obj => pp.preprocess(obj.content, paths.locals, { type: "css" }))
       .then(obj => minify(obj))
-      .then(obj => {
-        obj.content = `/* ${process.env.npm_package_name} v${process.env.npm_package_version} */ ${obj.content}`;
-        return obj;
-      })
-      .then(obj => simpleStream.write(obj))
+      .then(obj => addBanner(obj))
+      .then(obj => obj.write())
       .then((obj) => resolve(obj))
-      .catch(obj => reject(obj));
+      .catch(err => reject(err))
   }).catch(err => err); // this catch prevents breaking the Promise.all
 }
 
