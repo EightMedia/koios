@@ -20,16 +20,15 @@ function getFolderList(src) {
  * Bundle 
  */
 
-function bundle(src, dst, babelPresets) {
+function bundle(obj, babelPresets) {
   return new Promise((resolve, reject) => {
-
     webpack(
       {
         mode: process.env.NODE_ENV,
-        entry: path.resolve(process.cwd(), src),
+        entry: path.resolve(process.cwd(), path.format(obj.src)),
         output: {
-          path: path.resolve(process.cwd(), path.dirname(dst)),
-          filename: path.basename(dst)
+          path: path.resolve(process.cwd(), obj.dst.dir),
+          filename: obj.dst.base
         },
         optimization: {
           minimize: true,
@@ -56,14 +55,21 @@ function bundle(src, dst, babelPresets) {
         ]
       },
       (err, stats) => {
-        if (err) reject(err);
+        if (err) {
+          obj.err = err;
+          return reject(obj);
+        }
 
         const info = stats.toJson();
 
-        if (stats.hasErrors()) return reject(new Error(info.errors));
-        if (stats.hasWarnings()) return resolve(info.warnings);
+        if (stats.hasErrors()) {
+          obj.err = new Error(info.errors);
+          return reject(obj);
+        }
 
-        return resolve();
+        if (stats.hasWarnings()) obj.warn = info.warnings;
+
+        return resolve(obj);
       }
     );
   });
@@ -75,18 +81,20 @@ function bundle(src, dst, babelPresets) {
 
 function buildScript(folder) {
   return new Promise(async (resolve, reject) => {
-    const src = `${paths.SRC.scripts}${folder}${path.sep}index.js`;
-    const dst = `${paths.DST.scripts}${folder}.v${process.env.npm_package_version}.js`;
+    const obj = {
+      src: path.parse(`${paths.SRC.scripts}${folder}${path.sep}index.js`),
+      dst: path.parse(`${paths.DST.scripts}${folder}.v${process.env.npm_package_version}.js`)
+    }
     
-    await fs.promises.mkdir(path.dirname(dst), { recursive: true });
+    await fs.promises.mkdir(obj.dst.dir, { recursive: true });
 
     const babelPresets = ["@babel/preset-env"];
     if (folder.substr(0, 5) === "react") babelPresets.push("@babel/preset-react");
 
     // read and process the file
-    bundle(src, dst, babelPresets)
-      .then(() => resolve({ src, dst }))
-      .catch(err => reject({ src, err }));
+    bundle(obj, babelPresets)
+      .then(obj => resolve(obj))
+      .catch(err => reject(err));
   }).catch(err => err); // this catch prevents breaking the Promise.all
 }
 

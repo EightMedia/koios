@@ -4,12 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "clean": "node tasks/run clean",
-    "build:styles": "node tasks/run styles",
-    "build:scripts": "node tasks/run scripts",
-    "build:templates": "node tasks/run templates",
-    "build": "run-s clean build:* --silent",
-    "start": "node tasks/run server"
+    "clean": "NODE_ENV=development node tasks/run clean",
+    "build:styles": "NODE_ENV=development node tasks/run styles",
+    "build:scripts": "NODE_ENV=development node tasks/run scripts",
+    "build:templates": "NODE_ENV=development node tasks/run templates",
+    "build": "NODE_ENV=development run-s clean build:* --silent",
+    "start": "NODE_ENV=development node tasks/run server"
   },
   "author": "hylmar@eight.nl",
   "license": "ISC",
