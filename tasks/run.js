@@ -53,11 +53,12 @@ function run(fn, options) {
         item.err.message = `[${i}/${promises.length}] ${item.src} → ${item.err.message}`;
         logger.error(item.err);
       } else if (item.warn) {
-        const msg = `[${i}/${promises.length}] ${item.dst}`];
+        const msg = [`[${i}/${promises.length}] ${path.format(item.dst)}]`];
         item.warn.forEach(w => msg.push(w));
         logger.warn(msg);
       } else {
-        logger.success(`[${i}/${promises.length}] ${item.dst}`);
+        item.log = item.log || path.format(item.dst);
+        logger.success(`[${i}/${promises.length}] ${item.log}`);
       }
     })
     .then(result => {

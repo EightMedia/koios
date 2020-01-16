@@ -52,14 +52,15 @@ async function getDependencies(filter) {
  * Compile pug into html
  */
 
-function pugToHtml(code, filename) {
+function pugToHtml(obj) {
   return new Promise((resolve, reject) => {
-    pug.render(code, Object.assign(locals, { self: true, filename }), function(
-      err,
-      html
-    ) {
+    pug.render(obj.data, Object.assign(locals, { self: true, filename: path.format(obj.src) }), 
+    (err, html) => {
       if (err) reject(err);
-      else resolve(html);
+      else {
+        obj.data = html;
+        resolve(obj);
+      };
     });
   });
 }
@@ -68,78 +69,93 @@ function pugToHtml(code, filename) {
  * Pug doc parser
  */
 
-function pugdoc(pug, filename) {
-  const pd = getPugdocDocuments(pug, filename, locals);
-  return Promise.resolve(pd[0]);
+function pugdoc(obj) {
+  return new Promise((resolve, reject) => {
+    const component = getPugdocDocuments(obj.data, path.format(obj.src), locals)[0];
+    if (!component) resolve(obj); // silent resolve when pug-doc is empty
+
+    const promises = [writeFragment(component)];
+    if (component.fragments) component.fragments.forEach(fragment => promises.push(writeFragment(fragment)));
+
+    Promise.all(promises)
+      .then((fragments) => {
+        obj.log = path.format(obj.dst) + ` (${fragments.length} fragments)`;
+        resolve(obj)
+      })
+      .catch(err => reject(err));
+  });
 }
 
 /**
- * Write component
+ * Write component fragment
  */
 
-function writeComponent(component) {
-  const filename = slugify(component.meta.name) + ".html";
-  const dst = path.normalize(paths.DST.components + path.sep + filename);
+function writeFragment(fragment) {
   const html = htmlComponent
-    .replace("{{output}}", component.output || "")
-    .replace("{{title}}", component.meta.name);
-  return simpleStream.write(`<!-- ${process.env.npm_package_name} v${process.env.npm_package_version} --> ${html}`, dst).then(() => dst);
+    .replace("{{output}}", fragment.output || "")
+    .replace("{{title}}", fragment.meta.name);
+  
+  const obj = new simpleStream(html, path.parse(paths.DST.components + path.sep + slugify(fragment.meta.name) + ".html"));
+  addBanner(obj);
+  return obj.write();
 }
+
+/**
+ * Check inside which templates folder src resides
+ */
+
+function sourceType(src) {
+  return pathDiff(paths.SRC.templates, src)
+    .split(path.sep)
+    .shift();
+}
+
+
+/**
+ * Add banner
+ */
+
+function addBanner(obj) {
+  obj.data = `<!-- ${process.env.npm_package_name} v${process.env.npm_package_version} --> ${obj.data}`;
+  return obj;
+}
+
 
 /**
  * Compiles source pug to destination html
  */
 
-function build(src) {
+function build(inputPath) {
   const builders = {
     pages: src => {
       return new Promise(async (resolve, reject) => {
-        const dir = path.normalize(
-          paths.DST.pages + path.dirname(pathDiff(paths.SRC.pages, src))
-        );
-        const dst = dir + path.sep + path.basename(src, ".pug") + ".html";
 
-        await fs.promises.mkdir(dir, { recursive: true });
-
-        simpleStream
-          .read(src)
-          .then(pug => pugToHtml(pug, src))
-          .then(
-            html =>
-              `<!-- ${process.env.npm_package_name} v${process.env.npm_package_version} --> ${html}`
-          )
-          .then(html => simpleStream.write(html, dst))
-          .then(() => resolve({ src, dst }))
+        new simpleStream(src, path.parse(paths.DST.pages + pathDiff(paths.SRC.pages, src.dir) + src.name + ".html"))
+          .read()
+          .then(obj => pugToHtml(obj))
+          .then(obj => addBanner(obj))
+          .then(obj => obj.write())
+          .then(obj => resolve(obj))
           .catch(err => reject(err));
       });
     },
 
     components: src => {
       return new Promise(async (resolve, reject) => {
-        await fs.promises.mkdir(paths.DST.components, { recursive: true });
 
-        simpleStream
-          .read(src)
-          .then(pug => pugdoc(pug, src))
-          .then(pd => {
-            if (!pd) return src; // silent resolve when pug-doc is empty
-            const promises = [writeComponent(pd)];
-            if (pd.fragments)
-              pd.fragments.forEach(fragment =>
-                promises.push(writeComponent(fragment))
-              );
-            return Promise.all(promises);
-          })
-          .then(result => resolve({ src , dst: result }))
+        new simpleStream(src, path.parse(paths.DST.components + src.name + ".html"))
+          .read()
+          .then(obj => pugdoc(obj))
+          .then(obj => resolve(obj))
           .catch(err => reject(err));
       });
     }
   };
 
-  // get first foldername inside templates path and use the corresponding builder
-  const type = pathDiff(paths.SRC.templates, src)
-    .split(path.sep)
-    .shift();
+  // get source type and use the corresponding builder
+  const src = path.parse(inputPath);
+  const type = sourceType(src.dir);
+  
   const promise = builders[type]
     ? builders[type](src)
     : Promise.reject(new Error("No builder defined for " + type));
