@@ -111,6 +111,5 @@ function buildStyle(entrypoint) {
 
 exports.default = async function styles(changed) {
   let fileList = changed ? Array.of(pathDiff(paths.SRC.styles, changed).split(path.sep).shift()) : await getFileList(paths.SRC.styles);
-  const promises = fileList.map(file => buildStyle(file));
-  return Promise.resolve(promises);
+  return fileList.map(file => buildStyle(file));
 }

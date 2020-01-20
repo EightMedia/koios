@@ -45,7 +45,7 @@ function run(fn, input) {
   const start = new Date();
 
   const log = logger.scope(task.name);
-  log.pending(`Started at ${format(start)} for`, input || ` ${task.name}`);
+  log.pending(`Started at ${format(start)} for`, input || `${task.name}`);
 
   return task(input).then(promises => {
     return promiseProgress(promises, (i, item) => {
@@ -68,14 +68,13 @@ function run(fn, input) {
       if (errors.length > 0) {
         logger.warn(`Reported ${errors.length} error${errors.length !== 1 ? "s" : ""}`);
       }
-
+    })
+    .catch(err => reject(err))
+    .finally(() => {
       const end = new Date();
       const time = convertMs(end.getTime() - start.getTime());
       log.complete(`Finished after ${time}`);
-
-      return;
-    })
-    .catch(err => reject(err));
+    });
   });
 }
 

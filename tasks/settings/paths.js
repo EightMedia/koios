@@ -22,6 +22,9 @@ paths.DST.scripts = `${paths.DST.assets}js${S}`;
 paths.DST.pages = `${paths.DST.root}`;
 paths.DST.components = `${paths.DST.root}components${S}`;
 
+// Static items
+paths.DST.static = `${paths.DST.root}static${S}`;
+
 paths.locals = {
   CSS_URL: "/assets/css/",
   JS_URL: "/assets/js/",

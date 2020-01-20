@@ -105,6 +105,5 @@ function buildScript(folder) {
 
 exports.default = async function scripts(changed) {
   let folderList = changed ? Array.of(pathDiff(paths.SRC.scripts, changed).split(path.sep).shift()) : await getFolderList(paths.SRC.scripts);
-  const promises = folderList.map(folder => buildScript(folder));
-  return Promise.resolve(promises);
+  return folderList.map(folder => buildScript(folder));
 }

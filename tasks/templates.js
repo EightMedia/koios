@@ -197,5 +197,5 @@ exports.default = async function templates(changed) {
     fileList.forEach(file => promises.push(build(file)));
   }
 
-  return Promise.resolve(promises);
+  return promises;
 }
