@@ -6,11 +6,16 @@ const pathDiff = require("./utils/path-diff");
 const slugify = require("./utils/slugify");
 const simpleStream = require("./utils/simple-stream");
 
+const chalk = require("chalk");
 const path = require("path");
 const glob = require("glob-all");
 const pug = require("pug");
 const { getPugdocDocuments } = require("./utils/pugdoc-parser");
 const resolveDependencies = require("pug-dependencies");
+const pa11y = require("pa11y");
+
+const puppeteer = require("puppeteer");
+const checkA11y = process.argv.includes("-a11y");
 
 /**
  * Get file list in a Glob manner
@@ -103,15 +108,30 @@ function writeFragment(fragment) {
 }
 
 /**
- * Check inside which templates folder src resides
+ * Check accessibility
  */
 
-function sourceType(src) {
-  return pathDiff(paths.SRC.templates, src)
-    .split(path.sep)
-    .shift();
-}
+async function a11y(obj) {
+  if (!checkA11y) return obj;
 
+  const a11yPage = await a11yBrowser.newPage();
+
+  return pa11y(`http://localhost:8000${path.sep}` + pathDiff(paths.DST.pages, path.format(obj.dst)), 
+    { browser: a11yBrowser, page: a11yPage })
+    .then(report => {
+      if (report) {
+        obj.log = { type: "warn", msg: `${path.format(obj.dst)} is compiled, but contains some a11y issues:`, verbose: [] }
+        report.issues.forEach(issue => {
+          obj.log.verbose.push(`${issue.code}\n    ${chalk.grey(`${issue.message}\n    ${issue.context}`)}`);
+        })
+      }
+      return obj;
+    })
+    .catch(err => {
+      obj.err = err;
+      return obj;
+    });
+}
 
 /**
  * Add banner
@@ -120,6 +140,16 @@ function sourceType(src) {
 function addBanner(obj) {
   obj.data = `<!-- ${process.env.npm_package_name} v${process.env.npm_package_version} --> ${obj.data}\n`;
   return obj;
+}
+
+/**
+ * Check inside which templates folder src resides
+ */
+
+function sourceType(src) {
+  return pathDiff(paths.SRC.templates, src)
+    .split(path.sep)
+    .shift();
 }
 
 /**
@@ -134,6 +164,7 @@ function build(inputPath) {
         new simpleStream(src, path.parse(paths.DST.pages + pathDiff(paths.SRC.pages, src.dir) + src.name + ".html"))
           .read()
           .then(obj => pugToHtml(obj))
+          .then(obj => a11y(obj))
           .then(obj => addBanner(obj))
           .then(obj => obj.write())
           .then(obj => resolve(obj))
@@ -179,6 +210,7 @@ exports.default = async function templates(changed) {
 
   // only process the changed file or process all templates
   if (changed) {
+    if (checkA11y) a11yBrowser = await puppeteer.launch({ ignoreHTTPSErrors: true });
     promises.push(build(changed));
     const dependencies = await getDependencies(changed);
     if (dependencies.length > 0)

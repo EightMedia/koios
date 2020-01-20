@@ -52,14 +52,14 @@ function run(fn, input) {
       if (item.err) {
         item.err.message = `[${i}/${promises.length}] ${path.format(item.src)} → ${item.err.message}`;
         logger.error(item.err);
-      } else if (item.warn) {
-        const msg = [`[${i}/${promises.length}] ${path.format(item.dst)}]`];
-        item.warn.forEach(w => msg.push(w));
-        logger.warn(msg);
       } else {
         item.log = item.log || path.format(item.dst);
         if (typeof item.log === "string") item.log = { type: "success", msg: item.log };
         logger[item.log.type](`[${i}/${promises.length}] ${item.log.msg}`);
+
+        if (item.log.verbose) {
+          item.log.verbose.forEach(issue => console.log(`  ${issue}`));
+        }
       }
     })
     .then(result => {
