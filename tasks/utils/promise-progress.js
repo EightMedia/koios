@@ -8,7 +8,7 @@ module.exports = function(promises, cb) {
     p.then((item) => {
       i++;
       cb(i, item);
-    });
+    }).catch(err => err);
   }
   return Promise.all(promises);
 }

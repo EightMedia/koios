@@ -36,6 +36,7 @@
     "pug-doc": "^2.15.0",
     "puppeteer": "^2.0.0",
     "signale": "^1.4.0",
+    "stylelint": "^13.0.0",
     "terser-webpack-plugin": "^2.3.2",
     "webpack": "^4.41.5"
   },

@@ -9,6 +9,7 @@ const pp = require("preprocess");
 const postcss = require("postcss");
 const autoprefixer = require("autoprefixer");
 const cssnano = require("cssnano");
+const stylelint = require("stylelint");
 
 /**
  * Get folder list (check for directories and return array of names)
@@ -16,6 +17,26 @@ const cssnano = require("cssnano");
 
 function getFileList(src) {
   return fs.promises.readdir(src, { withFileTypes: true }).then(items => items.filter(item => { return !item.isDirectory() & item.name.charAt(0) !== "." }).map(item => item.name));
+}
+
+/**
+ * Lint
+ */
+
+function lint(obj) {
+  return new Promise((resolve, reject) => {
+    stylelint.lint({
+      code: obj.data,
+      codeFilename: path.format(obj.src),
+      syntax: "scss"
+    }).then((result) => {
+      obj.log = { type: "warn", msg: "Linter warnings", verbose: [result.output] };
+      resolve(obj);
+    }).catch((err) => {
+      obj.err = err;
+      reject(err);
+    });
+  });
 }
 
 /**
@@ -32,11 +53,11 @@ function compile(obj) {
       (err, result) => {
         if (err) {
           obj.err = err;
-          return reject(obj); 
+          reject(obj); 
         }
 
         obj.data = result.css;
-        return resolve(obj);
+        resolve(obj);
       });
   });
 }
@@ -94,12 +115,12 @@ function buildStyle(entrypoint) {
     // read and process the file
     new simpleStream(src, dst)
       .read()
+      .then(obj => lint(obj))
       .then(obj => compile(obj))
-      // .then(obj => pp.preprocess(obj.content, paths.locals, { type: "css" }))
       .then(obj => minify(obj))
       .then(obj => addBanner(obj))
       .then(obj => obj.write())
-      .then((obj) => resolve(obj))
+      .then(obj => resolve(obj))
       .catch(err => reject(err))
   }).catch(err => err); // this catch prevents breaking the Promise.all
 }
