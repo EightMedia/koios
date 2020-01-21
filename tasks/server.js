@@ -11,6 +11,13 @@ const chokidar = require("chokidar");
 
 function server() {
   return new Promise(function(resolve, reject) {
+    const chokidarOptions = {
+      awaitWriteFinish: {
+        stabilityThreshold: 500,
+        pollInterval: 100
+      }
+    };
+
     /**
      * Run BrowserSync
      */
@@ -21,6 +28,7 @@ function server() {
         directory: true
       },
       files: [paths.DST.pages, paths.DST.styles, paths.DST.scripts],
+      watchOptions: chokidarOptions,
       notify: false,
       port: 8000,
       open: false
@@ -36,11 +44,14 @@ function server() {
       pug: require(`./templates.js`).default
     };
 
-    const watcher = chokidar.watch([
-      `${paths.SRC.styles}**/*.scss`,
-      `${paths.SRC.scripts}**/*.js`,
-      `${paths.SRC.templates}**/*.pug`,
-    ]);
+    const watcher = chokidar.watch(
+      [
+        `${paths.SRC.styles}**/*.scss`,
+        `${paths.SRC.scripts}**/*.js`,
+        `${paths.SRC.templates}**/*.pug`
+      ],
+      chokidarOptions
+    );
 
     watcher.on("change", function(file) {
       const ext = path.extname(file).substr(1);

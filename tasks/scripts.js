@@ -9,11 +9,17 @@ const webpack = require("webpack");
 const TerserPlugin = require("terser-webpack-plugin");
 
 /**
- * Get folder list (check for directories and return array of names)
+ * Return list of folders inside src (skip names starting with "_")
  */
 
 function getFolderList(src) {
-  return fs.promises.readdir(src, { withFileTypes: true }).then(items => items.filter(item => { return item.isDirectory() }).map(item => item.name));
+  return fs.promises.readdir(src, { withFileTypes: true }).then(items =>
+    items
+      .filter(item => {
+        return item.isDirectory() && item.name.charAt(0) != "_";
+      })
+      .map(item => item.name)
+  );
 }
 
 /**

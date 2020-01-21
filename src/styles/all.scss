@@ -4,20 +4,20 @@
  * Libs
  */
 
-@import "./lib/normalize";
-@import "./lib/reset";
-@import "./lib/breakpoint";
-@import "./lib/scrollbar";
-@import "./lib/hyphens";
-@import "./lib/quantity-queries";
-@import "./lib/sqrt";
+@import "lib/normalize";
+@import "lib/reset";
+@import "lib/breakpoint";
+@import "lib/scrollbar";
+@import "lib/hyphens";
+@import "lib/quantity-queries";
+@import "lib/sqrt";
 
 /**
 * Third party
 */
 
-@import "./lib/photoswipe";
-@import "./lib/video-js/video-js";
+@import "lib/photoswipe";
+@import "lib/video-js/video-js";
 
 /**
  * Global

@@ -7,8 +7,8 @@ module.exports = function(promises, cb) {
   for (const p of promises) {
     p.then((item) => {
       i++;
-      cb(i, item);
-    }).catch(err => err);
+      return cb(i, item);
+    }).catch(err => err); // Shuts up UnhandledPromiseRejectionWarning, but keeps you in the dark
   }
   return Promise.all(promises);
 }

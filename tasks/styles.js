@@ -1,18 +1,20 @@
 const paths = require("./settings/paths");
 
 const simpleStream = require("./utils/simple-stream");
+const pathDiff = require("./utils/path-diff");
 
 const fs = require('fs');
 const path = require("path");
+const chalk = require("chalk");
 const sass = require("node-sass");
-const pp = require("preprocess");
+const sassGraph = require("sass-graph");
 const postcss = require("postcss");
 const autoprefixer = require("autoprefixer");
 const cssnano = require("cssnano");
 const stylelint = require("stylelint");
 
 /**
- * Get folder list (check for directories and return array of names)
+ * Return list of folders files inside src (skip names starting with ".")
  */
 
 function getFileList(src) {
@@ -25,17 +27,37 @@ function getFileList(src) {
 
 function lint(obj) {
   return new Promise((resolve, reject) => {
-    stylelint.lint({
-      code: obj.data,
-      codeFilename: path.format(obj.src),
-      syntax: "scss"
-    }).then((result) => {
-      obj.log = { type: "warn", msg: "Linter warnings", verbose: [result.output] };
-      resolve(obj);
-    }).catch((err) => {
-      obj.err = err;
-      reject(err);
-    });
+    stylelint
+      .lint({
+        syntax: "scss",
+        files: obj.changed || `${path.dirname(path.format(obj.src))}${path.sep}**/*.scss`,
+        formatter: (result, retval) => {
+          retval.logs = [];
+          result.forEach(file => {
+            file.warnings.forEach(issue =>
+              retval.logs.push(
+                `${pathDiff(file.source, process.cwd())} [${issue.line}:${issue.column}]\n  ${chalk.grey(issue.text)}`
+              )
+            );
+          });
+          return retval;
+        }
+      })
+      .then(result => {
+        if (result.logs.length > 0) {
+          obj.log = {
+            type: "warn",
+            scope: "linter",
+            msg: `Found ${result.logs.length} issues concerning ${path.format(obj.dst)}:`,
+            verbose: result.logs
+          };
+        }
+        return resolve(obj);
+      })
+      .catch(err => {
+        obj.err = err;
+        return reject(err);
+      });
   });
 }
 
@@ -45,20 +67,22 @@ function lint(obj) {
 
 function compile(obj) {
   return new Promise((resolve, reject) => {
-    sass.render({
-      data: obj.data,
-      outputStyle: "expanded",
-      includePaths: [paths.SRC.styles]
-    },
+    sass.render(
+      {
+        data: obj.data,
+        outputStyle: "expanded",
+        includePaths: [path.dirname(path.format(obj.src))]
+      },
       (err, result) => {
         if (err) {
           obj.err = err;
-          reject(obj); 
+          return reject(obj);
         }
 
         obj.data = result.css;
-        resolve(obj);
-      });
+        return resolve(obj);
+      }
+    );
   });
 }
 
@@ -73,24 +97,29 @@ function minify(obj) {
         cascade: false
       }),
       cssnano({
-        zindex: false,
-        discardComments: {
-          removeAll: true
-        },
-        discardDuplicates: true,
-        discardEmpty: true,
-        minifyFontValues: true,
-        minifySelectors: true
+        preset: [
+          "default",
+          {
+            discardComments: {
+              removeAll: true
+            },
+            discardDuplicates: true,
+            discardEmpty: true,
+            minifyFontValues: true,
+            minifySelectors: true
+          }
+        ]
       })
-  ]).process(obj.data, { from: undefined })
-    .then(result => {
-      obj.data = result.css;
-      resolve(obj);
-    })
-    .catch(err => {
-      obj.err = err;
-      reject(obj);
-    });
+    ])
+      .process(obj.data, { from: undefined })
+      .then(result => {
+        obj.data = result.css;
+        resolve(obj);
+      })
+      .catch(err => {
+        obj.err = err;
+        reject(obj);
+      });
   });
 }
 
@@ -107,13 +136,13 @@ function addBanner(obj) {
  * Build
  */
 
-function buildStyle(entrypoint) {
+function buildStyle(entry, changed) {
   return new Promise(async (resolve, reject) => {
-    const src = path.parse(paths.SRC.styles + entrypoint);
+    const src = path.parse(`${paths.SRC.styles}${entry}`);
     const dst = path.parse(`${paths.DST.styles}${src.name}.v${process.env.npm_package_version}.css`);
- 
+
     // read and process the file
-    new simpleStream(src, dst)
+    new simpleStream(src, dst, changed)
       .read()
       .then(obj => lint(obj))
       .then(obj => compile(obj))
@@ -131,6 +160,18 @@ function buildStyle(entrypoint) {
  */
 
 exports.default = async function styles(changed) {
-  let fileList = changed ? Array.of(pathDiff(paths.SRC.styles, changed).split(path.sep).shift()) : await getFileList(paths.SRC.styles);
-  return fileList.map(file => buildStyle(file));
+  const entries = await getFileList(paths.SRC.styles);
+  const promises = [];
+
+  entries.forEach(entry => {
+    if (changed) {
+      // only build this entry if the changed file is a dependency
+      const dependencies = sassGraph.parseFile(paths.SRC.styles + entry);
+      if (!dependencies.index[process.cwd() + path.sep + changed]) return;
+    }
+
+    promises.push(buildStyle(entry, changed));
+  });
+
+  return promises;
 }
