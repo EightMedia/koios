@@ -41,7 +41,7 @@ function lint(obj) {
           obj.log = {
             type: "warn",
             scope: "linter",
-            msg: `Found ${result.logs.length} issues concerning ${obj.destination.base}:`,
+            msg: `Found ${result.logs.length} issues concerning ${pathDiff(process.cwd(), obj.destination)}:`,
             verbose: result.logs
           };
         }
