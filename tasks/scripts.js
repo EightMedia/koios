@@ -92,7 +92,7 @@ exports.default = async function scripts(changed) {
 
   entries.forEach(entry => {
     const source = path.resolve(entry);
-    const destination = path.resolve(paths.DST.scripts, `${path.basename(entry)}.v${process.env.npm_package_version}.js`);
+    const destination = path.resolve(paths.DST.scripts, `${path.basename(entry, ".js")}.v${process.env.npm_package_version}.js`);
     const obj = new FileObject(source, destination, changed);
     promises.push(buildScript(obj));
   });

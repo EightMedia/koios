@@ -25,11 +25,9 @@ function pugToHtml(obj) {
   return new Promise((resolve, reject) => {
     pug.render(obj.data, Object.assign(locals, { self: true, filename: obj.source }), 
     (err, html) => {
-      if (err) reject(err);
-      else {
-        obj.data = html;
-        resolve(obj);
-      };
+      if (err) return reject(err);
+      obj.data = html;
+      return resolve(obj);
     });
   });
 }

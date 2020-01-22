@@ -158,7 +158,7 @@ exports.default = async function styles(changed) {
   
   entries.forEach(entry => {
     const source = path.resolve(entry);
-    const destination = path.resolve(paths.DST.styles, `${path.basename(entry)}.v${process.env.npm_package_version}.css`);
+    const destination = path.resolve(paths.DST.styles, `${path.basename(entry, ".scss")}.v${process.env.npm_package_version}.css`);
     const dependencies = sassGraph.parseFile(source).index[source].imports;
     
     // skip this entry if a changed file is given which isn't imported by entry
