@@ -8,7 +8,7 @@ const finished = util.promisify(stream.finished);
 
 module.exports = class obj {
 
-  constructor(src, dst, changed) {
+  constructor(src, dst, changed, dependencies) {
     // if src isn't a path object then we assume it contains data
     if (typeof src === "object") this.src = src;
     else this.data = src;
@@ -17,6 +17,7 @@ module.exports = class obj {
     this.mkdst();
 
     this.changed = changed || null;
+    this.dependencies = dependencies || null;
 
     return this;
   }

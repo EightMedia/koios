@@ -30,7 +30,7 @@ function lint(obj) {
     stylelint
       .lint({
         syntax: "scss",
-        files: obj.changed || `${path.dirname(path.format(obj.src))}${path.sep}**/*.scss`,
+        files: obj.changed || obj.dependencies,
         formatter: (result, retval) => {
           retval.logs = [];
           result.forEach(file => {
@@ -48,7 +48,7 @@ function lint(obj) {
           obj.log = {
             type: "warn",
             scope: "linter",
-            msg: `Found ${result.logs.length} issues concerning ${path.format(obj.dst)}:`,
+            msg: `Found ${result.logs.length} issues concerning ${obj.dst.base}:`,
             verbose: result.logs
           };
         }
@@ -136,14 +136,9 @@ function addBanner(obj) {
  * Build
  */
 
-function buildStyle(entry, changed) {
+function buildStyle(obj) {
   return new Promise(async (resolve, reject) => {
-    const src = path.parse(`${paths.SRC.styles}${entry}`);
-    const dst = path.parse(`${paths.DST.styles}${src.name}.v${process.env.npm_package_version}.css`);
-
-    // read and process the file
-    new simpleStream(src, dst, changed)
-      .read()
+    obj.read()
       .then(obj => lint(obj))
       .then(obj => compile(obj))
       .then(obj => minify(obj))
@@ -160,17 +155,21 @@ function buildStyle(entry, changed) {
  */
 
 exports.default = async function styles(changed) {
+  changed = changed ? path.resolve(process.cwd(), changed) : null;
   const entries = await getFileList(paths.SRC.styles);
   const promises = [];
-
+  
   entries.forEach(entry => {
-    if (changed) {
-      // only build this entry if the changed file is a dependency
-      const dependencies = sassGraph.parseFile(paths.SRC.styles + entry);
-      if (!dependencies.index[process.cwd() + path.sep + changed]) return;
-    }
+    const src = path.parse(path.resolve(paths.SRC.styles, entry));
+    const dst = path.parse(path.resolve(paths.DST.styles, `${src.name}.v${process.env.npm_package_version}.css`));
+    const dependencies = sassGraph.parseFile(path.format(src)).index[path.format(src)].imports;
+    
+    // skip this entry if a changed file is given and when it's not a dependency
+    if (changed && !dependencies.includes(changed)) return;
 
-    promises.push(buildStyle(entry, changed));
+    const obj = new simpleStream(src, dst, changed, dependencies);
+
+    promises.push(buildStyle(obj));
   });
 
   return promises;
