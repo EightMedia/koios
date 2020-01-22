@@ -1,29 +1,14 @@
 const paths = require("./settings/paths");
 
-const pathDiff = require("./utils/path-diff");
+const FileObject = require("./utils/file-object");
 
-const fs = require("fs");
 const path = require("path");
-
+const globby = require("globby");
 const webpack = require("webpack");
 const TerserPlugin = require("terser-webpack-plugin");
 
 /**
- * Return list of folders inside src (skip names starting with "_")
- */
-
-function getFolderList(src) {
-  return fs.promises.readdir(src, { withFileTypes: true }).then(items =>
-    items
-      .filter(item => {
-        return item.isDirectory() && item.name.charAt(0) != "_";
-      })
-      .map(item => item.name)
-  );
-}
-
-/**
- * Bundle 
+ * Bundle
  */
 
 function bundle(obj, babelPresets) {
@@ -31,10 +16,10 @@ function bundle(obj, babelPresets) {
     webpack(
       {
         mode: process.env.NODE_ENV,
-        entry: path.resolve(process.cwd(), path.format(obj.src)),
+        entry: obj.source,
         output: {
-          path: path.resolve(process.cwd(), obj.dst.dir),
-          filename: obj.dst.base
+          path: obj.destination.dir,
+          filename: obj.destination.base
         },
         optimization: {
           minimize: true,
@@ -73,8 +58,6 @@ function bundle(obj, babelPresets) {
           return reject(obj);
         }
 
-        if (stats.hasWarnings()) obj.warn = info.warnings;
-
         return resolve(obj);
       }
     );
@@ -85,17 +68,10 @@ function bundle(obj, babelPresets) {
  * Build
  */
 
-function buildScript(folder) {
+function buildScript(obj) {
   return new Promise(async (resolve, reject) => {
-    const obj = {
-      src: path.parse(`${paths.SRC.scripts}${folder}${path.sep}index.js`),
-      dst: path.parse(`${paths.DST.scripts}${folder}.v${process.env.npm_package_version}.js`)
-    }
-    
-    await fs.promises.mkdir(obj.dst.dir, { recursive: true });
-
     const babelPresets = ["@babel/preset-env"];
-    if (folder.substr(0, 5) === "react") babelPresets.push("@babel/preset-react");
+    if (path.basename(obj.source).substr(0, 5) === "react") babelPresets.push("@babel/preset-react");
 
     // read and process the file
     bundle(obj, babelPresets)
@@ -110,6 +86,16 @@ function buildScript(folder) {
  */
 
 exports.default = async function scripts(changed) {
-  let folderList = changed ? Array.of(pathDiff(paths.SRC.scripts, changed).split(path.sep).shift()) : await getFolderList(paths.SRC.scripts);
-  return folderList.map(folder => buildScript(folder));
+  changed = changed ? path.resolve(process.cwd(), changed) : null;
+  const entries = await globby(paths.SRC.scripts + "*.js");
+  const promises = [];
+
+  entries.forEach(entry => {
+    const source = path.resolve(entry);
+    const destination = path.resolve(paths.DST.scripts, `${path.basename(entry)}.v${process.env.npm_package_version}.js`);
+    const obj = new FileObject(source, destination, changed);
+    promises.push(buildScript(obj));
+  });
+
+  return promises;
 }

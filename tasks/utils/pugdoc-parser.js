@@ -215,16 +215,16 @@ function getExamples(meta) {
  * Compile Pug
  */
 
-function compilePug(src, meta, filename, locals) {
-  var newSrc = [src];
+function compilePug(source, meta, filename, locals) {
+  var newSrc = [source];
 
   // add example calls
   getExamples(meta).forEach(function (example, i) {
     // append to pug if it's a mixin example
-    if (MIXIN_NAME_REGEX.test(src)) {
+    if (MIXIN_NAME_REGEX.test(source)) {
       newSrc.push(example);
 
-      // replace example block with src
+      // replace example block with source
     } else {
       if (i === 0) {
         newSrc = [];
@@ -234,7 +234,7 @@ function compilePug(src, meta, filename, locals) {
       lines.forEach(function (line) {
         if (line.trim() === EXAMPLE_BLOCK) {
           var indent = detectIndent(line).indent.length;
-          line = rebaseIndent(src.split("\n"), indent).join("\n");
+          line = rebaseIndent(source.split("\n"), indent).join("\n");
         }
         newSrc.push(line);
       });

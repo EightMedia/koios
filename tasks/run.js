@@ -1,6 +1,7 @@
 const { Signale } = require("signale");
 const logger = new Signale();
 const promiseProgress = require("./utils/promise-progress");
+const pathDiff = require("./utils/path-diff");
 const path = require("path");
 
 /**
@@ -50,13 +51,13 @@ function run(fn, input) {
   return task(input).then(promises => {
     return promiseProgress(promises, (i, item) => {
       if (item instanceof Error) throw item;
-      if (!item.src || !item.dst) throw new Error("Received obj without src and/or dst.");
+      if (!item.source || !item.destination) throw new Error("Received obj without source and/or destination.");
 
       if (item.err) {
-        item.err.message = `[${i}/${promises.length}] ${path.format(item.src)} → ${item.err.message}`;
+        item.err.message = `[${i}/${promises.length}] ${pathDiff(process.cwd(), item.source)} → ${item.err.message}`;
         log.error(item.err);
       } else {
-        item.log = item.log || (item.dst ? path.format(item.dst) : path.format(item.src));
+        item.log = item.log || (item.destination ? pathDiff(process.cwd(), item.destination) : pathDiff(process.cwd(), item.source));
         if (typeof item.log === "string") item.log = { type: "success", msg: item.log };
         log[item.log.type](`[${i}/${promises.length}] ${item.log.msg}`);
 

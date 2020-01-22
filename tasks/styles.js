@@ -1,9 +1,9 @@
 const paths = require("./settings/paths");
 
-const simpleStream = require("./utils/simple-stream");
+const fileObject = require("./utils/file-object");
 const pathDiff = require("./utils/path-diff");
 
-const fs = require('fs');
+const globby = require("globby");
 const path = require("path");
 const chalk = require("chalk");
 const sass = require("node-sass");
@@ -12,14 +12,7 @@ const postcss = require("postcss");
 const autoprefixer = require("autoprefixer");
 const cssnano = require("cssnano");
 const stylelint = require("stylelint");
-
-/**
- * Return list of folders files inside src (skip names starting with ".")
- */
-
-function getFileList(src) {
-  return fs.promises.readdir(src, { withFileTypes: true }).then(items => items.filter(item => { return !item.isDirectory() & item.name.charAt(0) !== "." }).map(item => item.name));
-}
+const preprocess = require("preprocess").preprocess;
 
 /**
  * Lint
@@ -48,7 +41,7 @@ function lint(obj) {
           obj.log = {
             type: "warn",
             scope: "linter",
-            msg: `Found ${result.logs.length} issues concerning ${obj.dst.base}:`,
+            msg: `Found ${result.logs.length} issues concerning ${obj.destination.base}:`,
             verbose: result.logs
           };
         }
@@ -71,7 +64,7 @@ function compile(obj) {
       {
         data: obj.data,
         outputStyle: "expanded",
-        includePaths: [path.dirname(path.format(obj.src))]
+        includePaths: [path.dirname(obj.source)]
       },
       (err, result) => {
         if (err) {
@@ -141,6 +134,10 @@ function buildStyle(obj) {
     obj.read()
       .then(obj => lint(obj))
       .then(obj => compile(obj))
+      .then(obj => {
+        obj.data = preprocess(obj.data, paths.locals, "css");
+        return obj;
+      })
       .then(obj => minify(obj))
       .then(obj => addBanner(obj))
       .then(obj => obj.write())
@@ -156,18 +153,18 @@ function buildStyle(obj) {
 
 exports.default = async function styles(changed) {
   changed = changed ? path.resolve(process.cwd(), changed) : null;
-  const entries = await getFileList(paths.SRC.styles);
+  const entries = await globby(paths.SRC.styles + "*.scss");
   const promises = [];
   
   entries.forEach(entry => {
-    const src = path.parse(path.resolve(paths.SRC.styles, entry));
-    const dst = path.parse(path.resolve(paths.DST.styles, `${src.name}.v${process.env.npm_package_version}.css`));
-    const dependencies = sassGraph.parseFile(path.format(src)).index[path.format(src)].imports;
+    const source = path.resolve(entry);
+    const destination = path.resolve(paths.DST.styles, `${path.basename(entry)}.v${process.env.npm_package_version}.css`);
+    const dependencies = sassGraph.parseFile(source).index[source].imports;
     
-    // skip this entry if a changed file is given and when it's not a dependency
+    // skip this entry if a changed file is given which isn't imported by entry
     if (changed && !dependencies.includes(changed)) return;
 
-    const obj = new simpleStream(src, dst, changed, dependencies);
+    const obj = new fileObject(source, destination, changed, dependencies);
 
     promises.push(buildStyle(obj));
   });

@@ -8,6 +8,6 @@ if (vacancies) {
   if (!data) {
     console.log("No data found for ReactVacancies.");
   } else {
-    require("./vacancies").default(vacancies, data);
+    require("./react-vacancies/vacancies").default(vacancies, data);
   }
 }

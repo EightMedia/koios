@@ -1,8 +1,8 @@
 const S = require("path").sep;
 
 const paths = {
-  SRC: { root: `src${S}` },
-  DST: { root: `dst${S}` }
+  SRC: { root: `source${S}` },
+  DST: { root: `build${S}` }
 };
 
 // Source paths
@@ -21,6 +21,7 @@ paths.DST.scripts = `${paths.DST.assets}js${S}`;
 
 paths.DST.pages = `${paths.DST.root}`;
 paths.DST.components = `${paths.DST.root}components${S}`;
+paths.DST.icons = paths.DST.components;
 
 // Static items
 paths.DST.static = `${paths.DST.root}static${S}`;

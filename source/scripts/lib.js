@@ -20,8 +20,8 @@ require("classlist-polyfill");
 require("track-focus");
 require("what-input");
 require("whatwg-fetch");
-require("./ie-version");
-require("./object-fit");
+require("./lib/ie-version");
+require("./lib/object-fit");
 window.PhotoSwipe = require("photoswipe/dist/photoswipe");
 window.PhotoSwipeUI_Default = require("photoswipe/dist/photoswipe-ui-default");
 
