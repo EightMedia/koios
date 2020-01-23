@@ -24,6 +24,12 @@ function lint(obj) {
       .lint({
         syntax: "scss",
         files: obj.changed || obj.dependencies,
+        config: {
+          "extends": "stylelint-config-recommended-scss",
+          "rules": {
+            "no-descending-specificity": null
+          }
+        },
         formatter: (result, retval) => {
           retval.logs = [];
           result.forEach(file => {
@@ -159,12 +165,12 @@ exports.default = async function styles(changed) {
   entries.forEach(entry => {
     const source = path.resolve(entry);
     const destination = path.resolve(paths.DST.styles, `${path.basename(entry, ".scss")}.v${process.env.npm_package_version}.css`);
-    const dependencies = sassGraph.parseFile(source).index[source].imports;
+    const children = sassGraph.parseFile(source).index[source].imports;
     
     // skip this entry if a changed file is given which isn't imported by entry
-    if (changed && !dependencies.includes(changed)) return;
+    if (changed && !children.includes(changed)) return;
 
-    const obj = new fileObject(source, destination, changed, dependencies);
+    const obj = new fileObject(source, destination, changed, children);
 
     promises.push(buildStyle(obj));
   });

@@ -3,6 +3,7 @@ const paths = require("./settings/paths");
 const FileObject = require("./utils/file-object");
 const pathDiff = require("./utils/path-diff");
 
+const fs = require("fs");
 const path = require("path");
 const globby = require("globby");
 const chalk = require("chalk");
@@ -15,36 +16,41 @@ const esprima = require("esprima");
  * Gather imports from js file
  */
 
-function gatherImports(code) {
+function gatherLocalImports(source) {
+  const code = fs.readFileSync(source, "utf8");
+
   const tree = esprima.parse(code, {
     sourceType: "module"
   });
 
   const imports = [];
 
+  console.log(chalk.blue(source));
+
   tree.body.forEach(s => {
-    if (s.type === "ExpressionStatement" &&
-        s.expression.type === "CallExpression" &&
-        s.expression.callee.name === "require" && 
-        s.expression.callee.arguments)
-      {
-        return imports.push(s.expression.callee.arguments[0].value);
-      }
+    if (s.type === "ExpressionStatement" && 
+        s.expression.callee &&
+        s.expression.callee.name === "require")
+      return imports.push(s.expression.arguments[0].value);
 
-    if (s.type === "ImportDeclaration") return imports.push(s.source.value);
-    
-    // if (s.type === "VariableDeclaration") {
-    //   return s.declarations.forEach(d => {
-    //     console.log(d);
-    //   })
-    // }
+    if (s.type === "ExpressionStatement")
+      return imports.push(s.expression);
 
-    return imports.push(s.type);
+    if (s.type === "ImportDeclaration") 
+      return imports.push(s.source.value);
+
+    console.log(s);
+
+    return;
   });
+  
+  const localImports = imports.filter(item => typeof item === "string" && item.charAt(0) === ".").map(item => path.resolve(paths.SRC.scripts, item) + ".js");
 
-  console.log(imports);
+  if (localImports.length === 0) return;
 
-  return imports;
+  return localImports.map(item => {
+    return { path: item, children: gatherLocalImports(item) };
+  });
 }
 
 /**
@@ -53,31 +59,26 @@ function gatherImports(code) {
 
 function lint(obj) {
   return new Promise((resolve, reject) => {
-    // const report = new eslint({
-    //   envs: ["browser", "mocha"],
-    //   useEslintrc: false,
-    //   rules: {
-    //     semi: 2
-    //   }
-    // }).executeOnFiles(obj.changed || obj.dependencies)
+    const report = new eslint({ parser: "babel-eslint" }).executeOnFiles(obj.changed || obj.dependencies)
 
-    // const l = [];
+    const issues = [];
 
-    // m.forEach(issue =>
-    //   l.push(
-    //     `${pathDiff(obj.source, process.cwd())} [${issue.line}:${issue.column}]\n  
-    //     ${chalk.grey(issue.message)}`
-    //   )
-    // );
+    report.results.forEach(issue => {
+      if (issue.errorCount === 0 && issue.warningCount === 0) return;
+      issues.push(issue);
+    });
 
-    // if (l.length > 0) {
-    //   obj.log = {
-    //     type: "warn",
-    //     scope: "linter",
-    //     msg: `Found ${l.length} issues concerning ${pathDiff(process.cwd(), obj.destination)}:`,
-    //     verbose: l
-    //   };
-    // }
+    if (issues.length > 0) {
+      obj.log = {
+        type: "warn",
+        scope: "linter",
+        msg: `Found ${issues.length} issues concerning ${pathDiff(
+          process.cwd(),
+          obj.destination
+        )}:`,
+        verbose: issues
+      };
+    }
 
     return resolve(obj);
   })
@@ -171,12 +172,12 @@ exports.default = async function scripts(changed) {
   entries.forEach(entry => {
     const source = path.resolve(entry);
     const destination = path.resolve(paths.DST.scripts, `${path.basename(entry, ".js")}.v${process.env.npm_package_version}.js`);
-    const obj = new FileObject(source, destination, changed);
-    
-    obj.read().then((obj) => {
-      obj.dependencies = gatherImports(obj.data);
-    })
+    const children = gatherLocalImports(source);
 
+    // skip this entry if a changed file is given which isn't imported by entry
+    if (changed && !children.includes(changed)) return;
+
+    const obj = new FileObject(source, destination, changed, children);
 
     promises.push(buildScript(obj));
   });

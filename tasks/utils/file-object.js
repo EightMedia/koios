@@ -7,20 +7,21 @@ const stream = require("stream");
 // const finished = util.promisify(stream.finished);
 
 module.exports = class obj {
-
-  constructor(source, destination, changed, dependencies) {
+  constructor(source, destination, changed, children) {
     this.source = source;
     this.destination = destination;
     this.mkdestination();
 
     this.changed = changed || null;
-    this.dependencies = dependencies || null;
+    this.children = children || null;
 
     return this;
   }
-  
+
   async mkdestination() {
-    return await fs.promises.mkdir(path.dirname(this.destination), { recursive: true });
+    return await fs.promises.mkdir(path.dirname(this.destination), {
+      recursive: true
+    });
   }
 
   /**
@@ -44,7 +45,7 @@ module.exports = class obj {
   }
 
   /**
-   * Write 
+   * Write
    */
 
   async write() {
@@ -62,12 +63,12 @@ module.exports = class obj {
     // // wait until writing is done
     // return finished(writeStream).then(() => this);
 
-    return fs.promises.open(this.destination, "w")
-      .then(fh => {
-        return fh.writeFile(this.data, { encoding: "utf8" })
-          .then(() => fh.close())
-          .then(() => this)
-          .catch(err => err)
-      });
+    return fs.promises.open(this.destination, "w").then(fh => {
+      return fh
+        .writeFile(this.data, { encoding: "utf8" })
+        .then(() => fh.close())
+        .then(() => this)
+        .catch(err => err);
+    });
   }
-}
+};
