@@ -23,7 +23,7 @@ function lint(obj) {
     stylelint
       .lint({
         syntax: "scss",
-        files: obj.changed || obj.dependencies,
+        files: obj.changed || obj.children,
         config: {
           "extends": "stylelint-config-recommended-scss",
           "rules": {

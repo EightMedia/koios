@@ -4,10 +4,7 @@ if (!window.RWS) {
 
 window.RWS.picturefill = require("picturefill");
 window.RWS.picturefill();
-
-if (!window.Promise) {
-  window.Promise = require("promise-polyfill");
-}
+window.Promise = require("promise-polyfill");
 
 require("mdn-polyfills/Object.values");
 require("mdn-polyfills/Array.from");

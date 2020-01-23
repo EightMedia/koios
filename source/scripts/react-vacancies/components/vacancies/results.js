@@ -36,7 +36,6 @@ const Result = ({ results }) => (
       const excerpt = description.replace(regex, "");
 
       return (
-        // eslint-disable-next-line jsx-a11y/interactive-supports-focus,jsx-a11y/click-events-have-key-events
         <div
           key={id}
           className="react-card-vacancy"

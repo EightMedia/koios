@@ -3,55 +3,13 @@ const paths = require("./settings/paths");
 const FileObject = require("./utils/file-object");
 const pathDiff = require("./utils/path-diff");
 
-const fs = require("fs");
 const path = require("path");
 const globby = require("globby");
 const chalk = require("chalk");
 const webpack = require("webpack");
 const pluginTerser = require("terser-webpack-plugin");
 const eslint = require("eslint").CLIEngine;
-const esprima = require("esprima");
-
-/**
- * Gather imports from js file
- */
-
-function gatherLocalImports(source) {
-  const code = fs.readFileSync(source, "utf8");
-
-  const tree = esprima.parse(code, {
-    sourceType: "module"
-  });
-
-  const imports = [];
-
-  console.log(chalk.blue(source));
-
-  tree.body.forEach(s => {
-    if (s.type === "ExpressionStatement" && 
-        s.expression.callee &&
-        s.expression.callee.name === "require")
-      return imports.push(s.expression.arguments[0].value);
-
-    if (s.type === "ExpressionStatement")
-      return imports.push(s.expression);
-
-    if (s.type === "ImportDeclaration") 
-      return imports.push(s.source.value);
-
-    console.log(s);
-
-    return;
-  });
-  
-  const localImports = imports.filter(item => typeof item === "string" && item.charAt(0) === ".").map(item => path.resolve(paths.SRC.scripts, item) + ".js");
-
-  if (localImports.length === 0) return;
-
-  return localImports.map(item => {
-    return { path: item, children: gatherLocalImports(item) };
-  });
-}
+const depTree = require("dependency-tree");
 
 /**
  * Lint
@@ -59,13 +17,41 @@ function gatherLocalImports(source) {
 
 function lint(obj) {
   return new Promise((resolve, reject) => {
-    const report = new eslint({ parser: "babel-eslint" }).executeOnFiles(obj.changed || obj.dependencies)
+    const eslintExtends = ["eslint:recommended"];
+    const eslintSettings = {};
+    
+    if (obj.isReact) {
+      eslintExtends.push("plugin:react/recommended");
+      eslintSettings.react = {
+        "version": "detect"
+      };
+    }
+
+    const report = new eslint({
+      useEslintrc: false,
+      baseConfig: {
+        env: {
+          browser: true,
+          node: true
+        },
+        parser: "babel-eslint",
+        extends: eslintExtends,
+        rules: {
+          "global-require": 1,
+          "no-mixed-requires": 1
+        },
+        settings: eslintSettings,
+        globals: { window: true, document: true }
+      }
+    }).executeOnFiles(obj.changed || obj.children);
 
     const issues = [];
 
-    report.results.forEach(issue => {
-      if (issue.errorCount === 0 && issue.warningCount === 0) return;
-      issues.push(issue);
+    report.results.forEach(result => {
+      if (result.errorCount === 0 && result.warningCount === 0) return;
+      result.messages.forEach(issue => {
+        issues.push(`${pathDiff(result.filePath, process.cwd())} [${issue.line}:${issue.column}] ${issue.ruleId}\n  ${chalk.grey(issue.message)}`);
+      });
     });
 
     if (issues.length > 0) {
@@ -95,8 +81,8 @@ function bundle(obj, babelPresets) {
         mode: process.env.NODE_ENV,
         entry: obj.source,
         output: {
-          path: obj.destination.dir,
-          filename: obj.destination.base
+          path: path.dirname(obj.destination),
+          filename: path.basename(obj.destination)
         },
         optimization: {
           minimize: true,
@@ -148,7 +134,7 @@ function bundle(obj, babelPresets) {
 function buildScript(obj) {
   return new Promise(async (resolve, reject) => {
     const babelPresets = ["@babel/preset-env"];
-    if (path.basename(obj.source).substr(0, 5) === "react") babelPresets.push("@babel/preset-react");
+    if (obj.isReact) babelPresets.push("@babel/preset-react");
 
     // read and process the file
     obj.read()
@@ -172,12 +158,19 @@ exports.default = async function scripts(changed) {
   entries.forEach(entry => {
     const source = path.resolve(entry);
     const destination = path.resolve(paths.DST.scripts, `${path.basename(entry, ".js")}.v${process.env.npm_package_version}.js`);
-    const children = gatherLocalImports(source);
+    const children = depTree.toList({ 
+      filename: source, 
+      directory: paths.SRC.scripts,
+      filter: path => path.indexOf('node_modules') === -1 
+    });
 
     // skip this entry if a changed file is given which isn't imported by entry
     if (changed && !children.includes(changed)) return;
 
     const obj = new FileObject(source, destination, changed, children);
+
+    // check if entry is a react app
+    obj.isReact = path.basename(obj.source).substr(0, 5) === "react";
 
     promises.push(buildScript(obj));
   });

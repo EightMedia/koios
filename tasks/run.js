@@ -45,6 +45,8 @@ function run(fn, input) {
   const task = typeof fn.default === "undefined" ? fn : fn.default;
   const start = new Date();
 
+  console.log(""); // insert blank line for clarity
+
   const log = logger.scope(task.name);
   log.pending(`Started at ${format(start)} for`, input || `${task.name}`);
 
