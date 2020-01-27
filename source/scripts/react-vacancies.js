@@ -1,5 +1,3 @@
-const renderVacancies = require("./react-vacancies/vacancies");
-
 import "core-js/stable";
 import "regenerator-runtime/runtime";
 
@@ -10,6 +8,6 @@ if (vacancies) {
   if (!data) {
     console.log("No data found for ReactVacancies.");
   } else {
-    renderVacancies(vacancies, data);
+    require("./react-vacancies/vacancies").default(vacancies, data); // eslint-disable-line global-require
   }
 }

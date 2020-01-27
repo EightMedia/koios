@@ -4,8 +4,8 @@ if (!window.RWS) {
 
 window.RWS.picturefill = require("picturefill");
 window.RWS.picturefill();
-window.Promise = require("promise-polyfill");
 
+require("es6-promise/auto");
 require("mdn-polyfills/Object.values");
 require("mdn-polyfills/Array.from");
 require("mdn-polyfills/Array.prototype.includes");
@@ -23,7 +23,7 @@ window.PhotoSwipe = require("photoswipe/dist/photoswipe");
 window.PhotoSwipeUI_Default = require("photoswipe/dist/photoswipe-ui-default");
 
 require("velocity-animate");
-window.RWS.videojs = require("video.js");
+window.RWS.videojs = require("video.js").default;
 
 window.RWS.videojs.addLanguage("nl", {
   "Audio Player": "Audiospeler",

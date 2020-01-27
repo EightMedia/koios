@@ -7,7 +7,7 @@ const path = require("path");
 const globby = require("globby");
 const chalk = require("chalk");
 const webpack = require("webpack");
-const pluginTerser = require("terser-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
 const eslint = require("eslint").CLIEngine;
 const depTree = require("dependency-tree");
 
@@ -74,19 +74,23 @@ function lint(obj) {
  * Bundle
  */
 
-function bundle(obj, babelPresets) {
+function bundle(obj) {
+  const babelPresets = ["@babel/preset-env"];
+  if (obj.isReact) babelPresets.push("@babel/preset-react");
+
   return new Promise((resolve, reject) => {
     webpack(
       {
-        mode: process.env.NODE_ENV,
         entry: obj.source,
+        target: "web",
         output: {
           path: path.dirname(obj.destination),
-          filename: path.basename(obj.destination)
+          filename: path.basename(obj.destination),
+          sourceMapFilename: path.basename(obj.destination) + ".map"
         },
         optimization: {
           minimize: true,
-          minimizer: [new pluginTerser()]
+          minimizer: [new TerserPlugin({ sourceMap: true })]
         },
         module: {
           rules: [
@@ -96,7 +100,8 @@ function bundle(obj, babelPresets) {
               use: {
                 loader: "babel-loader",
                 options: {
-                  presets: babelPresets
+                  presets: babelPresets,
+                  plugins: ["@babel/plugin-transform-runtime"]
                 }
               }
             }
@@ -133,13 +138,10 @@ function bundle(obj, babelPresets) {
 
 function buildScript(obj) {
   return new Promise(async (resolve, reject) => {
-    const babelPresets = ["@babel/preset-env"];
-    if (obj.isReact) babelPresets.push("@babel/preset-react");
-
     // read and process the file
     obj.read()
       .then(obj => lint(obj))
-      .then(obj => bundle(obj, babelPresets))
+      .then(obj => bundle(obj))
       .then(obj => resolve(obj))
       .catch(err => reject(err));
   }).catch(err => err); // this catch prevents breaking the Promise.all

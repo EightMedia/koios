@@ -33,7 +33,7 @@ module.exports = `<!DOCTYPE html>
   <script source='/assets/js/lib.v${process.env.npm_package_version}.js'></script>
   <script source='/assets/js/app.v${process.env.npm_package_version}.js'></script>
   <script>
-  var xhr=new XMLHttpRequest;xhr.open("GET","/assets/images/_symbols.v${process.env.npm_package_version}.html",!0),xhr.onreadystatechange=function(){4===xhr.readyState&&200===xhr.status&&document.body.insertAdjacentHTML("afterbegin",xhr.responseText)},xhr.send();
+  var xhr=new XMLHttpRequest;xhr.open("GET","/components/_symbols.html",!0),xhr.onreadystatechange=function(){4===xhr.readyState&&200===xhr.status&&document.body.insertAdjacentHTML("afterbegin",xhr.responseText)},xhr.send();
   </script>
   {{output}}
 </body>

@@ -141,6 +141,17 @@ function build(obj, type) {
           .then(obj => resolve(obj))
           .catch(err => reject(err));
       });
+    },
+
+    icons: obj => {
+      return new Promise(async (resolve, reject) => {
+        obj.read()
+          .then(obj => pugToHtml(obj))
+          .then(obj => addBanner(obj))
+          .then(obj => obj.write())
+          .then(obj => resolve(obj))
+          .catch(err => reject(err))
+      })
     }
   };
 
@@ -184,6 +195,9 @@ exports.default = async function templates(changed) {
 
     // skip this entry if a changed file is given which isn't included or extended by entry
     if (changed && changed !== source && !dependencies.includes(changed.slice(0, -4))) return;
+
+    // skip this entry if the filename starts with "_"
+    if (path.basename(source).charAt(0) === "_" && type !== "icons") return;
 
     const obj = new FileObject(source, destination, changed, dependencies);
     
