@@ -51,7 +51,7 @@ function run(fn, input) {
   return task(input).then(promises => {
     return promiseProgress(promises, (i, item) => {
       if (item instanceof Error) throw item;
-      if (!item.source || !item.destination) throw new Error("Received obj without source and/or destination.");
+      if (!item.log && !item.err && !item.source && !item.destination) throw new Error("Task returned an invalid object.");
 
       if (item.err) {
         item.err.message = `[${i}/${promises.length}] ${pathDiff(process.cwd(), item.source)} → ${item.err.message}`;
@@ -84,7 +84,7 @@ function run(fn, input) {
 }
 
 /**
- * Read which module to run from the 2nd terminal argument
+ * Read which module(s) to run from the 2nd terminal argument
  */
 
 if (require.main === module && process.argv.length > 2) {

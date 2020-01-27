@@ -2,7 +2,8 @@ const S = require("path").sep;
 
 const paths = {
   SRC: { root: `source${S}` },
-  DST: { root: `build${S}` }
+  DST: { root: `build${S}` },
+  EXP: { root: `export${S}` }
 };
 
 // Source paths

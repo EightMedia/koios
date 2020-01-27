@@ -11,6 +11,6 @@ exports.default = async function clean() {
     ];
     const result = await del(glob);
 
-    return resolve({ source: glob, destination: result, log: `removed ${result.length} styles, scripts and templates` });
+    return resolve({ log: `removed ${result.length} styles, scripts and templates` });
   })];
 }
