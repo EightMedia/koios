@@ -8,8 +8,9 @@
     "build:styles": "NODE_ENV=development node tasks/run styles",
     "build:scripts": "NODE_ENV=development node tasks/run scripts",
     "build:templates": "NODE_ENV=development node tasks/run templates",
-    "build": "NODE_ENV=development run-s clean build:* --silent",
+    "build": "NODE_ENV=development node tasks/run clean styles scripts templates",
     "start": "NODE_ENV=development node tasks/run server",
+    "export": "NODE_ENV=production node tasks/run clean styles scripts templates export",
     "netlify": "netlify-lambda serve source/api"
   },
   "author": "hylmar@eight.nl",

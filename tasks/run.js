@@ -45,8 +45,6 @@ function run(fn, input) {
   const task = typeof fn.default === "undefined" ? fn : fn.default;
   const start = new Date();
 
-  console.log(""); // insert blank line for clarity
-
   const log = logger.scope(task.name);
   log.pending(`Started at ${format(start)} for`, input || `${task.name}`);
 
@@ -92,12 +90,26 @@ function run(fn, input) {
 if (require.main === module && process.argv.length > 2) {
   delete require.cache[__filename];
 
-  const module = require(`./${process.argv[2]}.js`).default;
+  const tasks = process.argv.slice(2);
 
-  run(module).catch(err => {
-    logger.error(err);
-    process.exit(1);
-  });
+  if (tasks.length > 1) {
+    tasks.unshift(async () => logger.time("Taskrunner"));
+    tasks.push(async () => logger.timeEnd("Taskrunner"));
+  }
+  
+  tasks.reduce(async (previousPromise, nextTask) => {
+    await previousPromise;
+    
+    console.log(""); // insert blank line for clarity
+
+    if (typeof nextTask === "function") return Promise.resolve(nextTask());
+    
+    const module = require(`./${nextTask}.js`).default;
+    return run(module).catch(err => {
+      logger.error(err);
+      process.exit(1);
+    });
+  }, Promise.resolve());
 }
 
 exports.default = run;
