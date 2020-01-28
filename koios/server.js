@@ -1,5 +1,5 @@
 const paths = require("./settings/paths");
-const run = require("./run").default;
+const koios = require("./index").default;
 
 const path = require("path");
 const bs = require("browser-sync").create("localdev");
@@ -55,7 +55,7 @@ function server() {
 
     watcher.on("change", function(file) {
       const ext = path.extname(file).substr(1);
-      run(tasks[ext], file).catch(err => {
+      koios(tasks[ext], file).catch(err => {
         reject(err);
       });
     });

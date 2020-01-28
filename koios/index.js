@@ -93,8 +93,8 @@ if (require.main === module && process.argv.length > 2) {
   const tasks = process.argv.slice(2);
 
   if (tasks.length > 1) {
-    tasks.unshift(async () => logger.time("Taskrunner"));
-    tasks.push(async () => logger.timeEnd("Taskrunner"));
+    tasks.unshift(async () => logger.time("Koios"));
+    tasks.push(async () => logger.timeEnd("Koios"));
   }
   
   tasks.reduce(async (previousPromise, nextTask) => {
