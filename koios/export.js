@@ -1,7 +1,5 @@
-const paths = require("./settings/paths");
-
+const { paths } = require(`${process.cwd()}/.koiosrc`);
 const pathDiff = require("./utils/path-diff");
-
 const fs = require("fs");
 const path = require("path");
 const del = require("del");

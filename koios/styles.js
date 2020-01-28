@@ -1,8 +1,6 @@
-const paths = require("./settings/paths");
-
+const { paths } = require(`${process.cwd()}/.koiosrc`);
 const fileObject = require("./utils/file-object");
 const pathDiff = require("./utils/path-diff");
-
 const globby = require("globby");
 const path = require("path");
 const chalk = require("chalk");
@@ -161,7 +159,7 @@ exports.default = async function (changed) {
   changed = changed ? path.resolve(process.cwd(), changed) : null;
   const entries = await globby(paths.SRC.styles + "*.scss");
   const promises = [];
-  
+
   entries.forEach(entry => {
     const source = path.resolve(entry);
     const destination = path.resolve(paths.DST.styles, `${path.basename(entry, ".scss")}.v${process.env.npm_package_version}.css`);

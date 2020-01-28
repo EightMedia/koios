@@ -1,19 +1,14 @@
-const paths = require("./settings/paths");
-const locals = require("./settings/template-locals");
-const htmlComponent = require("./settings/html-component");
-
+const { paths, locals, htmlComponent } = require(`${process.cwd()}/.koiosrc`);
 const pathDiff = require("./utils/path-diff");
 const slugify = require("./utils/slugify");
 const FileObject = require("./utils/file-object");
-
+const { getPugdocDocuments } = require("./utils/pugdoc-parser");
 const globby = require("globby");
 const chalk = require("chalk");
 const path = require("path");
 const pug = require("pug");
-const { getPugdocDocuments } = require("./utils/pugdoc-parser");
 const resolveDependencies = require("pug-dependencies");
 const pa11y = require("pa11y");
-
 const puppeteer = require("puppeteer");
 const checkA11y = process.argv.includes("-a11y");
 

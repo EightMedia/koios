@@ -1,4 +1,70 @@
-module.exports = `<!DOCTYPE html>
+const S = require("path").sep;
+
+/**
+ * Paths
+ */
+
+const paths = {
+  SRC: { root: `source${S}` },
+  DST: { root: `build${S}` },
+  EXP: { root: `export${S}` }
+};
+
+// Source paths
+paths.SRC.styles = `${paths.SRC.root}styles${S}`;
+paths.SRC.scripts = `${paths.SRC.root}scripts${S}`;
+paths.SRC.data = `${paths.SRC.root}data${S}`;
+
+paths.SRC.templates = `${paths.SRC.root}templates${S}`;
+paths.SRC.pages = `${paths.SRC.templates}pages${S}`;
+paths.SRC.components = `${paths.SRC.templates}components${S}`;
+
+// Destination paths
+paths.DST.assets = `${paths.DST.root}assets${S}`;
+paths.DST.styles = `${paths.DST.assets}css${S}`;
+paths.DST.scripts = `${paths.DST.assets}js${S}`;
+
+paths.DST.pages = `${paths.DST.root}`;
+paths.DST.components = `${paths.DST.root}components${S}`;
+paths.DST.icons = paths.DST.components;
+
+// Static items
+paths.DST.static = `${paths.DST.root}static${S}`;
+
+paths.locals = {
+  CSS_URL: "/assets/css/",
+  JS_URL: "/assets/js/",
+  IMG_URL: "/static/images/",
+  FONTS_URL: "/static/fonts/",
+  VIDEOS_URL: "/static/video/",
+  TEMPLATES_PATH: paths.SRC.templates
+};
+
+module.exports.paths = paths;
+
+/**
+ * Locals
+ */
+
+module.exports.locals = Object.assign(
+  {
+    version: process.env.npm_package_version,
+    imageSizes: require(`${process.cwd()}${S}${
+      paths.SRC.data
+    }image-sizes.json`),
+    dataMeetUs: require(`${process.cwd()}${S}${
+      paths.SRC.data
+    }maak-kennis-items.json`)
+  },
+  require(`${process.cwd()}${S}${paths.SRC.data}template-locals.js`),
+  paths.locals
+);
+
+/**
+ * Html template for components
+ */
+
+module.exports.htmlComponent = `<!DOCTYPE html>
 <html style="margin: 0; padding: 0px;">
 
 <head>

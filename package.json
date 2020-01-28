@@ -27,6 +27,7 @@
     "bump-regex": "^4.0.0",
     "chalk": "^3.0.0",
     "chokidar": "^3.3.1",
+    "cosmiconfig": "^6.0.0",
     "cssnano": "^4.1.10",
     "cssnano-preset-default": "^4.0.7",
     "del": "^5.1.0",

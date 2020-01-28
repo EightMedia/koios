@@ -1,8 +1,6 @@
-const paths = require("./settings/paths");
-
+const { paths } = require(`${process.cwd()}/.koiosrc`);
 const FileObject = require("./utils/file-object");
 const pathDiff = require("./utils/path-diff");
-
 const path = require("path");
 const globby = require("globby");
 const chalk = require("chalk");

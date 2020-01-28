@@ -1,6 +1,5 @@
-const paths = require("./settings/paths");
+const { paths } = require(`${process.cwd()}/.koiosrc`);
 const koios = require("./index").default;
-
 const path = require("path");
 const bs = require("browser-sync").create("localdev");
 const chokidar = require("chokidar");

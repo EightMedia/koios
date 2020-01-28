@@ -1,4 +1,4 @@
-const paths = require("./settings/paths");
+const { paths } = require(`${process.cwd()}/.koiosrc`);
 const del = require("del");
 
 /**

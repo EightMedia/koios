@@ -2,7 +2,6 @@ const { Signale } = require("signale");
 const logger = new Signale();
 const promiseProgress = require("./utils/promise-progress");
 const pathDiff = require("./utils/path-diff");
-const path = require("path");
 
 /**
  * Format time string to 2 digits
@@ -41,7 +40,7 @@ function convertMs(ms) {
  * Run a task
  */
 
-function run(task, input) {
+async function run(task, input) {
   const fn = require(`./${task}.js`).default;
   const start = new Date();
 
