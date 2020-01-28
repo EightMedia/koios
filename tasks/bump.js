@@ -4,6 +4,11 @@ const qoa = require("qoa");
 const bumper = require("bump-regex");
 const fs = require("fs");
 
+/**
+ * Entry point for run.js
+ * $ node tasks/run bump
+ */
+
 exports.default = async function () {
   return [new Promise(async (resolve, reject) => {
     return qoa.interactive({
@@ -18,6 +23,7 @@ exports.default = async function () {
         if (err) return reject(err);
 
         await fs.promises.writeFile(`${process.cwd()}/package.json`, out.str);
+        process.env.npm_package_version = out.new;
 
         return resolve({
           log: `Bumped version from ${out.prev} to ${out.new}`

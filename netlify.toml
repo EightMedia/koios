@@ -1,2 +1,2 @@
 [build]
-  functions = "docs/.vuepress/public/functions"
+  functions = "build/api"

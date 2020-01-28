@@ -41,14 +41,14 @@ function convertMs(ms) {
  * Run a task
  */
 
-function run(module, input) {
-  const task = require(`./${module}.js`).default;
+function run(task, input) {
+  const fn = require(`./${task}.js`).default;
   const start = new Date();
 
-  const log = logger.scope(module);
-  log.pending(`Started at ${format(start)} for`, input || `${module}`);
+  const log = logger.scope(task);
+  log.pending(`Started at ${format(start)} for`, input || `${task}`);
 
-  return task(input).then(promises => {
+  return fn(input).then(promises => {
     return promiseProgress(promises, (i, item) => {
       if (item instanceof Error) throw item;
       if (!item.log && !item.err && !item.source && !item.destination) throw new Error("Task returned an invalid object.");
@@ -62,7 +62,7 @@ function run(module, input) {
         log[item.log.type](`[${i}/${promises.length}] ${item.log.msg}`);
 
         if (item.log.verbose) {
-          const sublog = log.scope(module, item.log.scope);
+          const sublog = log.scope(task, item.log.scope);
           item.log.verbose.forEach((issue, i) => sublog.note(`[${i+1}/${item.log.verbose.length}] ${issue}`));
         }
       }
