@@ -4,7 +4,7 @@ const qoa = require("qoa");
 const bumper = require("bump-regex");
 const fs = require("fs");
 
-exports.default = async function bump() {
+exports.default = async function () {
   return [new Promise(async (resolve, reject) => {
     return qoa.interactive({
       type: "interactive",

@@ -4,7 +4,7 @@ const qoa = require("qoa");
 const bumper = require("bump-regex");
 const fs = require("fs");
 
-exports.default = async function export() {
+exports.default = async function () {
   return [new Promise(async (resolve, reject) => {
     return resolve({ log: `TODO: export` });
   })];

@@ -41,12 +41,12 @@ function convertMs(ms) {
  * Run a task
  */
 
-function run(fn, input) {
-  const task = typeof fn.default === "undefined" ? fn : fn.default;
+function run(module, input) {
+  const task = require(`./${module}.js`).default;
   const start = new Date();
 
-  const log = logger.scope(task.name);
-  log.pending(`Started at ${format(start)} for`, input || `${task.name}`);
+  const log = logger.scope(module);
+  log.pending(`Started at ${format(start)} for`, input || `${module}`);
 
   return task(input).then(promises => {
     return promiseProgress(promises, (i, item) => {
@@ -62,7 +62,7 @@ function run(fn, input) {
         log[item.log.type](`[${i}/${promises.length}] ${item.log.msg}`);
 
         if (item.log.verbose) {
-          const sublog = log.scope(task.name, item.log.scope);
+          const sublog = log.scope(module, item.log.scope);
           item.log.verbose.forEach((issue, i) => sublog.note(`[${i+1}/${item.log.verbose.length}] ${issue}`));
         }
       }
@@ -104,8 +104,7 @@ if (require.main === module && process.argv.length > 2) {
 
     if (typeof nextTask === "function") return Promise.resolve(nextTask());
     
-    const module = require(`./${nextTask}.js`).default;
-    return run(module).catch(err => {
+    return run(nextTask).catch(err => {
       logger.error(err);
       process.exit(1);
     });

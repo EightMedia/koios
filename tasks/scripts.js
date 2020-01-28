@@ -152,7 +152,7 @@ function buildScript(obj) {
  * $ node tasks/run scripts
  */
 
-exports.default = async function scripts(changed) {
+exports.default = async function (changed) {
   changed = changed ? path.resolve(process.cwd(), changed) : null;
   const entries = await globby(paths.SRC.scripts + "*.js");
   const promises = [];

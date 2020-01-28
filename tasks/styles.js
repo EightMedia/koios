@@ -157,7 +157,7 @@ function buildStyle(obj) {
  * $ node tasks/run styles
  */
 
-exports.default = async function styles(changed) {
+exports.default = async function (changed) {
   changed = changed ? path.resolve(process.cwd(), changed) : null;
   const entries = await globby(paths.SRC.styles + "*.scss");
   const promises = [];

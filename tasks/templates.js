@@ -173,7 +173,7 @@ function build(obj, type) {
  * $ node tasks/run templates
  */
 
-exports.default = async function templates(changed) {
+exports.default = async function (changed) {
   changed = changed ? path.resolve(process.cwd(), changed) : null;
   const entries = await globby([
     `${paths.SRC.pages}**${path.sep}*.pug`,

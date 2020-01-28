@@ -1,7 +1,7 @@
 const paths = require("./settings/paths");
 const del = require("del");
 
-exports.default = async function clean() {
+exports.default = async function () {
   return [new Promise(async (resolve, reject) => {
     const glob = [
       paths.DST.styles + "*.css",
