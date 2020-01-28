@@ -1,8 +1,6 @@
-const paths = require("./settings/paths");
-
+const fs = require("fs");
 const qoa = require("qoa");
 const bumper = require("bump-regex");
-const fs = require("fs");
 
 /**
  * Entry point for run.js
