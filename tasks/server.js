@@ -39,9 +39,9 @@ function server() {
      */
 
     const tasks = {
-      scss: require(`./styles.js`).default,
-      js: require(`./scripts.js`).default,
-      pug: require(`./templates.js`).default
+      scss: "styles",
+      js: "scripts",
+      pug: "templates"
     };
 
     const watcher = chokidar.watch(
