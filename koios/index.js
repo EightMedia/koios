@@ -2,14 +2,24 @@ const { Signale } = require("signale");
 const logger = new Signale();
 const promiseProgress = require("./utils/promise-progress");
 const pathDiff = require("./utils/path-diff");
+const semver = require("semver");
 
 /**
- * Format time string to 2 digits
+ * Check if NodeJS uses version 12.14.0
  */
 
-function format(time) {
-  return time.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
+if (!semver.satisfies(process.version, ">=12.14.0")) {
+  logger.error(new Error("Koios needs NodeJS >=12.14.0 to function properly."));
+  process.exit(1);
 }
+
+  /**
+   * Format time string to 2 digits
+   */
+
+  function format(time) {
+    return time.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
+  }
 
 /**
  * Convert milliseconds to string with days, hours, minutes and seconds

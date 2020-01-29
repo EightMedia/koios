@@ -1,6 +1,6 @@
 {
   "name": "koios",
-  "version": "0.0.1",
+  "version": "0.0.5",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -48,6 +48,7 @@
     "qoa": "^0.2.0",
     "rebase-indent": "^1.5.0",
     "sass-graph": "^3.0.4",
+    "semver": "^7.1.1",
     "signale": "^1.4.0",
     "stylelint": "^13.0.0",
     "stylelint-config-recommended-scss": "^4.1.0",

@@ -54,9 +54,25 @@ module.exports.locals = Object.assign(
     }image-sizes.json`),
     dataMeetUs: require(`${process.cwd()}${S}${
       paths.SRC.data
-    }maak-kennis-items.json`)
+    }maak-kennis-items.json`),
+    SLIM: "slim",
+    WIDE: "wide",
+    FULL: "full",
+    TOP: "top",
+    BOTTOM: "bottom",
+    IMAGE: "image",
+    IMGIX_URL: "https://eightmedia-werkenbij-rijkswaterstaat.imgix.net/",
+    TESTIMONIAL: "testimonial",
+    BUTTON: "button",
+    STRONGLINK: "stronglink",
+    VIDEO: "video",
+    PODCAST: "podcast",
+    GALLERY: "gallery",
+    NEWS: "news",
+    EVENT: "evenement",
+    ARTICLE: "artikel"
   },
-  require(`${process.cwd()}${S}${paths.SRC.data}template-locals.js`),
+
   paths.locals
 );
 
