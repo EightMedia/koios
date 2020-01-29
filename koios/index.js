@@ -10,7 +10,7 @@ const semver = require("semver");
 
 if (!semver.satisfies(process.version, ">=12.14.0")) {
   logger.error(new Error("Koios needs NodeJS >=12.14.0 to function properly."));
-  process.exit(1);
+  process.exit(0);
 }
 
   /**
@@ -115,7 +115,7 @@ if (require.main === module && process.argv.length > 2) {
     
     return run(nextTask).catch(err => {
       logger.error(err);
-      process.exit(1);
+      process.exit(0);
     });
   }, Promise.resolve());
 }
