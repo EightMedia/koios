@@ -1,10 +1,12 @@
 const { paths } = require(`${process.cwd()}/.koiosrc`);
 const FileObject = require("./utils/file-object");
 const pathDiff = require("./utils/path-diff");
+const fs = require("fs");
 const path = require("path");
 const globby = require("globby");
 const chalk = require("chalk");
 const webpack = require("webpack");
+const merge = require("webpack-merge");
 const TerserPlugin = require("terser-webpack-plugin");
 const eslint = require("eslint").CLIEngine;
 const depTree = require("dependency-tree");
@@ -15,33 +17,8 @@ const depTree = require("dependency-tree");
 
 function lint(obj) {
   return new Promise((resolve, reject) => {
-    const eslintExtends = ["eslint:recommended"];
-    const eslintSettings = {};
     
-    if (obj.isReact) {
-      eslintExtends.push("plugin:react/recommended");
-      eslintSettings.react = {
-        "version": "detect"
-      };
-    }
-
-    const report = new eslint({
-      useEslintrc: false,
-      baseConfig: {
-        env: {
-          browser: true,
-          node: true
-        },
-        parser: "babel-eslint",
-        extends: eslintExtends,
-        rules: {
-          "global-require": 1,
-          "no-mixed-requires": 1
-        },
-        settings: eslintSettings,
-        globals: { window: true, document: true }
-      }
-    }).executeOnFiles(obj.changed || obj.children);
+    const report = new eslint().executeOnFiles(obj.changed || obj.children);
 
     const issues = [];
 
@@ -73,12 +50,12 @@ function lint(obj) {
  */
 
 function bundle(obj) {
-  const babelPresets = ["@babel/preset-env"];
-  if (obj.isReact) babelPresets.push("@babel/preset-react");
+  return new Promise(async (resolve, reject) => {
+    const extraConfigFile = path.resolve(path.dirname(obj.source), `webpack.${path.basename(obj.source)}`);
+    const extraConfigExists = await fs.promises.stat(extraConfigFile).catch(() => false);
+    const extraConfig = extraConfigExists ? require(extraConfigFile) : {};
 
-  return new Promise((resolve, reject) => {
-    webpack(
-      {
+    const baseConfig = {
         entry: obj.source,
         target: "web",
         output: {
@@ -90,6 +67,11 @@ function bundle(obj) {
           minimize: true,
           minimizer: [new TerserPlugin({ sourceMap: true })]
         },
+        plugins: [
+          new webpack.BannerPlugin({
+            banner: `${process.env.npm_package_name} v${process.env.npm_package_version}`
+          })
+        ],
         module: {
           rules: [
             {
@@ -98,19 +80,17 @@ function bundle(obj) {
               use: {
                 loader: "babel-loader",
                 options: {
-                  presets: babelPresets,
-                  plugins: ["@babel/plugin-transform-runtime"]
+                  presets: ["@babel/preset-env"]
                 }
               }
             }
           ]
-        },
-        plugins: [
-          new webpack.BannerPlugin({
-            banner: `${process.env.npm_package_name} v${process.env.npm_package_version}`
-          })
-        ]
-      },
+        }
+      };
+
+    const config = merge(baseConfig, extraConfig);
+
+    webpack(config,
       (err, stats) => {
         if (err) {
           obj.err = err;
@@ -152,7 +132,10 @@ function buildScript(obj) {
 
 exports.default = async function (changed) {
   changed = changed ? path.resolve(process.cwd(), changed) : null;
-  const entries = await globby(paths.SRC.scripts + "*.js");
+  const entries = await globby([
+    `${paths.SRC.scripts}*.js`,
+    `!${paths.SRC.scripts}webpack.*.js`
+  ]);
   const promises = [];
 
   entries.forEach(entry => {

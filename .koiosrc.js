@@ -31,6 +31,7 @@ paths.DST.icons = paths.DST.components;
 // Static items
 paths.DST.static = `${paths.DST.root}static${S}`;
 
+// Path locals
 paths.locals = {
   CSS_URL: "/assets/css/",
   JS_URL: "/assets/js/",

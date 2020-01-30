@@ -8,6 +8,6 @@ if (vacancies) {
   if (!data) {
     console.log("No data found for ReactVacancies.");
   } else {
-    require("./react-vacancies/vacancies").default(vacancies, data); // eslint-disable-line global-require
+    require("./vacancies/vacancies").default(vacancies, data); // eslint-disable-line global-require
   }
 }
