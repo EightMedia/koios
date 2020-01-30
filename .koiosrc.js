@@ -28,8 +28,8 @@ paths.DST.pages = `${paths.DST.root}`;
 paths.DST.components = `${paths.DST.root}components${S}`;
 paths.DST.icons = paths.DST.components;
 
-// Static items
-paths.DST.static = `${paths.DST.root}static${S}`;
+// Static resources
+paths.static = `static${S}`;
 
 // Path locals
 paths.locals = {

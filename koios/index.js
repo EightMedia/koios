@@ -106,6 +106,7 @@ if (require.main === module && process.argv.length > 2) {
     tasks.push(async () => logger.timeEnd("Koios"));
   }
   
+  // run tasks one after another
   tasks.reduce(async (previousPromise, nextTask) => {
     await previousPromise;
     
