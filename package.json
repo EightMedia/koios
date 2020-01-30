@@ -1,10 +1,11 @@
 {
   "name": "koios",
-  "version": "4.0.0",
+  "version": "0.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "clean": "NODE_ENV=development node koios clean",
+    "clean:build": "NODE_ENV=development node koios clean",
+    "clean:export": "NODE_ENV=production node koios clean",
     "build:styles": "NODE_ENV=development node koios styles",
     "build:scripts": "NODE_ENV=development node koios scripts",
     "build:templates": "NODE_ENV=development node koios templates",

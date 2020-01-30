@@ -1,6 +1,6 @@
 const S = require("path").sep;
 
-module.exports.ENV = process.env.NODE_ENV === "development" ? "BLD" : "EXP";
+module.exports.ENV = process.env.NODE_ENV === "production" ? "EXP" : "BLD";
 
 /**
  * Paths
