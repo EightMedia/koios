@@ -23,10 +23,10 @@ function server() {
 
     bs.init({
       server: {
-        baseDir: paths.DST.pages,
+        baseDir: paths.BLD.pages,
         directory: true
       },
-      files: [paths.DST.pages, paths.DST.styles, paths.DST.scripts],
+      files: [paths.BLD.pages, paths.BLD.styles, paths.BLD.scripts],
       watchOptions: chokidarOptions,
       notify: false,
       port: 8000,

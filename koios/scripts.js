@@ -1,4 +1,4 @@
-const { paths } = require(`${process.cwd()}/.koiosrc`);
+const { ENV, paths } = require(`${process.cwd()}/.koiosrc`);
 const FileObject = require("./utils/file-object");
 const pathDiff = require("./utils/path-diff");
 const fs = require("fs");
@@ -141,7 +141,7 @@ exports.default = async function (changed) {
 
   entries.forEach(entry => {
     const source = path.resolve(entry);
-    const destination = path.resolve(paths.DST.scripts, `${path.basename(entry, ".js")}.v${process.env.npm_package_version}.js`);
+    const destination = path.resolve(paths[ENV].scripts, `${path.basename(entry, ".js")}.v${process.env.npm_package_version}.js`);
     const children = depTree.toList({ 
       filename: source, 
       directory: paths.SRC.scripts,

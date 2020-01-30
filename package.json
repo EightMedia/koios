@@ -1,6 +1,6 @@
 {
   "name": "koios",
-  "version": "0.0.3",
+  "version": "4.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -10,7 +10,7 @@
     "build:templates": "NODE_ENV=development node koios templates",
     "build": "NODE_ENV=development node koios clean styles scripts templates",
     "start": "NODE_ENV=development node koios server",
-    "export": "NODE_ENV=production node koios bump clean styles scripts templates export",
+    "export": "NODE_ENV=production node koios bump clean styles scripts templates",
     "netlify": "netlify-lambda serve source/api"
   },
   "author": "hylmar@eight.nl",

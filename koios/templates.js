@@ -1,4 +1,4 @@
-const { paths, locals, htmlComponent } = require(`${process.cwd()}/.koiosrc`);
+const { ENV, paths, locals, htmlComponent } = require(`${process.cwd()}/.koiosrc`);
 const pathDiff = require("./utils/path-diff");
 const slugify = require("./utils/slugify");
 const FileObject = require("./utils/file-object");
@@ -60,7 +60,7 @@ function writeFragment(fragment) {
     .replace("{{output}}", fragment.output || "")
     .replace("{{title}}", fragment.meta.name);
   
-  const obj = new FileObject(null, path.resolve(paths.DST.components, slugify(fragment.meta.name) + ".html"));
+  const obj = new FileObject(null, path.resolve(paths.BLD.components, slugify(fragment.meta.name) + ".html"));
   obj.read(html);
   addBanner(obj);
   return obj.write();
@@ -75,7 +75,7 @@ async function a11y(obj) {
 
   const a11yPage = await a11yBrowser.newPage();
 
-  return pa11y(`http://localhost:8000${path.sep}` + pathDiff(paths.DST.pages, obj.destination), 
+  return pa11y(`http://localhost:8000${path.sep}` + pathDiff(paths.BLD.pages, obj.destination), 
     { browser: a11yBrowser, page: a11yPage })
     .then(report => {
       if (report) {
@@ -185,7 +185,7 @@ exports.default = async function (changed) {
     const type = sourceType(entry);
     const source = path.resolve(entry);
     const subdir = type === "pages" ? pathDiff(paths.SRC.pages, path.dirname(entry)) : "";
-    const destination = path.resolve(paths.DST[type], subdir, `${path.basename(entry, ".pug")}.html`);
+    const destination = path.resolve(paths[ENV][type], subdir, `${path.basename(entry, ".pug")}.html`);
     const dependencies = resolveDependencies(source);
 
     // skip this entry if a changed file is given which isn't included or extended by entry

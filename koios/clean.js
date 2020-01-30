@@ -1,4 +1,4 @@
-const { paths } = require(`${process.cwd()}/.koiosrc`);
+const { ENV, paths } = require(`${process.cwd()}/.koiosrc`);
 const del = require("del");
 
 const fs = require("fs");
@@ -14,19 +14,19 @@ const path = require("path");
 exports.default = async function () {
   return [
     new Promise(async (resolve, reject) => {
-      del(`${paths.DST.root}**/*`)
+      del(`${paths[ENV].root}**/*`)
         .then((result) => { 
-          return { log: `deleted everything inside ${paths.DST.root} (${result.length} items)` };
+          return { log: `deleted everything inside ${paths[ENV].root} (${result.length} items)` };
         })
         .then(async (obj) => {
           return await fs.promises
             .symlink(
               path.resolve(paths.static),
-              path.resolve(paths.DST.root, paths.static),
+              path.resolve(paths[ENV].root, paths.static),
               "dir"
             )
             .then(() => {
-              obj.log += ` and added the symlink to ${paths.static} inside ${paths.DST.root}`;
+              obj.log += ` and added the symlink to ${paths.static} inside ${paths[ENV].root}`;
               return obj;
             });
         })

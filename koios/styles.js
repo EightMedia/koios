@@ -1,4 +1,4 @@
-const { paths } = require(`${process.cwd()}/.koiosrc`);
+const { ENV, paths } = require(`${process.cwd()}/.koiosrc`);
 const fileObject = require("./utils/file-object");
 const pathDiff = require("./utils/path-diff");
 const globby = require("globby");
@@ -156,7 +156,7 @@ exports.default = async function (changed) {
 
   entries.forEach(entry => {
     const source = path.resolve(entry);
-    const destination = path.resolve(paths.DST.styles, `${path.basename(entry, ".scss")}.v${process.env.npm_package_version}.css`);
+    const destination = path.resolve(paths[ENV].styles, `${path.basename(entry, ".scss")}.v${process.env.npm_package_version}.css`);
     const children = sassGraph.parseFile(source).index[source].imports;
     
     // skip this entry if a changed file is given which isn't imported by entry

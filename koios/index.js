@@ -1,8 +1,10 @@
+const { ENV, paths } = require(`${process.cwd()}/.koiosrc`);
 const { Signale } = require("signale");
 const logger = new Signale();
 const promiseProgress = require("./utils/promise-progress");
 const pathDiff = require("./utils/path-diff");
 const semver = require("semver");
+const fs = require("fs");
 
 /**
  * Check if NodeJS uses version 12.14.0
@@ -57,6 +59,8 @@ async function run(task, input) {
   const log = logger.scope(task);
   log.pending(`Started at ${format(start)} for`, input || `${task}`);
 
+  await fs.promises.mkdir(paths[ENV].root).catch((err) => err);
+
   return fn(input).then(promises => {
     return promiseProgress(promises, (i, item) => {
       if (item instanceof Error) throw item;
@@ -100,10 +104,11 @@ if (require.main === module && process.argv.length > 2) {
   delete require.cache[__filename];
 
   const tasks = process.argv.slice(2);
+  const command = JSON.parse(process.env.npm_config_argv).original.pop();
 
   if (tasks.length > 1) {
-    tasks.unshift(async () => logger.time("Koios"));
-    tasks.push(async () => logger.timeEnd("Koios"));
+    tasks.unshift(async () => logger.time(command || "koios"));
+    tasks.push(async () => logger.timeEnd(command || "koios"));
   }
   
   // run tasks one after another

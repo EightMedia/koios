@@ -1,12 +1,14 @@
 const S = require("path").sep;
 
+module.exports.ENV = process.env.NODE_ENV === "development" ? "BLD" : "EXP";
+
 /**
  * Paths
  */
 
 const paths = {
   SRC: { root: `source${S}` },
-  DST: { root: `build${S}` },
+  BLD: { root: `build${S}` },
   EXP: { root: `export${S}` }
 };
 
@@ -19,14 +21,23 @@ paths.SRC.templates = `${paths.SRC.root}templates${S}`;
 paths.SRC.pages = `${paths.SRC.templates}pages${S}`;
 paths.SRC.components = `${paths.SRC.templates}components${S}`;
 
-// Destination paths
-paths.DST.assets = `${paths.DST.root}assets${S}`;
-paths.DST.styles = `${paths.DST.assets}css${S}`;
-paths.DST.scripts = `${paths.DST.assets}js${S}`;
+// Build paths
+paths.BLD.assets = `${paths.BLD.root}assets${S}`;
+paths.BLD.styles = `${paths.BLD.assets}css${S}`;
+paths.BLD.scripts = `${paths.BLD.assets}js${S}`;
 
-paths.DST.pages = `${paths.DST.root}`;
-paths.DST.components = `${paths.DST.root}components${S}`;
-paths.DST.icons = paths.DST.components;
+paths.BLD.pages = `${paths.BLD.root}`;
+paths.BLD.components = `${paths.BLD.root}components${S}`;
+paths.BLD.icons = paths.BLD.components;
+
+// Export paths
+paths.EXP.assets = `${paths.EXP.root}assets${S}`;
+paths.EXP.styles = `${paths.EXP.assets}css${S}`;
+paths.EXP.scripts = `${paths.EXP.assets}js${S}`;
+
+paths.EXP.pages = `${paths.EXP.root}`;
+paths.EXP.components = `${paths.EXP.root}components${S}`;
+paths.EXP.icons = paths.EXP.components;
 
 // Static resources
 paths.static = `static${S}`;
