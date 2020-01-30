@@ -22,12 +22,6 @@ function lint(obj) {
       .lint({
         syntax: "scss",
         files: obj.changed || obj.children,
-        config: {
-          "extends": "stylelint-config-recommended-scss",
-          "rules": {
-            "no-descending-specificity": null
-          }
-        },
         formatter: (result, retval) => {
           retval.logs = [];
           result.forEach(file => {
