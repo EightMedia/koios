@@ -9,12 +9,12 @@ const del = require("del");
 exports.default = async function () {
   return [new Promise(async (resolve, reject) => {
     const glob = [
-      paths.DST.styles + "*.css",
-      paths.DST.scripts + "*.js",
-      paths.DST.scripts + "*.LICENCE",
-      paths.DST.scripts + "*.map",
-      paths.DST.pages + "**/*.html",
-      "!" + paths.DST.static + "**/*"
+      `${paths.DST.styles}*.css`,
+      `${paths.DST.scripts}*.js`,
+      `${paths.DST.scripts}*.LICENSE`,
+      `${paths.DST.scripts}*.map`,
+      `${paths.DST.pages}**/*.html`,
+      `!${paths.DST.static}**/*`
     ];
     const result = await del(glob);
 

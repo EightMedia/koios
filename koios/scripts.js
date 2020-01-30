@@ -67,6 +67,7 @@ function bundle(obj) {
           minimize: true,
           minimizer: [new TerserPlugin({ sourceMap: true })]
         },
+        devtool: "source-map",
         plugins: [
           new webpack.BannerPlugin({
             banner: `${process.env.npm_package_name} v${process.env.npm_package_version}`
