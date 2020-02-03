@@ -8,18 +8,6 @@ module.exports = ({source, destination, changed, children}) => ({
   children,
 
   /**
-   * Make sure the destination exists
-   */
-
-  async mkdestination() {
-    await fs.promises.mkdir(path.dirname(this.destination), {
-      recursive: true
-    })
-
-    return this;
-  },
-
-  /**
    * Read the stream as an async iterable
    */
 
@@ -44,8 +32,8 @@ module.exports = ({source, destination, changed, children}) => ({
    */
 
   async write() {
-    return this.mkdestination().then(() =>
-      fs.promises.open(this.destination, "w")
+    return fs.promises.mkdir(path.dirname(this.destination), { recursive: true })
+      .then(() => fs.promises.open(this.destination, "w")
         .then(fh => fh.writeFile(this.data, { encoding: "utf8" })
           .then(() => fh.close())
           .then(() => this)
