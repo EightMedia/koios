@@ -1,5 +1,5 @@
 const { ENV, paths } = require(`${process.cwd()}/.koiosrc`);
-const fileObject = require("./utils/file-object");
+const FileObject = require("./utils/file-object");
 const pathDiff = require("./utils/path-diff");
 const globby = require("globby");
 const path = require("path");
@@ -141,7 +141,10 @@ function buildStyle(obj) {
       .then(obj => obj.write())
       .then(obj => resolve(obj))
       .catch(err => reject(err))
-  }).catch(err => err); // this catch prevents breaking the Promise.all
+  }).catch(err => {
+    obj.err = err;
+    return obj;
+  }); // this catch prevents breaking the Promise.all
 }
 
 /**
@@ -162,7 +165,7 @@ exports.default = async function (changed) {
     // skip this entry if a changed file is given which isn't imported by entry
     if (changed && !children.includes(changed)) return;
 
-    const obj = new fileObject(source, destination, changed, children);
+    const obj = FileObject({ source, destination, changed, children });
 
     promises.push(buildStyle(obj));
   });

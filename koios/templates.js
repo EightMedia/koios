@@ -60,7 +60,7 @@ function writeFragment(fragment) {
     .replace("{{output}}", fragment.output || "")
     .replace("{{title}}", fragment.meta.name);
   
-  const obj = new FileObject(null, path.resolve(paths.BLD.components, slugify(fragment.meta.name) + ".html"));
+  const obj = FileObject({ destination: path.resolve(paths.BLD.components, slugify(fragment.meta.name) + ".html") });
   obj.read(html);
   addBanner(obj);
   return obj.write();
@@ -186,15 +186,15 @@ exports.default = async function (changed) {
     const source = path.resolve(entry);
     const subdir = type === "pages" ? pathDiff(paths.SRC.pages, path.dirname(entry)) : "";
     const destination = path.resolve(paths[ENV][type], subdir, `${path.basename(entry, ".pug")}.html`);
-    const dependencies = resolveDependencies(source);
+    const children = resolveDependencies(source);
 
     // skip this entry if a changed file is given which isn't included or extended by entry
-    if (changed && changed !== source && !dependencies.includes(changed.slice(0, -4))) return;
+    if (changed && changed !== source && !children.includes(changed.slice(0, -4))) return;
 
     // skip this entry if the filename starts with "_"
     if (path.basename(source).charAt(0) === "_" && type !== "icons") return;
 
-    const obj = new FileObject(source, destination, changed, dependencies);
+    const obj = FileObject({ source, destination, changed, children });
     
     promises.push(build(obj, type));
   });

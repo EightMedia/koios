@@ -151,7 +151,7 @@ exports.default = async function (changed) {
     // skip this entry if a changed file is given which isn't imported by entry
     if (changed && !children.includes(changed)) return;
 
-    const obj = new FileObject(source, destination, changed, children);
+    const obj = FileObject({ source, destination, changed, children });
 
     // check if entry is a react app
     obj.isReact = path.basename(obj.source).substr(0, 5) === "react";

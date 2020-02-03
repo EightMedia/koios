@@ -1,28 +1,23 @@
-const util = require("util");
 const fs = require("fs");
 const path = require("path");
-const stream = require("stream");
 
-// const { once } = require('events');
-// const finished = util.promisify(stream.finished);
+module.exports = ({source, destination, changed, children}) => ({
+  source,
+  destination,
+  changed,
+  children,
 
-module.exports = class obj {
-  constructor(source, destination, changed, children) {
-    this.source = source;
-    this.destination = destination;
-    this.mkdestination();
-
-    this.changed = changed || null;
-    this.children = children || null;
-
-    return this;
-  }
+  /**
+   * Make sure the destination exists
+   */
 
   async mkdestination() {
-    return await fs.promises.mkdir(path.dirname(this.destination), {
+    await fs.promises.mkdir(path.dirname(this.destination), {
       recursive: true
-    });
-  }
+    })
+
+    return this;
+  },
 
   /**
    * Read the stream as an async iterable
@@ -42,33 +37,20 @@ module.exports = class obj {
     this.data = data;
 
     return this;
-  }
+  },
 
   /**
    * Write
    */
 
   async write() {
-    // WRITE STREAM IS SLOWER
-    // const writeStream = fs.createWriteStream(this.destination, { encoding: "utf8" });
-
-    // for await (const chunk of this.data) {
-    //   if (!writeStream.write(chunk)) {
-    //     // Handle backpressure
-    //     await once(writeStream, "drain");
-    //   }
-    // }
-    // writeStream.end();
-
-    // // wait until writing is done
-    // return finished(writeStream).then(() => this);
-
-    return fs.promises.open(this.destination, "w").then(fh => {
-      return fh
-        .writeFile(this.data, { encoding: "utf8" })
-        .then(() => fh.close())
-        .then(() => this)
-        .catch(err => err);
-    });
+    return this.mkdestination().then(() =>
+      fs.promises.open(this.destination, "w")
+        .then(fh => fh.writeFile(this.data, { encoding: "utf8" })
+          .then(() => fh.close())
+          .then(() => this)
+          .catch(err => err)
+          )
+    );
   }
-};
+})
