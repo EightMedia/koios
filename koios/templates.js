@@ -16,53 +16,58 @@ const checkA11y = process.argv.includes("-a11y");
  * Compile pug into html
  */
 
-function pugToHtml(obj) {
-  return new Promise((resolve, reject) => {
-    pug.render(obj.data, Object.assign(locals, { self: true, filename: obj.source }), 
-    (err, html) => {
-      if (err) return reject(err);
-      obj.data = html;
-      return resolve(obj);
-    });
-  });
+async function pugToHtml(obj) {
+  try {
+    pug.render(
+      obj.data, 
+      Object.assign(locals, { self: true, filename: obj.source }), 
+      (err, html) => {
+        if (err) throw err;
+        obj.data = html;
+        return obj;
+      }
+    );
+  } catch (err) {
+    throw err;
+  }
 }
 
 /**
  * Pug doc parser
  */
 
-function pugdoc(obj) {
-  return new Promise((resolve, reject) => {
+async function pugdoc(obj) {
+  try {
     const component = getPugdocDocuments(obj.data, obj.source, locals)[0];
+    
     if (!component) {
       obj.log = { type: "info", msg: `no pug-doc in ${pathDiff(process.cwd(), obj.source)}` };
-      resolve(obj); // silent resolve when pug-doc is empty
+      return obj;
     }
 
     const promises = [writeFragment(component)];
     if (component.fragments) component.fragments.forEach(fragment => promises.push(writeFragment(fragment)));
 
-    Promise.all(promises)
-      .then((fragments) => {
-        obj.log = pathDiff(process.cwd(), obj.destination) + ` (${fragments.length} fragment${fragments.length !== 1 ? "s" : ""})`;
-        resolve(obj);
-      })
-      .catch(err => reject(err));
-  });
+    const fragments = await Promise.all(promises);
+
+    obj.log = pathDiff(process.cwd(), obj.destination) + ` (${fragments.length} fragment${fragments.length !== 1 ? "s" : ""})`;
+    return obj;
+  } catch (err) {
+    throw err;
+  }
 }
 
 /**
  * Write component fragment
  */
 
-function writeFragment(fragment) {
+async function writeFragment(fragment) {
   const html = htmlComponent
     .replace("{{output}}", fragment.output || "")
     .replace("{{title}}", fragment.meta.name);
   
-  const obj = FileObject({ destination: path.resolve(paths.BLD.components, slugify(fragment.meta.name) + ".html") });
-  obj.read(html);
-  addBanner(obj);
+  const obj = FileObject({ input: html, destination: path.resolve(paths.BLD.components, slugify(fragment.meta.name) + ".html") });
+  await addBanner(obj);
   return obj.write();
 }
 
@@ -73,30 +78,30 @@ function writeFragment(fragment) {
 async function a11y(obj) {
   if (!checkA11y) return obj;
 
-  const a11yPage = await a11yBrowser.newPage();
+  try {
+    const a11yPage = await a11yBrowser.newPage();
 
-  return pa11y(`http://localhost:8000${path.sep}` + pathDiff(paths.BLD.pages, obj.destination), 
-    { browser: a11yBrowser, page: a11yPage })
-    .then(report => {
-      if (report) {
-        obj.log = { type: "warn", msg: `${obj.destination} is compiled, but contains some a11y issues:`, verbose: [] }
-        report.issues.forEach(issue => {
-          obj.log.verbose.push(`${issue.code}\n    ${chalk.grey(`${issue.message}\n    ${issue.context}`)}`);
-        })
-      }
-      return obj;
-    })
-    .catch(err => {
-      obj.err = err;
-      return obj;
-    });
+    const report = await pa11y(`http://localhost:8000${path.sep}` + pathDiff(paths.BLD.pages, obj.destination), 
+      { browser: a11yBrowser, page: a11yPage });
+
+    if (report) {
+      obj.log = { type: "warn", msg: `${obj.destination} is compiled, but contains some a11y issues:`, verbose: [] }
+      report.issues.forEach(issue => {
+        obj.log.verbose.push(`${issue.code}\n    ${chalk.grey(`${issue.message}\n    ${issue.context}`)}`);
+      })
+    }
+    return obj;
+  } catch (err) {
+    obj.err = err;
+    return obj;
+  }
 }
 
 /**
  * Add banner
  */
 
-function addBanner(obj) {
+async function addBanner(obj) {
   obj.data = `<!-- ${process.env.npm_package_name} v${process.env.npm_package_version} --> ${obj.data}\n`;
   return obj;
 }
@@ -105,7 +110,7 @@ function addBanner(obj) {
  * Check inside which templates folder source resides
  */
 
-function sourceType(source) {
+function getSourceType(source) {
   return pathDiff(paths.SRC.templates, source)
     .split(path.sep)
     .shift();
@@ -117,47 +122,48 @@ function sourceType(source) {
 
 function build(obj, type) {
   const builders = {
-    pages: obj => {
-      return new Promise(async (resolve, reject) => {
-        obj.read()
-          .then(obj => pugToHtml(obj))
-          .then(obj => a11y(obj))
-          .then(obj => addBanner(obj))
-          .then(obj => obj.write())
-          .then(obj => resolve(obj))
-          .catch(err => reject(err));
-      });
+    pages: async obj => {
+      try {
+        await obj.read();
+        await pugToHtml(obj);
+        await a11y(obj);
+        await addBanner(obj);
+        await obj.write();
+        return obj;
+      } catch (err) { 
+        throw err;
+      }
     },
 
-    components: obj => {
-      return new Promise(async (resolve, reject) => {
-        obj.read()
-          .then(obj => pugdoc(obj))
-          .then(obj => resolve(obj))
-          .catch(err => reject(err));
-      });
+    components: async obj => {
+      try {
+        await obj.read();
+        await pugdoc(obj);
+        // no obj.write() because components are written via pugdoc
+        return obj;
+      } catch (err) {
+        throw err;
+      }
     },
 
-    icons: obj => {
-      return new Promise(async (resolve, reject) => {
-        obj.read()
-          .then(obj => pugToHtml(obj))
-          .then(obj => addBanner(obj))
-          .then(obj => obj.write())
-          .then(obj => resolve(obj))
-          .catch(err => reject(err))
-      })
+    icons: async obj => {
+      try {
+        await obj.read();
+        await pugToHtml(obj);
+        await addBanner(obj);
+        await obj.write();
+        return obj;
+      } catch (err) {
+        throw err;
+      }
     }
   };
 
-  // get source type and use the corresponding builder
-  const promise = builders[type]
-    ? builders[type](obj)
-    : Promise.reject(new Error("No builder defined for " + type));
+  // check if builder is present
+  if (!builders[type]) throw new Error("No builder defined for " + type);
 
-  // finish the promise with an extra catch to prevent Promise.all from breaking up the chain
-  // the catch returns an object containing the original source path and error object
-  return promise.catch(err => {
+  // use the corresponding builder
+  return builders[type](obj).catch(err => {
     obj.err = err;
     return obj;
   });
@@ -182,7 +188,7 @@ exports.default = async function (changed) {
   if (changed && checkA11y) a11yBrowser = await puppeteer.launch({ ignoreHTTPSErrors: true });
 
   entries.forEach(entry => {
-    const type = sourceType(entry);
+    const type = getSourceType(entry);
     const source = path.resolve(entry);
     const subdir = type === "pages" ? pathDiff(paths.SRC.pages, path.dirname(entry)) : "";
     const destination = path.resolve(paths[ENV][type], subdir, `${path.basename(entry, ".pug")}.html`);
