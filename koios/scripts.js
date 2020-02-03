@@ -123,7 +123,10 @@ function buildScript(obj) {
       .then(obj => bundle(obj))
       .then(obj => resolve(obj))
       .catch(err => reject(err));
-  }).catch(err => err); // this catch prevents breaking the Promise.all
+  }).catch(err => {
+    obj.err = err;
+    return obj;
+  }); // this catch prevents breaking the Promise.all
 }
 
 /**
