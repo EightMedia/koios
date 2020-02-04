@@ -16,10 +16,9 @@ const preprocess = require("preprocess").preprocess;
  * Lint
  */
 
-function lint(obj) {
-  return new Promise((resolve, reject) => {
-    stylelint
-      .lint({
+async function lint(obj) {
+  try {
+    const result = await stylelint.lint({
         syntax: "scss",
         files: obj.changed || obj.children,
         formatter: (result, retval) => {
@@ -33,23 +32,21 @@ function lint(obj) {
           });
           return retval;
         }
-      })
-      .then(result => {
-        if (result.logs.length > 0) {
-          obj.log = {
-            type: "warn",
-            scope: "linter",
-            msg: `Found ${result.logs.length} issues concerning ${pathDiff(process.cwd(), obj.destination)}:`,
-            verbose: result.logs
-          };
-        }
-        return resolve(obj);
-      })
-      .catch(err => {
-        obj.err = err;
-        return reject(err);
       });
-  });
+
+    if (result.logs.length > 0) {
+      obj.log = {
+        type: "warn",
+        scope: "linter",
+        msg: `Found ${result.logs.length} issues concerning ${pathDiff(process.cwd(), obj.destination)}:`,
+        verbose: result.logs
+      };
+    }
+
+    return obj;
+  } catch (err) {
+    throw err;
+  }
 }
 
 /**
@@ -65,11 +62,7 @@ function compile(obj) {
         includePaths: [path.dirname(obj.source)]
       },
       (err, result) => {
-        if (err) {
-          obj.err = err;
-          return reject(obj);
-        }
-
+        if (err) return reject(err);
         obj.data = result.css;
         return resolve(obj);
       }
@@ -81,9 +74,9 @@ function compile(obj) {
  * Minify (and autoprefix) using cssnano
  */
 
-function minify(obj) {
-  return new Promise((resolve, reject) => {
-    postcss([
+async function minify(obj) {
+  try {
+    const result = await postcss([
       autoprefixer({
         cascade: false
       }),
@@ -101,24 +94,20 @@ function minify(obj) {
           }
         ]
       })
-    ])
-      .process(obj.data, { from: undefined })
-      .then(result => {
-        obj.data = result.css;
-        resolve(obj);
-      })
-      .catch(err => {
-        obj.err = err;
-        reject(obj);
-      });
-  });
+    ]).process(obj.data, { from: undefined });
+    
+    obj.data = result.css;
+    return obj;
+  } catch (err) {
+    throw err;
+  }
 }
 
 /**
  * Banner
  */
 
-function addBanner(obj) {
+async function addBanner(obj) {
   obj.data = `/* ${process.env.npm_package_name} v${process.env.npm_package_version} */ ${obj.data}`;
   return obj;
 }
@@ -127,24 +116,20 @@ function addBanner(obj) {
  * Build
  */
 
-function buildStyle(obj) {
-  return new Promise(async (resolve, reject) => {
-    obj.read()
-      .then(obj => lint(obj))
-      .then(obj => compile(obj))
-      .then(obj => {
-        obj.data = preprocess(obj.data, paths.locals, "css");
-        return obj;
-      })
-      .then(obj => minify(obj))
-      .then(obj => addBanner(obj))
-      .then(obj => obj.write())
-      .then(obj => resolve(obj))
-      .catch(err => reject(err))
-  }).catch(err => {
+async function buildStyle(obj) {
+  try{
+    await obj.read();
+    await lint(obj);
+    await compile(obj);
+    obj.data = preprocess(obj.data, paths.locals, "css");
+    await minify(obj);
+    await addBanner(obj);
+    await obj.write();
+    return obj;
+  } catch (err) {
     obj.err = err;
     return obj;
-  }); // this catch prevents breaking the Promise.all
+  }
 }
 
 /**
