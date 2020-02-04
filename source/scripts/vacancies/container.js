@@ -1,15 +1,15 @@
 import React from "react";
 import { Router } from "@reach/router";
 import qs from "query-string";
-import uniqueValuesByCode from "../helpers/uniqueValuesByCode";
-import matchQueryToFilters from "../helpers/matchQueryToFilters";
-import matchDataToSearch from "../helpers/matchDataToSearch";
-import matchDataToFiltersByCode from "../helpers/matchDataToFiltersByCode";
-import matchDataToDistance from "../helpers/matchDataToDistance";
-import toggleInObject from "../helpers/toggleInObject";
-import pick from "../helpers/pick";
-import useZipcodeAPI from "../state/useZipcodeAPI";
-import Page from "../components/vacancies/page";
+import uniqueValuesByCode from "./helpers/uniqueValuesByCode";
+import matchQueryToFilters from "./helpers/matchQueryToFilters";
+import matchDataToSearch from "./helpers/matchDataToSearch";
+import matchDataToFiltersByCode from "./helpers/matchDataToFiltersByCode";
+import matchDataToDistance from "./helpers/matchDataToDistance";
+import toggleInObject from "./helpers/toggleInObject";
+import pick from "./helpers/pick";
+import useZipcodeAPI from "./state/useZipcodeAPI";
+import Page from "./components/vacancies/page";
 
 // supported in query:
 // `searchString`, will be used to search the data using fuse

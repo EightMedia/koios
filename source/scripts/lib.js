@@ -5,15 +5,6 @@ if (!window.RWS) {
 window.RWS.picturefill = require("picturefill");
 window.RWS.picturefill();
 
-require("es6-promise/auto");
-require("mdn-polyfills/Object.values");
-require("mdn-polyfills/Array.from");
-require("mdn-polyfills/Array.prototype.includes");
-require("mdn-polyfills/Array.prototype.forEach");
-require("mdn-polyfills/Node.prototype.remove");
-require("mdn-polyfills/Element.prototype.matches");
-require("url-search-params-polyfill");
-require("classlist-polyfill");
 require("track-focus");
 require("what-input");
 require("whatwg-fetch");

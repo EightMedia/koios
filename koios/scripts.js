@@ -51,58 +51,60 @@ function lint(obj) {
  */
 
 async function bundle(obj) {
-  try {
+  return new Promise(async (resolve, reject) => {
     const extraConfigFile = path.resolve(path.dirname(obj.source), `webpack.${path.basename(obj.source)}`);
     const extraConfigExists = await fs.promises.stat(extraConfigFile).catch(() => false);
     const extraConfig = extraConfigExists ? require(extraConfigFile) : {};
 
     const baseConfig = {
-        entry: obj.source,
-        target: "web",
-        output: {
-          path: path.dirname(obj.destination),
-          filename: path.basename(obj.destination),
-          sourceMapFilename: path.basename(obj.destination) + ".map"
-        },
-        optimization: {
-          minimize: true,
-          minimizer: [new TerserPlugin({ sourceMap: true })]
-        },
-        devtool: "source-map",
-        plugins: [
-          new webpack.BannerPlugin({
-            banner: `${process.env.npm_package_name} v${process.env.npm_package_version}`
-          })
-        ],
-        module: {
-          rules: [
-            {
-              test: /\.(js)$/,
-              exclude: /node_modules/,
-              use: {
-                loader: "babel-loader",
-                options: {
-                  presets: ["@babel/preset-env"]
-                }
+      entry: obj.source,
+      target: "web",
+      output: {
+        path: path.dirname(obj.destination),
+        filename: path.basename(obj.destination),
+        sourceMapFilename: path.basename(obj.destination) + ".map"
+      },
+      optimization: {
+        minimize: true,
+        minimizer: [new TerserPlugin({ sourceMap: true })]
+      },
+      devtool: "source-map",
+      plugins: [
+        new webpack.BannerPlugin({
+          banner: `${process.env.npm_package_name} v${process.env.npm_package_version}`
+        })
+      ],
+      module: {
+        rules: [
+          {
+            test: /\.(js)$/,
+            exclude: /node_modules/,
+            use: {
+              loader: "babel-loader",
+              options: {
+                presets: [
+                  ["@babel/preset-env", { modules: "cjs", useBuiltIns: "usage", corejs: 3 }]
+                ]
               }
             }
-          ]
-        }
-      };
+          }
+        ]
+      }
+    };
 
-    const config = merge(baseConfig, extraConfig);
-
-    webpack(config,
+    const config = merge.strategy({
+      "module.rules": "replace"
+    })(baseConfig, extraConfig);
+    
+    return webpack(config,
       (err, stats) => {
-        if (err) throw err;
+        if (err) return reject(err);
         const info = stats.toJson();
-        if (stats.hasErrors()) throw new Error(info.errors);
-        return obj;
+        if (stats.hasErrors()) return reject(new Error(info.errors));
+        return resolve(obj);
       }
     );
-  } catch (err) {
-    throw err;
-  }
+  });
 }
 
 /**
