@@ -16,8 +16,7 @@ const depTree = require("dependency-tree");
  */
 
 function lint(obj) {
-  return new Promise((resolve, reject) => {
-    
+  try {
     const report = new eslint().executeOnFiles(obj.changed || obj.children);
 
     const issues = [];
@@ -41,16 +40,18 @@ function lint(obj) {
       };
     }
 
-    return resolve(obj);
-  })
+    return obj;
+  } catch (err) {
+    throw err;
+  }
 }
 
 /**
  * Bundle
  */
 
-function bundle(obj) {
-  return new Promise(async (resolve, reject) => {
+async function bundle(obj) {
+  try {
     const extraConfigFile = path.resolve(path.dirname(obj.source), `webpack.${path.basename(obj.source)}`);
     const extraConfigExists = await fs.promises.stat(extraConfigFile).catch(() => false);
     const extraConfig = extraConfigExists ? require(extraConfigFile) : {};
@@ -93,40 +94,32 @@ function bundle(obj) {
 
     webpack(config,
       (err, stats) => {
-        if (err) {
-          obj.err = err;
-          return reject(obj);
-        }
-
+        if (err) throw err;
         const info = stats.toJson();
-
-        if (stats.hasErrors()) {
-          obj.err = new Error(info.errors);
-          return reject(obj);
-        }
-
-        return resolve(obj);
+        if (stats.hasErrors()) throw new Error(info.errors);
+        return obj;
       }
     );
-  });
+  } catch (err) {
+    throw err;
+  }
 }
 
 /**
  * Build
  */
 
-function buildScript(obj) {
-  return new Promise(async (resolve, reject) => {
-    // read and process the file
-    obj.read()
-      .then(obj => lint(obj))
-      .then(obj => bundle(obj))
-      .then(obj => resolve(obj))
-      .catch(err => reject(err));
-  }).catch(err => {
+async function buildScript(obj) {
+  try {
+    await obj.read();
+    await lint(obj);
+    await bundle(obj);
+    // no obj.write() because scripts are written via webpack
+    return obj;
+  } catch (err) {
     obj.err = err;
     return obj;
-  }); // this catch prevents breaking the Promise.all
+  }
 }
 
 /**
@@ -155,9 +148,6 @@ exports.default = async function (changed) {
     if (changed && !children.includes(changed)) return;
 
     const obj = FileObject({ source, destination, changed, children });
-
-    // check if entry is a react app
-    obj.isReact = path.basename(obj.source).substr(0, 5) === "react";
 
     promises.push(buildScript(obj));
   });
