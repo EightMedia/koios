@@ -5,9 +5,13 @@ if (!window.RWS) {
 window.RWS.picturefill = require("picturefill");
 window.RWS.picturefill();
 
+require("mdn-polyfills/Element.prototype.matches");
+require("mdn-polyfills/Node.prototype.remove");
+require("./lib/template-polyfill");
+require("whatwg-fetch");
+
 require("track-focus");
 require("what-input");
-require("whatwg-fetch");
 require("./lib/ie-version");
 require("./lib/object-fit");
 window.PhotoSwipe = require("photoswipe/dist/photoswipe");
