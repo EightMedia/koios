@@ -7,13 +7,12 @@ module.exports = {
         use: {
           loader: "babel-loader",
           options: {
-            plugins: ["@babel/plugin-transform-runtime"],
+            plugins: [
+              "@babel/plugin-transform-runtime"
+            ],
             presets: [
-              [
-                "@babel/preset-env",
-                { useBuiltIns: "usage", modules: false, corejs: 3 }
-              ],
-              "@babel/preset-react"
+              "@babel/preset-react",
+              ["@babel/preset-env", { useBuiltIns: "entry", corejs: 3 }]
             ]
           }
         }

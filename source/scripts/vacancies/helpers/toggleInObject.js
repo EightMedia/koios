@@ -6,7 +6,7 @@ const toggleInObject = object => (key, value, { asArray = true } = {}) => {
   if (!asArray) {
     if (object[key]) {
       // if the key is present, cut it from the object
-      const { [key]: omitMe, ...rest } = object;
+      const { [key]: omitMe, ...rest } = object; //eslint-disable-line no-unused-vars
       return rest;
     }
     // else add it to the object

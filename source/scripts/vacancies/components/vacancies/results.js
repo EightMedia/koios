@@ -1,12 +1,12 @@
 import React from "react";
-import moment from "moment";
-import "moment/locale/nl";
 import Icon from "../icon";
+import { format, differenceInHours, differenceInDays } from "date-fns";
+import { nl } from "date-fns/locale";
 
 const dateFormat = rawDate => {
-  const currentDate = moment();
-  const rawDateMoment = moment(rawDate);
-  const hoursFromNow = rawDateMoment.diff(currentDate, "hours");
+  const curDate = new Date();
+  const theDate = new Date(rawDate);
+  const hoursFromNow = differenceInHours(theDate, curDate)
 
   if (hoursFromNow < 0) {
     // past
@@ -20,11 +20,11 @@ const dateFormat = rawDate => {
 
   if (hoursFromNow < 24 * 5) {
     // diff in days
-    const days = rawDateMoment.diff(currentDate, "days") + 1;
+    const days = differenceInDays(theDate, curDate) + 1;
     return <span className="react-card-vacancy__body__list__item__almost-time">Nog {days} dagen</span>;
   }
 
-  return moment(rawDate).format("D MMMM YYYY");
+  return format(theDate, "d MMMM yyyy", { locale: nl });
 };
 
 const Result = ({ results }) => (

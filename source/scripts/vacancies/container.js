@@ -67,7 +67,7 @@ const Vacancies = ({ data, location, navigate }) => {
   const changeField = (dict, { field, value }) => {
     // if empty, cut it out of the dict
     if (!value) {
-      const { [field]: omit, ...rest } = dict;
+      const { [field]: omit, ...rest } = dict; //eslint-disable-line no-unused-vars
       return rest;
     }
     // create a new dict by adding this value

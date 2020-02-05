@@ -7,7 +7,6 @@ const globby = require("globby");
 const chalk = require("chalk");
 const webpack = require("webpack");
 const merge = require("webpack-merge");
-const TerserPlugin = require("terser-webpack-plugin");
 const eslint = require("eslint").CLIEngine;
 const depTree = require("dependency-tree");
 
@@ -63,10 +62,6 @@ async function bundle(obj) {
         path: path.dirname(obj.destination),
         filename: path.basename(obj.destination),
         sourceMapFilename: path.basename(obj.destination) + ".map"
-      },
-      optimization: {
-        minimize: true,
-        minimizer: [new TerserPlugin({ sourceMap: true })]
       },
       devtool: "source-map",
       plugins: [

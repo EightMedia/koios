@@ -55,14 +55,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-11T22:00:00Z",
-      dateEnd: "2019-07-02T22:00:00Z",
+      dateStart: "2020-02-11T22:00:00Z",
+      dateEnd: "2020-03-02T22:00:00Z",
       showDaysLeftLabel: true,
       daysLeftLabel: "Laatste dag"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CVYP",
-    dateCreated: "2019-06-11T12:22:08.21Z",
-    dateUpdated: "2019-06-12T11:12:36.623Z"
+    dateCreated: "2020-02-11T12:22:08.21Z",
+    dateUpdated: "2020-02-12T11:12:36.623Z"
   },
   {
     id: "RWS190640",
@@ -120,14 +120,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-11T22:00:00Z",
-      dateEnd: "2019-07-02T22:00:00Z",
+      dateStart: "2020-01-11T22:00:00Z",
+      dateEnd: "2020-02-02T22:00:00Z",
       showDaysLeftLabel: true,
       daysLeftLabel: "Laatste dag"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CTEP",
-    dateCreated: "2019-06-03T12:45:33.56Z",
-    dateUpdated: "2019-06-12T08:58:41.167Z"
+    dateCreated: "2020-02-03T12:45:33.56Z",
+    dateUpdated: "2020-02-12T08:58:41.167Z"
   },
   {
     id: "RWS190638",
@@ -179,14 +179,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-11T22:00:00Z",
-      dateEnd: "2019-07-02T22:00:00Z",
+      dateStart: "2020-02-11T22:00:00Z",
+      dateEnd: "2020-03-02T22:00:00Z",
       showDaysLeftLabel: true,
       daysLeftLabel: "Laatste dag"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CU0P",
-    dateCreated: "2019-06-03T10:55:42.183Z",
-    dateUpdated: "2019-06-13T11:28:19.053Z"
+    dateCreated: "2020-02-03T10:55:42.183Z",
+    dateUpdated: "2020-02-13T11:28:19.053Z"
   },
   {
     id: "RWS190553",
@@ -238,14 +238,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970777", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-11T22:00:00Z",
-      dateEnd: "2019-07-02T22:00:00Z",
+      dateStart: "2020-02-11T22:00:00Z",
+      dateEnd: "2020-03-02T22:00:00Z",
       showDaysLeftLabel: true,
       daysLeftLabel: "Laatste dag"
     },
     onlineApplicationUrl: "https://career2.successfactors.eu/sfcareer/jobreqcareer?jobId=2186&company=WenS&username=",
     dateCreated: "2019-05-17T09:00:11.953Z",
-    dateUpdated: "2019-06-12T06:49:27.99Z"
+    dateUpdated: "2020-02-12T06:49:27.99Z"
   },
   {
     id: "RWS190551",
@@ -296,14 +296,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970777", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-27T22:00:00Z",
-      dateEnd: "2019-07-02T22:00:00Z",
+      dateStart: "2020-02-27T22:00:00Z",
+      dateEnd: "2020-03-02T22:00:00Z",
       showDaysLeftLabel: true,
       daysLeftLabel: "Laatste dag"
     },
     onlineApplicationUrl: "https://career2.successfactors.eu/sfcareer/jobreqcareer?jobId=2185&company=WenS&username=",
     dateCreated: "2019-05-17T08:35:09.273Z",
-    dateUpdated: "2019-06-27T13:53:11.933Z"
+    dateUpdated: "2020-02-27T13:53:11.933Z"
   },
   {
     id: "RWS181169",
@@ -354,14 +354,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-12T22:00:00Z",
-      dateEnd: "2019-07-03T22:00:00Z",
+      dateStart: "2020-02-12T22:00:00Z",
+      dateEnd: "2020-03-03T22:00:00Z",
       showDaysLeftLabel: true,
       daysLeftLabel: "Nog 2 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000C69P",
     dateCreated: "2018-12-21T09:39:47.5Z",
-    dateUpdated: "2019-06-12T07:38:50.907Z"
+    dateUpdated: "2020-02-12T07:38:50.907Z"
   },
   {
     id: "RWS190647",
@@ -412,14 +412,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-12T22:00:00Z",
-      dateEnd: "2019-07-03T22:00:00Z",
+      dateStart: "2020-02-12T22:00:00Z",
+      dateEnd: "2020-03-03T22:00:00Z",
       showDaysLeftLabel: true,
       daysLeftLabel: "Nog 2 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CSFP",
-    dateCreated: "2019-06-04T08:27:16.443Z",
-    dateUpdated: "2019-06-12T13:31:16.287Z"
+    dateCreated: "2020-02-04T08:27:16.443Z",
+    dateUpdated: "2020-02-12T13:31:16.287Z"
   },
   {
     id: "RWS190684",
@@ -471,14 +471,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-20T22:00:00Z",
-      dateEnd: "2019-07-03T22:00:00Z",
+      dateStart: "2020-02-20T22:00:00Z",
+      dateEnd: "2020-03-03T22:00:00Z",
       showDaysLeftLabel: true,
       daysLeftLabel: "Nog 2 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CVTP",
-    dateCreated: "2019-06-12T07:38:17.63Z",
-    dateUpdated: "2019-06-21T08:02:21.963Z"
+    dateCreated: "2020-02-12T07:38:17.63Z",
+    dateUpdated: "2020-02-21T08:02:21.963Z"
   },
   {
     id: "RWS190648",
@@ -532,14 +532,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-12T22:00:00Z",
-      dateEnd: "2019-07-03T22:00:00Z",
+      dateStart: "2020-02-12T22:00:00Z",
+      dateEnd: "2020-03-03T22:00:00Z",
       showDaysLeftLabel: true,
       daysLeftLabel: "Nog 2 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CSJP",
-    dateCreated: "2019-06-04T11:03:18.773Z",
-    dateUpdated: "2019-06-13T11:28:31.387Z"
+    dateCreated: "2020-02-04T11:03:18.773Z",
+    dateUpdated: "2020-02-13T11:28:31.387Z"
   },
   {
     id: "RWS190653",
@@ -585,14 +585,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-13T22:00:00Z",
-      dateEnd: "2019-07-04T22:00:00Z",
+      dateStart: "2020-02-13T22:00:00Z",
+      dateEnd: "2020-03-04T22:00:00Z",
       showDaysLeftLabel: true,
       daysLeftLabel: "Nog 3 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CS2P",
-    dateCreated: "2019-06-05T10:43:44.897Z",
-    dateUpdated: "2019-06-13T10:26:03.947Z"
+    dateCreated: "2020-02-05T10:43:44.897Z",
+    dateUpdated: "2020-02-13T10:26:03.947Z"
   },
   {
     id: "RWS190100",
@@ -638,14 +638,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-16T22:00:00Z",
-      dateEnd: "2019-07-07T22:00:00Z",
+      dateStart: "2020-02-16T22:00:00Z",
+      dateEnd: "2020-03-07T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 6 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000C8XP",
     dateCreated: "2019-01-30T13:31:29.907Z",
-    dateUpdated: "2019-06-19T13:05:10.823Z"
+    dateUpdated: "2020-02-19T13:05:10.823Z"
   },
   {
     id: "RWS190651",
@@ -691,14 +691,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-13T22:00:00Z",
-      dateEnd: "2019-07-07T22:00:00Z",
+      dateStart: "2020-02-13T22:00:00Z",
+      dateEnd: "2020-03-07T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 6 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CUJP",
-    dateCreated: "2019-06-05T09:24:25.993Z",
-    dateUpdated: "2019-06-13T10:13:06.8Z"
+    dateCreated: "2020-02-05T09:24:25.993Z",
+    dateUpdated: "2020-02-13T10:13:06.8Z"
   },
   {
     id: "RWS180606",
@@ -749,14 +749,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-16T22:00:00Z",
-      dateEnd: "2019-07-07T22:00:00Z",
+      dateStart: "2020-02-16T22:00:00Z",
+      dateEnd: "2020-03-07T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 6 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000BJWP",
     dateCreated: "2018-07-30T08:42:51.727Z",
-    dateUpdated: "2019-06-14T12:03:32.153Z"
+    dateUpdated: "2020-02-14T12:03:32.153Z"
   },
   {
     id: "RWS190723",
@@ -817,14 +817,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-24T22:00:00Z",
-      dateEnd: "2019-07-07T22:00:00Z",
+      dateStart: "2020-02-24T22:00:00Z",
+      dateEnd: "2020-03-07T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 6 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CSWP",
-    dateCreated: "2019-06-14T15:02:46.807Z",
-    dateUpdated: "2019-06-24T14:14:52.437Z"
+    dateCreated: "2020-02-14T15:02:46.807Z",
+    dateUpdated: "2020-02-24T14:14:52.437Z"
   },
   {
     id: "RWS190685",
@@ -891,14 +891,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-20T22:00:00Z",
-      dateEnd: "2019-07-07T22:00:00Z",
+      dateStart: "2020-02-20T22:00:00Z",
+      dateEnd: "2020-03-07T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 6 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CVGP",
-    dateCreated: "2019-06-12T08:01:33.653Z",
-    dateUpdated: "2019-06-25T08:01:58.18Z"
+    dateCreated: "2020-02-12T08:01:33.653Z",
+    dateUpdated: "2020-02-25T08:01:58.18Z"
   },
   {
     id: "RWS190722",
@@ -950,14 +950,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-24T22:00:00Z",
-      dateEnd: "2019-07-07T22:00:00Z",
+      dateStart: "2020-02-24T22:00:00Z",
+      dateEnd: "2020-03-07T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 6 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CVFP",
-    dateCreated: "2019-06-14T14:49:42.823Z",
-    dateUpdated: "2019-06-25T05:40:29.193Z"
+    dateCreated: "2020-02-14T14:49:42.823Z",
+    dateUpdated: "2020-02-25T05:40:29.193Z"
   },
   {
     id: "RWS190527",
@@ -1016,14 +1016,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-16T22:00:00Z",
-      dateEnd: "2019-07-07T22:00:00Z",
+      dateStart: "2020-02-16T22:00:00Z",
+      dateEnd: "2020-03-07T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 6 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CNZP",
     dateCreated: "2019-05-14T12:55:49.423Z",
-    dateUpdated: "2019-06-19T13:11:09.213Z"
+    dateUpdated: "2020-02-19T13:11:09.213Z"
   },
   {
     id: "RWS190528",
@@ -1081,14 +1081,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-16T22:00:00Z",
-      dateEnd: "2019-07-07T22:00:00Z",
+      dateStart: "2020-02-16T22:00:00Z",
+      dateEnd: "2020-03-07T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 6 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CO0P",
     dateCreated: "2019-05-14T13:51:54.437Z",
-    dateUpdated: "2019-06-19T13:10:13.743Z"
+    dateUpdated: "2020-02-19T13:10:13.743Z"
   },
   {
     id: "RWS190587",
@@ -1146,8 +1146,8 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-02T22:00:00Z",
-      dateEnd: "2019-07-07T22:00:00Z",
+      dateStart: "2020-02-02T22:00:00Z",
+      dateEnd: "2020-03-07T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 6 dagen"
     },
@@ -1204,14 +1204,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-13T22:00:00Z",
-      dateEnd: "2019-07-07T22:00:00Z",
+      dateStart: "2020-02-13T22:00:00Z",
+      dateEnd: "2020-03-07T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 6 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CUMP",
-    dateCreated: "2019-06-05T11:50:06.483Z",
-    dateUpdated: "2019-06-19T12:12:17.457Z"
+    dateCreated: "2020-02-05T11:50:06.483Z",
+    dateUpdated: "2020-02-19T12:12:17.457Z"
   },
   {
     id: "RWS181068",
@@ -1263,14 +1263,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-16T22:00:00Z",
-      dateEnd: "2019-07-07T22:00:00Z",
+      dateStart: "2020-02-16T22:00:00Z",
+      dateEnd: "2020-03-07T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 6 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000C1UP",
     dateCreated: "2018-11-28T14:57:05.617Z",
-    dateUpdated: "2019-06-19T13:14:26.103Z"
+    dateUpdated: "2020-02-19T13:14:26.103Z"
   },
   {
     id: "RWS190549",
@@ -1325,14 +1325,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-16T22:00:00Z",
-      dateEnd: "2019-07-07T22:00:00Z",
+      dateStart: "2020-02-16T22:00:00Z",
+      dateEnd: "2020-03-07T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 6 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CR3P",
     dateCreated: "2019-05-16T13:16:09.26Z",
-    dateUpdated: "2019-06-17T05:25:39.577Z"
+    dateUpdated: "2020-02-17T05:25:39.577Z"
   },
   {
     id: "RWS190599",
@@ -1378,14 +1378,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970777", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-17T22:00:00Z",
-      dateEnd: "2019-07-08T22:00:00Z",
+      dateStart: "2020-02-17T22:00:00Z",
+      dateEnd: "2020-03-08T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 7 dagen"
     },
     onlineApplicationUrl: "https://career2.successfactors.eu/sfcareer/jobreqcareer?jobId=2205&company=WenS&username=",
     dateCreated: "2019-05-27T09:10:15.61Z",
-    dateUpdated: "2019-06-18T09:55:08.96Z"
+    dateUpdated: "2020-02-18T09:55:08.96Z"
   },
   {
     id: "RWS190600",
@@ -1434,14 +1434,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-17T22:00:00Z",
-      dateEnd: "2019-07-08T22:00:00Z",
+      dateStart: "2020-02-17T22:00:00Z",
+      dateEnd: "2020-03-08T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 7 dagen"
     },
     onlineApplicationUrl: "https://career2.successfactors.eu/sfcareer/jobreqcareer?jobId=2202&company=WenS&username=",
     dateCreated: "2019-05-27T09:25:16.79Z",
-    dateUpdated: "2019-06-18T09:56:01.14Z"
+    dateUpdated: "2020-02-18T09:56:01.14Z"
   },
   {
     id: "RWS190661",
@@ -1487,14 +1487,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-18T22:00:00Z",
-      dateEnd: "2019-07-09T22:00:00Z",
+      dateStart: "2020-02-18T22:00:00Z",
+      dateEnd: "2020-03-09T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 8 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CV6P",
-    dateCreated: "2019-06-07T07:29:36.473Z",
-    dateUpdated: "2019-06-18T10:16:02.39Z"
+    dateCreated: "2020-02-07T07:29:36.473Z",
+    dateUpdated: "2020-02-18T10:16:02.39Z"
   },
   {
     id: "RWS190663",
@@ -1548,14 +1548,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-18T22:00:00Z",
-      dateEnd: "2019-07-09T22:00:00Z",
+      dateStart: "2020-02-18T22:00:00Z",
+      dateEnd: "2020-03-09T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 8 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CVCP",
-    dateCreated: "2019-06-07T08:17:59.373Z",
-    dateUpdated: "2019-06-18T10:16:58.477Z"
+    dateCreated: "2020-02-07T08:17:59.373Z",
+    dateUpdated: "2020-02-18T10:16:58.477Z"
   },
   {
     id: "RWS190673",
@@ -1613,14 +1613,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-18T22:00:00Z",
-      dateEnd: "2019-07-09T22:00:00Z",
+      dateStart: "2020-02-18T22:00:00Z",
+      dateEnd: "2020-03-09T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 8 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CS5P",
-    dateCreated: "2019-06-07T14:29:19.353Z",
-    dateUpdated: "2019-06-18T10:14:54.48Z"
+    dateCreated: "2020-02-07T14:29:19.353Z",
+    dateUpdated: "2020-02-18T10:14:54.48Z"
   },
   {
     id: "RWS190662",
@@ -1675,14 +1675,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-18T22:00:00Z",
-      dateEnd: "2019-07-09T22:00:00Z",
+      dateStart: "2020-02-18T22:00:00Z",
+      dateEnd: "2020-03-09T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 8 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CVDP",
-    dateCreated: "2019-06-07T08:00:49.773Z",
-    dateUpdated: "2019-06-18T10:12:27.247Z"
+    dateCreated: "2020-02-07T08:00:49.773Z",
+    dateUpdated: "2020-02-18T10:12:27.247Z"
   },
   {
     id: "RWS190744",
@@ -1733,14 +1733,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-27T22:00:00Z",
-      dateEnd: "2019-07-09T22:00:00Z",
+      dateStart: "2020-02-27T22:00:00Z",
+      dateEnd: "2020-03-09T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 8 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CT7P",
-    dateCreated: "2019-06-19T13:08:04.833Z",
-    dateUpdated: "2019-06-27T10:21:19.503Z"
+    dateCreated: "2020-02-19T13:08:04.833Z",
+    dateUpdated: "2020-02-27T10:21:19.503Z"
   },
   {
     id: "RWS190552",
@@ -1796,14 +1796,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970777", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-19T22:00:00Z",
-      dateEnd: "2019-07-10T22:00:00Z",
+      dateStart: "2020-02-19T22:00:00Z",
+      dateEnd: "2020-03-10T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 9 dagen"
     },
     onlineApplicationUrl: "https://career2.successfactors.eu/sfcareer/jobreqcareer?jobId=2194&company=WenS&username=",
     dateCreated: "2019-05-17T08:45:09.277Z",
-    dateUpdated: "2019-06-19T10:22:03.54Z"
+    dateUpdated: "2020-02-19T10:22:03.54Z"
   },
   {
     id: "RWS190689",
@@ -1849,14 +1849,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970777", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-19T22:00:00Z",
-      dateEnd: "2019-07-10T22:00:00Z",
+      dateStart: "2020-02-19T22:00:00Z",
+      dateEnd: "2020-03-10T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 9 dagen"
     },
     onlineApplicationUrl: "https://career2.successfactors.eu/sfcareer/jobreqcareer?jobId=2235&company=WenS&username=",
-    dateCreated: "2019-06-12T11:20:13.567Z",
-    dateUpdated: "2019-06-25T12:25:11.587Z"
+    dateCreated: "2020-02-12T11:20:13.567Z",
+    dateUpdated: "2020-02-25T12:25:11.587Z"
   },
   {
     id: "RWS190568",
@@ -1902,14 +1902,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-19T22:00:00Z",
-      dateEnd: "2019-07-10T22:00:00Z",
+      dateStart: "2020-02-19T22:00:00Z",
+      dateEnd: "2020-03-10T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 9 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CRGP",
     dateCreated: "2019-05-21T13:23:27.44Z",
-    dateUpdated: "2019-06-19T11:19:49.883Z"
+    dateUpdated: "2020-02-19T11:19:49.883Z"
   },
   {
     id: "RWS190672",
@@ -1954,14 +1954,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-19T22:00:00Z",
-      dateEnd: "2019-07-10T22:00:00Z",
+      dateStart: "2020-02-19T22:00:00Z",
+      dateEnd: "2020-03-10T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 9 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CVBP",
-    dateCreated: "2019-06-07T14:00:27.703Z",
-    dateUpdated: "2019-06-21T11:22:19.63Z"
+    dateCreated: "2020-02-07T14:00:27.703Z",
+    dateUpdated: "2020-02-21T11:22:19.63Z"
   },
   {
     id: "RWS190588",
@@ -2016,14 +2016,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970777", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-19T22:00:00Z",
-      dateEnd: "2019-07-10T22:00:00Z",
+      dateStart: "2020-02-19T22:00:00Z",
+      dateEnd: "2020-03-10T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 9 dagen"
     },
     onlineApplicationUrl: "https://career2.successfactors.eu/sfcareer/jobreqcareer?jobId=2198&company=WenS&username=",
     dateCreated: "2019-05-24T08:40:08.813Z",
-    dateUpdated: "2019-06-20T10:32:30.04Z"
+    dateUpdated: "2020-02-20T10:32:30.04Z"
   },
   {
     id: "RWS190383",
@@ -2076,14 +2076,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-20T22:00:00Z",
-      dateEnd: "2019-07-11T22:00:00Z",
+      dateStart: "2020-02-20T22:00:00Z",
+      dateEnd: "2020-03-11T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 10 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CKPP",
     dateCreated: "2019-04-10T14:59:17.097Z",
-    dateUpdated: "2019-06-20T11:24:05.17Z"
+    dateUpdated: "2020-02-20T11:24:05.17Z"
   },
   {
     id: "RWS190467",
@@ -2134,14 +2134,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-20T22:00:00Z",
-      dateEnd: "2019-07-11T22:00:00Z",
+      dateStart: "2020-02-20T22:00:00Z",
+      dateEnd: "2020-03-11T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 10 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CODP",
     dateCreated: "2019-05-03T10:44:17.017Z",
-    dateUpdated: "2019-06-28T10:59:39.897Z"
+    dateUpdated: "2020-02-28T10:59:39.897Z"
   },
   {
     id: "RWS190688",
@@ -2199,14 +2199,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-20T22:00:00Z",
-      dateEnd: "2019-07-11T22:00:00Z",
+      dateStart: "2020-02-20T22:00:00Z",
+      dateEnd: "2020-03-11T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 10 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CUXP",
-    dateCreated: "2019-06-12T11:15:16.23Z",
-    dateUpdated: "2019-06-20T10:12:32.967Z"
+    dateCreated: "2020-02-12T11:15:16.23Z",
+    dateUpdated: "2020-02-20T10:12:32.967Z"
   },
   {
     id: "RWS190718",
@@ -2257,14 +2257,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-24T22:00:00Z",
-      dateEnd: "2019-07-11T22:00:00Z",
+      dateStart: "2020-02-24T22:00:00Z",
+      dateEnd: "2020-03-11T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 10 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CWJP",
-    dateCreated: "2019-06-14T13:21:11.61Z",
-    dateUpdated: "2019-06-28T09:36:44.65Z"
+    dateCreated: "2020-02-14T13:21:11.61Z",
+    dateUpdated: "2020-02-28T09:36:44.65Z"
   },
   {
     id: "RWS190683",
@@ -2316,14 +2316,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-20T22:00:00Z",
-      dateEnd: "2019-07-11T22:00:00Z",
+      dateStart: "2020-02-20T22:00:00Z",
+      dateEnd: "2020-03-11T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 10 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CR4P",
-    dateCreated: "2019-06-12T07:09:03.91Z",
-    dateUpdated: "2019-06-21T08:02:49.873Z"
+    dateCreated: "2020-02-12T07:09:03.91Z",
+    dateUpdated: "2020-02-21T08:02:49.873Z"
   },
   {
     id: "RWS190746",
@@ -2384,14 +2384,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-30T22:00:00Z",
-      dateEnd: "2019-07-11T22:00:00Z",
+      dateStart: "2020-02-30T22:00:00Z",
+      dateEnd: "2020-03-11T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 10 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CXIP",
-    dateCreated: "2019-06-20T09:24:44.103Z",
-    dateUpdated: "2019-07-01T09:11:00.7Z"
+    dateCreated: "2020-02-20T09:24:44.103Z",
+    dateUpdated: "2020-03-01T09:11:00.7Z"
   },
   {
     id: "RWS190687",
@@ -2449,14 +2449,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-20T22:00:00Z",
-      dateEnd: "2019-07-11T22:00:00Z",
+      dateStart: "2020-02-20T22:00:00Z",
+      dateEnd: "2020-03-11T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 10 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CUWP",
-    dateCreated: "2019-06-12T09:09:14.347Z",
-    dateUpdated: "2019-06-20T10:15:24.61Z"
+    dateCreated: "2020-02-12T09:09:14.347Z",
+    dateUpdated: "2020-02-20T10:15:24.61Z"
   },
   {
     id: "RWS190779",
@@ -2507,14 +2507,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-27T22:00:00Z",
-      dateEnd: "2019-07-12T22:00:00Z",
+      dateStart: "2020-02-27T22:00:00Z",
+      dateEnd: "2020-03-12T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 11 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CXHP",
-    dateCreated: "2019-06-27T13:41:00.973Z",
-    dateUpdated: "2019-06-28T14:39:14.85Z"
+    dateCreated: "2020-02-27T13:41:00.973Z",
+    dateUpdated: "2020-02-28T14:39:14.85Z"
   },
   {
     id: "RWS180880",
@@ -2564,14 +2564,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-26T22:00:00Z",
-      dateEnd: "2019-07-14T22:00:00Z",
+      dateStart: "2020-02-26T22:00:00Z",
+      dateEnd: "2020-03-14T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 13 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000BSLP",
     dateCreated: "2018-10-16T13:14:35.943Z",
-    dateUpdated: "2019-06-26T12:58:31.64Z"
+    dateUpdated: "2020-02-26T12:58:31.64Z"
   },
   {
     id: "RWS190694",
@@ -2629,14 +2629,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-23T22:00:00Z",
-      dateEnd: "2019-07-14T22:00:00Z",
+      dateStart: "2020-02-23T22:00:00Z",
+      dateEnd: "2020-03-14T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 13 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CUKP",
-    dateCreated: "2019-06-13T07:40:53.787Z",
-    dateUpdated: "2019-06-21T11:16:44.193Z"
+    dateCreated: "2020-02-13T07:40:53.787Z",
+    dateUpdated: "2020-02-21T11:16:44.193Z"
   },
   {
     id: "RWS190693",
@@ -2682,14 +2682,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-23T22:00:00Z",
-      dateEnd: "2019-07-14T22:00:00Z",
+      dateStart: "2020-02-23T22:00:00Z",
+      dateEnd: "2020-03-14T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 13 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CW4P",
-    dateCreated: "2019-06-13T07:01:10.16Z",
-    dateUpdated: "2019-06-21T11:10:47.34Z"
+    dateCreated: "2020-02-13T07:01:10.16Z",
+    dateUpdated: "2020-02-21T11:10:47.34Z"
   },
   {
     id: "RWS190697",
@@ -2740,14 +2740,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-23T22:00:00Z",
-      dateEnd: "2019-07-14T22:00:00Z",
+      dateStart: "2020-02-23T22:00:00Z",
+      dateEnd: "2020-03-14T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 13 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CVUP",
-    dateCreated: "2019-06-13T12:40:35.22Z",
-    dateUpdated: "2019-06-21T11:19:33.38Z"
+    dateCreated: "2020-02-13T12:40:35.22Z",
+    dateUpdated: "2020-02-21T11:19:33.38Z"
   },
   {
     id: "RWS190695",
@@ -2793,14 +2793,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-23T22:00:00Z",
-      dateEnd: "2019-07-14T22:00:00Z",
+      dateStart: "2020-02-23T22:00:00Z",
+      dateEnd: "2020-03-14T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 13 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CWHP",
-    dateCreated: "2019-06-13T11:52:30.723Z",
-    dateUpdated: "2019-06-25T12:37:57.363Z"
+    dateCreated: "2020-02-13T11:52:30.723Z",
+    dateUpdated: "2020-02-25T12:37:57.363Z"
   },
   {
     id: "RWS190696",
@@ -2851,14 +2851,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-23T22:00:00Z",
-      dateEnd: "2019-07-14T22:00:00Z",
+      dateStart: "2020-02-23T22:00:00Z",
+      dateEnd: "2020-03-14T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 13 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CVVP",
-    dateCreated: "2019-06-13T12:18:25.713Z",
-    dateUpdated: "2019-06-21T11:07:56.8Z"
+    dateCreated: "2020-02-13T12:18:25.713Z",
+    dateUpdated: "2020-02-21T11:07:56.8Z"
   },
   {
     id: "RWS190698",
@@ -2911,14 +2911,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-23T22:00:00Z",
-      dateEnd: "2019-07-14T22:00:00Z",
+      dateStart: "2020-02-23T22:00:00Z",
+      dateEnd: "2020-03-14T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 13 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CV2P",
-    dateCreated: "2019-06-13T13:12:17.58Z",
-    dateUpdated: "2019-06-21T11:18:29.987Z"
+    dateCreated: "2020-02-13T13:12:17.58Z",
+    dateUpdated: "2020-02-21T11:18:29.987Z"
   },
   {
     id: "RWS190738",
@@ -2967,14 +2967,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-23T22:00:00Z",
-      dateEnd: "2019-07-14T22:00:00Z",
+      dateStart: "2020-02-23T22:00:00Z",
+      dateEnd: "2020-03-14T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 13 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CWHP",
-    dateCreated: "2019-06-17T14:00:50.233Z",
-    dateUpdated: "2019-06-21T11:19:06.087Z"
+    dateCreated: "2020-02-17T14:00:50.233Z",
+    dateUpdated: "2020-02-21T11:19:06.087Z"
   },
   {
     id: "RWS190505",
@@ -3025,14 +3025,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-13T22:00:00Z",
-      dateEnd: "2019-07-14T22:00:00Z",
+      dateStart: "2020-02-13T22:00:00Z",
+      dateEnd: "2020-03-14T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 13 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CQ3P",
     dateCreated: "2019-05-09T09:22:00.26Z",
-    dateUpdated: "2019-06-13T11:28:37.093Z"
+    dateUpdated: "2020-02-13T11:28:37.093Z"
   },
   {
     id: "RWS190699",
@@ -3083,14 +3083,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-23T22:00:00Z",
-      dateEnd: "2019-07-14T22:00:00Z",
+      dateStart: "2020-02-23T22:00:00Z",
+      dateEnd: "2020-03-14T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 13 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CV3P",
-    dateCreated: "2019-06-13T13:39:01.547Z",
-    dateUpdated: "2019-06-21T11:09:29.84Z"
+    dateCreated: "2020-02-13T13:39:01.547Z",
+    dateUpdated: "2020-02-21T11:09:29.84Z"
   },
   {
     id: "RWS190691",
@@ -3136,14 +3136,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-23T22:00:00Z",
-      dateEnd: "2019-07-14T22:00:00Z",
+      dateStart: "2020-02-23T22:00:00Z",
+      dateEnd: "2020-03-14T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 13 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CW3P",
-    dateCreated: "2019-06-13T06:20:37.613Z",
-    dateUpdated: "2019-06-21T11:14:16.46Z"
+    dateCreated: "2020-02-13T06:20:37.613Z",
+    dateUpdated: "2020-02-21T11:14:16.46Z"
   },
   {
     id: "RWS190707",
@@ -3194,14 +3194,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970777", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-23T22:00:00Z",
-      dateEnd: "2019-07-14T22:00:00Z",
+      dateStart: "2020-02-23T22:00:00Z",
+      dateEnd: "2020-03-14T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 13 dagen"
     },
     onlineApplicationUrl: "https://career2.successfactors.eu/sfcareer/jobreqcareer?jobId=2246&company=WenS&username=",
-    dateCreated: "2019-06-14T08:25:10.123Z",
-    dateUpdated: "2019-06-26T12:35:57.217Z"
+    dateCreated: "2020-02-14T08:25:10.123Z",
+    dateUpdated: "2020-02-26T12:35:57.217Z"
   },
   {
     id: "RWS190554",
@@ -3252,14 +3252,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-24T22:00:00Z",
-      dateEnd: "2019-07-15T22:00:00Z",
+      dateStart: "2020-02-24T22:00:00Z",
+      dateEnd: "2020-03-15T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 14 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CORP",
     dateCreated: "2019-05-17T09:36:32.75Z",
-    dateUpdated: "2019-06-24T07:42:04.837Z"
+    dateUpdated: "2020-02-24T07:42:04.837Z"
   },
   {
     id: "RWS190719",
@@ -3305,14 +3305,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-24T22:00:00Z",
-      dateEnd: "2019-07-15T22:00:00Z",
+      dateStart: "2020-02-24T22:00:00Z",
+      dateEnd: "2020-03-15T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 14 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CVSP",
-    dateCreated: "2019-06-14T13:35:03.25Z",
-    dateUpdated: "2019-06-26T08:52:08.43Z"
+    dateCreated: "2020-02-14T13:35:03.25Z",
+    dateUpdated: "2020-02-26T08:52:08.43Z"
   },
   {
     id: "RWS190690",
@@ -3358,14 +3358,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-24T22:00:00Z",
-      dateEnd: "2019-07-15T22:00:00Z",
+      dateStart: "2020-02-24T22:00:00Z",
+      dateEnd: "2020-03-15T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 14 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CUIP",
-    dateCreated: "2019-06-12T12:38:52.627Z",
-    dateUpdated: "2019-06-26T08:38:19.37Z"
+    dateCreated: "2020-02-12T12:38:52.627Z",
+    dateUpdated: "2020-02-26T08:38:19.37Z"
   },
   {
     id: "RWS190720",
@@ -3412,14 +3412,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-24T22:00:00Z",
-      dateEnd: "2019-07-15T22:00:00Z",
+      dateStart: "2020-02-24T22:00:00Z",
+      dateEnd: "2020-03-15T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 14 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CWAP",
-    dateCreated: "2019-06-14T14:00:48.983Z",
-    dateUpdated: "2019-06-25T05:41:16.66Z"
+    dateCreated: "2020-02-14T14:00:48.983Z",
+    dateUpdated: "2020-02-25T05:41:16.66Z"
   },
   {
     id: "RWS190737",
@@ -3477,14 +3477,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-25T22:00:00Z",
-      dateEnd: "2019-07-16T22:00:00Z",
+      dateStart: "2020-02-25T22:00:00Z",
+      dateEnd: "2020-03-16T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 15 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CWNP",
-    dateCreated: "2019-06-17T13:27:37.233Z",
-    dateUpdated: "2019-06-25T09:01:10.29Z"
+    dateCreated: "2020-02-17T13:27:37.233Z",
+    dateUpdated: "2020-02-25T09:01:10.29Z"
   },
   {
     id: "RWS190735",
@@ -3530,14 +3530,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-25T22:00:00Z",
-      dateEnd: "2019-07-16T22:00:00Z",
+      dateStart: "2020-02-25T22:00:00Z",
+      dateEnd: "2020-03-16T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 15 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CWGP",
-    dateCreated: "2019-06-17T12:58:34.093Z",
-    dateUpdated: "2019-06-25T12:11:24.513Z"
+    dateCreated: "2020-02-17T12:58:34.093Z",
+    dateUpdated: "2020-02-25T12:11:24.513Z"
   },
   {
     id: "RWS190372",
@@ -3587,14 +3587,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-25T22:00:00Z",
-      dateEnd: "2019-07-16T22:00:00Z",
+      dateStart: "2020-02-25T22:00:00Z",
+      dateEnd: "2020-03-16T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 15 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CJPP",
     dateCreated: "2019-04-09T12:27:16.393Z",
-    dateUpdated: "2019-06-25T12:20:48.257Z"
+    dateUpdated: "2020-02-25T12:20:48.257Z"
   },
   {
     id: "RWS190745",
@@ -3645,14 +3645,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-26T22:00:00Z",
-      dateEnd: "2019-07-16T22:00:00Z",
+      dateStart: "2020-02-26T22:00:00Z",
+      dateEnd: "2020-03-16T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 15 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CSZP",
-    dateCreated: "2019-06-20T08:44:09.087Z",
-    dateUpdated: "2019-06-26T13:56:50.22Z"
+    dateCreated: "2020-02-20T08:44:09.087Z",
+    dateUpdated: "2020-02-26T13:56:50.22Z"
   },
   {
     id: "RWS190741",
@@ -3703,14 +3703,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-26T22:00:00Z",
-      dateEnd: "2019-07-16T22:00:00Z",
+      dateStart: "2020-02-26T22:00:00Z",
+      dateEnd: "2020-03-16T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 15 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380-02S000CSYP",
-    dateCreated: "2019-06-18T12:27:24.743Z",
-    dateUpdated: "2019-06-27T10:38:40.607Z"
+    dateCreated: "2020-02-18T12:27:24.743Z",
+    dateUpdated: "2020-02-27T10:38:40.607Z"
   },
   {
     id: "RWS190724",
@@ -3761,14 +3761,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-25T22:00:00Z",
-      dateEnd: "2019-07-16T22:00:00Z",
+      dateStart: "2020-02-25T22:00:00Z",
+      dateEnd: "2020-03-16T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 15 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CWCP",
-    dateCreated: "2019-06-17T08:04:53.55Z",
-    dateUpdated: "2019-06-25T10:32:19.45Z"
+    dateCreated: "2020-02-17T08:04:53.55Z",
+    dateUpdated: "2020-02-25T10:32:19.45Z"
   },
   {
     id: "RWS190408",
@@ -3820,14 +3820,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-26T22:00:00Z",
-      dateEnd: "2019-07-16T22:00:00Z",
+      dateStart: "2020-02-26T22:00:00Z",
+      dateEnd: "2020-03-16T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 15 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CN0P",
     dateCreated: "2019-04-17T11:08:18.767Z",
-    dateUpdated: "2019-06-28T10:07:16.997Z"
+    dateUpdated: "2020-02-28T10:07:16.997Z"
   },
   {
     id: "RWS190736",
@@ -3878,14 +3878,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-25T22:00:00Z",
-      dateEnd: "2019-07-16T22:00:00Z",
+      dateStart: "2020-02-25T22:00:00Z",
+      dateEnd: "2020-03-16T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 15 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CUPP",
-    dateCreated: "2019-06-17T13:16:22.237Z",
-    dateUpdated: "2019-06-27T10:16:49.707Z"
+    dateCreated: "2020-02-17T13:16:22.237Z",
+    dateUpdated: "2020-02-27T10:16:49.707Z"
   },
   {
     id: "RWS190220",
@@ -3932,14 +3932,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970777", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-25T22:00:00Z",
-      dateEnd: "2019-07-16T22:00:00Z",
+      dateStart: "2020-02-25T22:00:00Z",
+      dateEnd: "2020-03-16T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 15 dagen"
     },
     onlineApplicationUrl: "https://career2.successfactors.eu/sfcareer/jobreqcareer?jobId=1975&company=WenS&username=",
     dateCreated: "2019-03-05T13:30:08.003Z",
-    dateUpdated: "2019-06-25T12:11:59.497Z"
+    dateUpdated: "2020-02-25T12:11:59.497Z"
   },
   {
     id: "RWS190374",
@@ -3985,14 +3985,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-26T22:00:00Z",
-      dateEnd: "2019-07-17T22:00:00Z",
+      dateStart: "2020-02-26T22:00:00Z",
+      dateEnd: "2020-03-17T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 16 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CJ7P",
     dateCreated: "2019-04-09T12:53:30.57Z",
-    dateUpdated: "2019-06-26T13:11:16.087Z"
+    dateUpdated: "2020-02-26T13:11:16.087Z"
   },
   {
     id: "RWS190747",
@@ -4047,14 +4047,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-30T22:00:00Z",
-      dateEnd: "2019-07-17T22:00:00Z",
+      dateStart: "2020-02-30T22:00:00Z",
+      dateEnd: "2020-03-17T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 16 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CXXP",
-    dateCreated: "2019-06-20T09:45:53.267Z",
-    dateUpdated: "2019-06-28T10:04:07.85Z"
+    dateCreated: "2020-02-20T09:45:53.267Z",
+    dateUpdated: "2020-02-28T10:04:07.85Z"
   },
   {
     id: "RWS190121",
@@ -4100,14 +4100,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-06T22:00:00Z",
-      dateEnd: "2019-07-17T22:00:00Z",
+      dateStart: "2020-02-06T22:00:00Z",
+      dateEnd: "2020-03-17T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 16 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CB2P",
     dateCreated: "2019-02-12T11:48:05.497Z",
-    dateUpdated: "2019-06-26T10:21:57.307Z"
+    dateUpdated: "2020-02-26T10:21:57.307Z"
   },
   {
     id: "RWS190742",
@@ -4168,14 +4168,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970777", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-26T22:00:00Z",
-      dateEnd: "2019-07-17T22:00:00Z",
+      dateStart: "2020-02-26T22:00:00Z",
+      dateEnd: "2020-03-17T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 16 dagen"
     },
     onlineApplicationUrl: "https://career2.successfactors.eu/sfcareer/jobreqcareer?jobId=2241&company=WenS&username=",
-    dateCreated: "2019-06-19T10:35:06.257Z",
-    dateUpdated: "2019-06-27T12:55:09.647Z"
+    dateCreated: "2020-02-19T10:35:06.257Z",
+    dateUpdated: "2020-02-27T12:55:09.647Z"
   },
   {
     id: "RWS190743",
@@ -4225,14 +4225,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-27T22:00:00Z",
-      dateEnd: "2019-07-18T22:00:00Z",
+      dateStart: "2020-02-27T22:00:00Z",
+      dateEnd: "2020-03-18T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 17 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CUOP",
-    dateCreated: "2019-06-19T11:06:23.86Z",
-    dateUpdated: "2019-06-28T10:52:41.983Z"
+    dateCreated: "2020-02-19T11:06:23.86Z",
+    dateUpdated: "2020-02-28T10:52:41.983Z"
   },
   {
     id: "RWS190748",
@@ -4288,14 +4288,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970777", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-27T22:00:00Z",
-      dateEnd: "2019-07-18T22:00:00Z",
+      dateStart: "2020-02-27T22:00:00Z",
+      dateEnd: "2020-03-18T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 17 dagen"
     },
     onlineApplicationUrl: "https://career2.successfactors.eu/sfcareer/jobreqcareer?jobId=2266&company=WenS&username=",
-    dateCreated: "2019-06-20T10:05:12.03Z",
-    dateUpdated: "2019-06-28T07:45:10.2Z"
+    dateCreated: "2020-02-20T10:05:12.03Z",
+    dateUpdated: "2020-02-28T07:45:10.2Z"
   },
   {
     id: "RWS190209",
@@ -4344,14 +4344,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970777", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-30T22:00:00Z",
-      dateEnd: "2019-07-21T22:00:00Z",
+      dateStart: "2020-02-30T22:00:00Z",
+      dateEnd: "2020-03-21T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 20 dagen"
     },
     onlineApplicationUrl: "https://career2.successfactors.eu/sfcareer/jobreqcareer?jobId=1961&company=WenS&username=",
     dateCreated: "2019-03-05T09:50:19.537Z",
-    dateUpdated: "2019-06-28T09:01:57.453Z"
+    dateUpdated: "2020-02-28T09:01:57.453Z"
   },
   {
     id: "RWS190749",
@@ -4402,14 +4402,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-30T22:00:00Z",
-      dateEnd: "2019-07-21T22:00:00Z",
+      dateStart: "2020-02-30T22:00:00Z",
+      dateEnd: "2020-03-21T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 20 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CXPP",
-    dateCreated: "2019-06-20T10:47:48.193Z",
-    dateUpdated: "2019-06-28T10:07:18.223Z"
+    dateCreated: "2020-02-20T10:47:48.193Z",
+    dateUpdated: "2020-02-28T10:07:18.223Z"
   },
   {
     id: "RWS190659",
@@ -4469,14 +4469,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-30T22:00:00Z",
-      dateEnd: "2019-07-21T22:00:00Z",
+      dateStart: "2020-02-30T22:00:00Z",
+      dateEnd: "2020-03-21T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 20 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CRUP",
-    dateCreated: "2019-06-06T14:09:47.36Z",
-    dateUpdated: "2019-06-28T12:10:19.21Z"
+    dateCreated: "2020-02-06T14:09:47.36Z",
+    dateUpdated: "2020-02-28T12:10:19.21Z"
   },
   {
     id: "RWS190304",
@@ -4527,14 +4527,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-17T22:00:00Z",
-      dateEnd: "2019-07-21T22:00:00Z",
+      dateStart: "2020-02-17T22:00:00Z",
+      dateEnd: "2020-03-21T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 20 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CBRP",
     dateCreated: "2019-03-22T09:48:51.077Z",
-    dateUpdated: "2019-06-21T08:28:29.733Z"
+    dateUpdated: "2020-02-21T08:28:29.733Z"
   },
   {
     id: "RWS180993",
@@ -4585,14 +4585,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-26T22:00:00Z",
-      dateEnd: "2019-07-23T22:00:00Z",
+      dateStart: "2020-02-26T22:00:00Z",
+      dateEnd: "2020-03-23T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 22 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000BWYP",
     dateCreated: "2018-11-09T08:47:28.787Z",
-    dateUpdated: "2019-06-26T13:44:15.497Z"
+    dateUpdated: "2020-02-26T13:44:15.497Z"
   },
   {
     id: "RWS190670",
@@ -4651,14 +4651,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-12T22:00:00Z",
-      dateEnd: "2019-07-23T22:00:00Z",
+      dateStart: "2020-02-12T22:00:00Z",
+      dateEnd: "2020-03-23T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 22 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CV5P",
-    dateCreated: "2019-06-07T12:49:49.087Z",
-    dateUpdated: "2019-06-18T12:55:35.53Z"
+    dateCreated: "2020-02-07T12:49:49.087Z",
+    dateUpdated: "2020-02-18T12:55:35.53Z"
   },
   {
     id: "RWS190717",
@@ -4704,14 +4704,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-24T22:00:00Z",
-      dateEnd: "2019-07-28T22:00:00Z",
+      dateStart: "2020-02-24T22:00:00Z",
+      dateEnd: "2020-03-28T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 27 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CWMP",
-    dateCreated: "2019-06-14T13:02:37.047Z",
-    dateUpdated: "2019-06-24T14:16:21.58Z"
+    dateCreated: "2020-02-14T13:02:37.047Z",
+    dateUpdated: "2020-02-24T14:16:21.58Z"
   },
   {
     id: "RWS190402",
@@ -4757,14 +4757,14 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-30T22:00:00Z",
-      dateEnd: "2019-07-28T22:00:00Z",
+      dateStart: "2020-02-30T22:00:00Z",
+      dateEnd: "2020-03-28T22:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 27 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CMTP",
     dateCreated: "2019-04-16T08:35:11.267Z",
-    dateUpdated: "2019-06-28T13:34:54.09Z"
+    dateUpdated: "2020-02-28T13:34:54.09Z"
   },
   {
     id: "RWS190563",
@@ -4830,7 +4830,7 @@ var vacanciesJson = [
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000CNIP",
     dateCreated: "2019-05-20T11:04:23.3Z",
-    dateUpdated: "2019-06-07T08:42:28.227Z"
+    dateUpdated: "2020-02-07T08:42:28.227Z"
   },
   {
     id: "RWS190613",
@@ -4883,13 +4883,13 @@ var vacanciesJson = [
       { name: "Klanten Contact Centrum", phone: "088-7970788", email: null, phoneNumberLink: null, whatsAppLink: null }
     ],
     publication: {
-      dateStart: "2019-06-10T22:00:00Z",
+      dateStart: "2020-02-10T22:00:00Z",
       dateEnd: "2019-12-30T23:00:00Z",
       showDaysLeftLabel: false,
       daysLeftLabel: "Nog 182 dagen"
     },
     onlineApplicationUrl: "https://www.tangram-tis.nl/01380/kandidaten/inschrijven/01380%2d02S000COFP",
     dateCreated: "2019-05-29T07:56:45.61Z",
-    dateUpdated: "2019-06-28T10:23:06.177Z"
+    dateUpdated: "2020-02-28T10:23:06.177Z"
   }
 ];
