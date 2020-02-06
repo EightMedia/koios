@@ -140,7 +140,7 @@ async function buildStyle(koios) {
     .then(k => minify(k))
     .then(k => addBanner(k))
     .then(k => k.write())
-    .catch(err => Object.assign({}, koios, { err }));
+    .catch(err => ({ ...koios, err }));
 }
 
 /**

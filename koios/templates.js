@@ -149,7 +149,7 @@ function build(koios, type) {
   if (!builders[type]) throw new Error("No builder defined for " + type);
 
   // use the corresponding builder
-  return builders[type](koios).catch(err => Object.assign({}, koios, { err }));
+  return builders[type](koios).catch(err => ({ ...koios, err }));
 }
 
 /**

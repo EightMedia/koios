@@ -114,7 +114,7 @@ async function buildScript(koios) {
     .then(k => lint(k))
     .then(k => bundle(k))
     // no koios.write() because scripts are written via webpack
-    .catch(err => Object.assign({}, koios, { err }));
+    .catch(err => ({ ...koios, err }));
 }
 
 /**
