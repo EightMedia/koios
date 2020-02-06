@@ -18,7 +18,7 @@ module.exports = ({source, destination, changed, children, data}) => ({
    */
 
   async read() {
-    if (!this.source) throw new Error(`No source to read.`);
+    if (!this.source) throw new Error(`No source to read from.`);
     const readStream = fs.createReadStream(this.source, { encoding: "utf8" });
 
     let data = "";
@@ -36,6 +36,7 @@ module.exports = ({source, destination, changed, children, data}) => ({
    */
 
   async write() {
+    if (!this.destination) throw new Error(`No destination to write to.`);
     await fs.promises.mkdir(path.dirname(this.destination), {
       recursive: true
     });
