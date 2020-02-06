@@ -1,7 +1,8 @@
 const { ENV, paths, locals, htmlComponent } = require(`${process.cwd()}/.koiosrc`);
+const KoiosThought = require("./utils/koios-thought");
+const copy = require("./utils/immutable-clone");
 const pathDiff = require("./utils/path-diff");
 const slugify = require("./utils/slugify");
-const FileObject = require("./utils/file-object");
 const { getPugdocDocuments } = require("./utils/pugdoc-parser");
 const globby = require("globby");
 const chalk = require("chalk");
@@ -16,15 +17,15 @@ const checkA11y = process.argv.includes("-a11y");
  * Compile pug into html
  */
 
-async function pugToHtml(obj) {
+async function pugToHtml(koios) {
   try {
-    pug.render(
-      obj.data, 
-      Object.assign(locals, { self: true, filename: obj.source }), 
+    return pug.render(
+      koios.data, 
+      Object.assign(locals, { self: true, filename: koios.source }), 
       (err, html) => {
         if (err) throw err;
-        obj.data = html;
-        return obj;
+        koios.data = html;
+        return koios;
       }
     );
   } catch (err) {
@@ -36,13 +37,13 @@ async function pugToHtml(obj) {
  * Pug doc parser
  */
 
-async function pugdoc(obj) {
+async function pugdoc(koios) {
   try {
-    const component = getPugdocDocuments(obj.data, obj.source, locals)[0];
+    const component = getPugdocDocuments(koios.data, koios.source, locals)[0];
     
     if (!component) {
-      obj.log = { type: "info", msg: `no pug-doc in ${pathDiff(process.cwd(), obj.source)}` };
-      return obj;
+      koios.log = { type: "info", msg: `no pug-doc in ${pathDiff(process.cwd(), koios.source)}` };
+      return koios;
     }
 
     const promises = [writeFragment(component)];
@@ -50,8 +51,8 @@ async function pugdoc(obj) {
 
     const fragments = await Promise.all(promises);
 
-    obj.log = pathDiff(process.cwd(), obj.destination) + ` (${fragments.length} fragment${fragments.length !== 1 ? "s" : ""})`;
-    return obj;
+    koios.log = pathDiff(process.cwd(), koios.destination) + ` (${fragments.length} fragment${fragments.length !== 1 ? "s" : ""})`;
+    return koios;
   } catch (err) {
     throw err;
   }
@@ -62,38 +63,42 @@ async function pugdoc(obj) {
  */
 
 async function writeFragment(fragment) {
-  const html = htmlComponent
+  const input = htmlComponent
     .replace("{{output}}", fragment.output || "")
     .replace("{{title}}", fragment.meta.name);
   
-  const obj = FileObject({ input: html, destination: path.resolve(paths.BLD.components, slugify(fragment.meta.name) + ".html") });
-  await addBanner(obj);
-  return obj.write();
+  const destination = path.resolve(
+    paths.BLD.components,
+    slugify(fragment.meta.name) + ".html"
+  );
+
+  const koios = KoiosThought({ input, destination });
+  await addBanner(koios);
+  return koios.write();
 }
 
 /**
  * Check accessibility
  */
 
-async function a11y(obj) {
-  if (!checkA11y) return obj;
+async function a11y(koios) {
+  if (!checkA11y) return koios;
 
   try {
     const a11yPage = await a11yBrowser.newPage();
 
-    const report = await pa11y(`http://localhost:8000${path.sep}` + pathDiff(paths.BLD.pages, obj.destination), 
+    const report = await pa11y(`http://localhost:8000${path.sep}` + pathDiff(paths.BLD.pages, koios.destination), 
       { browser: a11yBrowser, page: a11yPage });
 
     if (report) {
-      obj.log = { type: "warn", msg: `${obj.destination} is compiled, but contains some a11y issues:`, verbose: [] }
+      koios.log = { type: "warn", msg: `${koios.destination} is compiled, but contains some a11y issues:`, verbose: [] }
       report.issues.forEach(issue => {
-        obj.log.verbose.push(`${issue.code}\n    ${chalk.grey(`${issue.message}\n    ${issue.context}`)}`);
+        koios.log.verbose.push(`${issue.code}\n    ${chalk.grey(`${issue.message}\n    ${issue.context}`)}`);
       })
     }
-    return obj;
+    return koios;
   } catch (err) {
-    obj.err = err;
-    return obj;
+    throw err;
   }
 }
 
@@ -101,9 +106,9 @@ async function a11y(obj) {
  * Add banner
  */
 
-async function addBanner(obj) {
-  obj.data = `<!-- ${process.env.npm_package_name} v${process.env.npm_package_version} --> ${obj.data}\n`;
-  return obj;
+async function addBanner(koios) {
+  koios.data = `<!-- ${process.env.npm_package_name} v${process.env.npm_package_version} --> ${koios.data}\n`;
+  return koios;
 }
 
 /**
@@ -120,39 +125,39 @@ function getSourceType(source) {
  * Compiles source pug to destination html
  */
 
-function build(obj, type) {
+function build(koios, type) {
   const builders = {
-    pages: async obj => {
+    pages: async koios => {
       try {
-        await obj.read();
-        await pugToHtml(obj);
-        await a11y(obj);
-        await addBanner(obj);
-        await obj.write();
-        return obj;
+        await koios.read();
+        koios = await pugToHtml(copy(koios));
+        koios = await a11y(copy(koios));
+        koios = await addBanner(copy(koios));
+        await koios.write();
+        return koios;
       } catch (err) { 
         throw err;
       }
     },
 
-    components: async obj => {
+    components: async koios => {
       try {
-        await obj.read();
-        await pugdoc(obj);
-        // no obj.write() because components are written via pugdoc
-        return obj;
+        await koios.read();
+        koios = await pugdoc(copy(koios));
+        // no koios.write() because components are written via pugdoc
+        return koios;
       } catch (err) {
         throw err;
       }
     },
 
-    icons: async obj => {
+    icons: async koios => {
       try {
-        await obj.read();
-        await pugToHtml(obj);
-        await addBanner(obj);
-        await obj.write();
-        return obj;
+        await koios.read();
+        koios = await pugToHtml(copy(koios));
+        koios = await addBanner(copy(koios));
+        await koios.write();
+        return koios;
       } catch (err) {
         throw err;
       }
@@ -163,9 +168,9 @@ function build(obj, type) {
   if (!builders[type]) throw new Error("No builder defined for " + type);
 
   // use the corresponding builder
-  return builders[type](obj).catch(err => {
-    obj.err = err;
-    return obj;
+  return builders[type](koios).catch(err => {
+    koios.err = err;
+    return koios;
   });
 }
 
@@ -200,9 +205,9 @@ exports.default = async function (changed) {
     // skip this entry if the filename starts with "_"
     if (path.basename(source).charAt(0) === "_" && type !== "icons") return;
 
-    const obj = FileObject({ source, destination, changed, children });
-    
-    promises.push(build(obj, type));
+    promises.push(
+      build(KoiosThought({ source, destination, changed, children }), type)
+    );
   });
 
   return promises;

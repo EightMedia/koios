@@ -64,7 +64,7 @@ async function run(task, input) {
   return fn(input).then(promises => {
     return promiseProgress(promises, (i, item) => {
       if (item instanceof Error) throw item;
-      if (!item.log && !item.err && !item.source && !item.destination) throw new Error("Task returned an invalid object.");
+      if (!item.log && !item.err && !item.source && !item.destination) throw new Error("Task returned an invalid koios-object.");
 
       if (item.err) {
         item.err.message = `[${i}/${promises.length}] ${pathDiff(process.cwd(), item.source)} → ${item.err.message}`;

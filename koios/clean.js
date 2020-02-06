@@ -18,7 +18,7 @@ exports.default = async function () {
         .then((result) => { 
           return { log: `deleted everything inside ${paths[ENV].root} (${result.length} items)` };
         })
-        .then(async (obj) => {
+        .then(async (koios) => {
           return await fs.promises
             .symlink(
               path.resolve(paths.static),
@@ -26,11 +26,11 @@ exports.default = async function () {
               "dir"
             )
             .then(() => {
-              obj.log += ` and added the symlink to ${paths.static} inside ${paths[ENV].root}`;
-              return obj;
+              koios.log += ` and added the symlink to ${paths.static} inside ${paths[ENV].root}`;
+              return koios;
             });
         })
-        .then((obj) => resolve(obj))
+        .then((koios) => resolve(koios))
         .catch(err => reject(err));
     })
   ];

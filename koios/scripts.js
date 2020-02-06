@@ -1,6 +1,7 @@
 const { ENV, paths } = require(`${process.cwd()}/.koiosrc`);
-const FileObject = require("./utils/file-object");
+const KoiosThought = require("./utils/koios-thought");
 const pathDiff = require("./utils/path-diff");
+const copy = require("./utils/immutable-clone");
 const fs = require("fs");
 const path = require("path");
 const globby = require("globby");
@@ -14,9 +15,9 @@ const depTree = require("dependency-tree");
  * Lint
  */
 
-function lint(obj) {
+function lint(koios) {
   try {
-    const report = new eslint().executeOnFiles(obj.changed || obj.children);
+    const report = new eslint().executeOnFiles(koios.changed || koios.children);
 
     const issues = [];
 
@@ -28,18 +29,18 @@ function lint(obj) {
     });
 
     if (issues.length > 0) {
-      obj.log = {
+      koios.log = {
         type: "warn",
         scope: "linter",
         msg: `Found ${issues.length} issues concerning ${pathDiff(
           process.cwd(),
-          obj.destination
+          koios.destination
         )}:`,
         verbose: issues
       };
     }
 
-    return obj;
+    return koios;
   } catch (err) {
     throw err;
   }
@@ -49,19 +50,19 @@ function lint(obj) {
  * Bundle
  */
 
-async function bundle(obj) {
+async function bundle(koios) {
   return new Promise(async (resolve, reject) => {
-    const extraConfigFile = path.resolve(path.dirname(obj.source), `webpack.${path.basename(obj.source)}`);
+    const extraConfigFile = path.resolve(path.dirname(koios.source), `webpack.${path.basename(koios.source)}`);
     const extraConfigExists = await fs.promises.stat(extraConfigFile).catch(() => false);
     const extraConfig = extraConfigExists ? require(extraConfigFile) : {};
 
     const baseConfig = {
-      entry: obj.source,
+      entry: koios.source,
       target: "web",
       output: {
-        path: path.dirname(obj.destination),
-        filename: path.basename(obj.destination),
-        sourceMapFilename: path.basename(obj.destination) + ".map"
+        path: path.dirname(koios.destination),
+        filename: path.basename(koios.destination),
+        sourceMapFilename: path.basename(koios.destination) + ".map"
       },
       devtool: "source-map",
       plugins: [
@@ -96,7 +97,7 @@ async function bundle(obj) {
         if (err) return reject(err);
         const info = stats.toJson();
         if (stats.hasErrors()) return reject(new Error(info.errors));
-        return resolve(obj);
+        return resolve(koios);
       }
     );
   });
@@ -106,16 +107,16 @@ async function bundle(obj) {
  * Build
  */
 
-async function buildScript(obj) {
+async function buildScript(koios) {
   try {
-    await obj.read();
-    await lint(obj);
-    await bundle(obj);
-    // no obj.write() because scripts are written via webpack
-    return obj;
+    await koios.read();
+    koios = await lint(copy(koios));
+    koios = await bundle(copy(koios));
+    // no koios.write() because scripts are written via webpack
+    return koios;
   } catch (err) {
-    obj.err = err;
-    return obj;
+    koios.err = err;
+    return koios;
   }
 }
 
@@ -144,9 +145,9 @@ exports.default = async function (changed) {
     // skip this entry if a changed file is given which isn't imported by entry
     if (changed && !children.includes(changed)) return;
 
-    const obj = FileObject({ source, destination, changed, children });
-
-    promises.push(buildScript(obj));
+    promises.push(
+      buildScript(KoiosThought({ source, destination, changed, children }))
+    );
   });
 
   return promises;

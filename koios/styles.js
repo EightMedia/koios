@@ -1,6 +1,7 @@
 const { ENV, paths } = require(`${process.cwd()}/.koiosrc`);
-const FileObject = require("./utils/file-object");
+const KoiosThought = require("./utils/koios-thought");
 const pathDiff = require("./utils/path-diff");
+const copy = require("./utils/immutable-clone");
 const globby = require("globby");
 const path = require("path");
 const chalk = require("chalk");
@@ -16,11 +17,11 @@ const preprocess = require("preprocess").preprocess;
  * Lint
  */
 
-async function lint(obj) {
+async function lint(koios) {
   try {
     const result = await stylelint.lint({
         syntax: "scss",
-        files: obj.changed || obj.children,
+        files: koios.changed || koios.children,
         formatter: (result, retval) => {
           retval.logs = [];
           result.forEach(file => {
@@ -35,15 +36,15 @@ async function lint(obj) {
       });
 
     if (result.logs.length > 0) {
-      obj.log = {
+      koios.log = {
         type: "warn",
         scope: "linter",
-        msg: `Found ${result.logs.length} issues concerning ${pathDiff(process.cwd(), obj.destination)}:`,
+        msg: `Found ${result.logs.length} issues concerning ${pathDiff(process.cwd(), koios.destination)}:`,
         verbose: result.logs
       };
     }
 
-    return obj;
+    return koios;
   } catch (err) {
     throw err;
   }
@@ -53,18 +54,18 @@ async function lint(obj) {
  * Compile using node-sass
  */
 
-function compile(obj) {
+function compile(koios) {
   return new Promise((resolve, reject) => {
     sass.render(
       {
-        data: obj.data,
+        data: koios.data,
         outputStyle: "expanded",
-        includePaths: [path.dirname(obj.source)]
+        includePaths: [path.dirname(koios.source)]
       },
       (err, result) => {
         if (err) return reject(err);
-        obj.data = result.css;
-        return resolve(obj);
+        koios.data = result.css;
+        return resolve(koios);
       }
     );
   });
@@ -74,7 +75,7 @@ function compile(obj) {
  * Minify (and autoprefix) using cssnano
  */
 
-async function minify(obj) {
+async function minify(koios) {
   try {
     const result = await postcss([
       autoprefixer({
@@ -94,10 +95,10 @@ async function minify(obj) {
           }
         ]
       })
-    ]).process(obj.data, { from: undefined });
+    ]).process(koios.data, { from: undefined });
     
-    obj.data = result.css;
-    return obj;
+    koios.data = result.css;
+    return koios;
   } catch (err) {
     throw err;
   }
@@ -107,28 +108,29 @@ async function minify(obj) {
  * Banner
  */
 
-async function addBanner(obj) {
-  obj.data = `/* ${process.env.npm_package_name} v${process.env.npm_package_version} */ ${obj.data}`;
-  return obj;
+async function addBanner(koios) {
+  koios.data = `/* ${process.env.npm_package_name} v${process.env.npm_package_version} */ ${koios.data}`;
+  return koios;
 }
 
 /**
  * Build
+ * pass copy of koios to enforce immutability
  */
 
-async function buildStyle(obj) {
+async function buildStyle(koios) {
   try{
-    await obj.read();
-    await lint(obj);
-    await compile(obj);
-    obj.data = preprocess(obj.data, paths.locals, "css");
-    await minify(obj);
-    await addBanner(obj);
-    await obj.write();
-    return obj;
+    await koios.read();
+    koios = await lint(copy(koios));
+    koios = await compile(copy(koios));
+    koios.data = preprocess(koios.data, paths.locals, "css");
+    koios = await minify(copy(koios));
+    koios = await addBanner(copy(koios));
+    await koios.write();
+    return koios;
   } catch (err) {
-    obj.err = err;
-    return obj;
+    koios.err = err;
+    return koios;
   }
 }
 
@@ -150,9 +152,9 @@ exports.default = async function (changed) {
     // skip this entry if a changed file is given which isn't imported by entry
     if (changed && !children.includes(changed)) return;
 
-    const obj = FileObject({ source, destination, changed, children });
-
-    promises.push(buildStyle(obj));
+    promises.push(
+      buildStyle(KoiosThought({ source, destination, changed, children }))
+    );
   });
 
   return promises;
