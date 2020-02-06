@@ -6,12 +6,12 @@ const stream = require("stream");
 const { once } = require('events');
 const finished = promisify(stream.finished);
 
-module.exports = ({source, destination, changed, children, input}) => ({
+module.exports = ({source, destination, changed, children, data}) => ({
   source,
   destination,
   changed,
   children,
-  data: input || null,
+  data: data || null,
 
   /**
    * Read the stream as an async iterable
@@ -34,17 +34,6 @@ module.exports = ({source, destination, changed, children, input}) => ({
   /**
    * Write
    */
-
-  // async write() {
-  //   return fs.promises.mkdir(path.dirname(this.destination), { recursive: true })
-  //     .then(() => fs.promises.open(this.destination, "w")
-  //       .then(fh => fh.writeFile(this.data, { encoding: "utf8" })
-  //         .then(() => fh.close())
-  //         .then(() => this)
-  //         .catch(err => err)
-  //         )
-  //   );
-  // },
 
   async write() {
     await fs.promises.mkdir(path.dirname(this.destination), {

@@ -15,7 +15,8 @@ const depTree = require("dependency-tree");
  * Lint
  */
 
-function lint(koios) {
+function lint(input) {
+  const koios = copy(input);
   try {
     const report = new eslint().executeOnFiles(koios.changed || koios.children);
 
@@ -50,7 +51,8 @@ function lint(koios) {
  * Bundle
  */
 
-async function bundle(koios) {
+async function bundle(input) {
+  const koios = copy(input);
   return new Promise(async (resolve, reject) => {
     const extraConfigFile = path.resolve(path.dirname(koios.source), `webpack.${path.basename(koios.source)}`);
     const extraConfigExists = await fs.promises.stat(extraConfigFile).catch(() => false);
@@ -108,16 +110,11 @@ async function bundle(koios) {
  */
 
 async function buildScript(koios) {
-  try {
-    await koios.read();
-    koios = await lint(copy(koios));
-    koios = await bundle(copy(koios));
+  return koios.read()
+    .then(k => lint(k))
+    .then(k => bundle(k))
     // no koios.write() because scripts are written via webpack
-    return koios;
-  } catch (err) {
-    koios.err = err;
-    return koios;
-  }
+    .catch(err => Object.assign({}, koios, { err }));
 }
 
 /**

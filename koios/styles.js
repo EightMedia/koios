@@ -17,7 +17,8 @@ const preprocess = require("preprocess").preprocess;
  * Lint
  */
 
-async function lint(koios) {
+async function lint(input) {
+  const koios = copy(input);
   try {
     const result = await stylelint.lint({
         syntax: "scss",
@@ -54,9 +55,10 @@ async function lint(koios) {
  * Compile using node-sass
  */
 
-function compile(koios) {
+function compile(input) {
+  const koios = copy(input);
   return new Promise((resolve, reject) => {
-    sass.render(
+    return sass.render(
       {
         data: koios.data,
         outputStyle: "expanded",
@@ -75,7 +77,8 @@ function compile(koios) {
  * Minify (and autoprefix) using cssnano
  */
 
-async function minify(koios) {
+async function minify(input) {
+  const koios = copy(input);
   try {
     const result = await postcss([
       autoprefixer({
@@ -105,10 +108,21 @@ async function minify(koios) {
 }
 
 /**
+ * Prep
+ */
+
+async function prep(input) {
+  const koios = copy(input);
+  koios.data = preprocess(koios.data, paths.locals, "css");
+  return koios;
+}
+
+/**
  * Banner
  */
 
-async function addBanner(koios) {
+async function addBanner(input) {
+  const koios = copy(input);
   koios.data = `/* ${process.env.npm_package_name} v${process.env.npm_package_version} */ ${koios.data}`;
   return koios;
 }
@@ -119,19 +133,14 @@ async function addBanner(koios) {
  */
 
 async function buildStyle(koios) {
-  try{
-    await koios.read();
-    koios = await lint(copy(koios));
-    koios = await compile(copy(koios));
-    koios.data = preprocess(koios.data, paths.locals, "css");
-    koios = await minify(copy(koios));
-    koios = await addBanner(copy(koios));
-    await koios.write();
-    return koios;
-  } catch (err) {
-    koios.err = err;
-    return koios;
-  }
+  return koios.read()
+    .then(k => lint(k))
+    .then(k => compile(k))
+    .then(k => prep(k))
+    .then(k => minify(k))
+    .then(k => addBanner(k))
+    .then(k => k.write())
+    .catch(err => Object.assign({}, koios, { err }));
 }
 
 /**

@@ -17,7 +17,8 @@ const checkA11y = process.argv.includes("-a11y");
  * Compile pug into html
  */
 
-async function pugToHtml(koios) {
+async function pugToHtml(input) {
+  const koios = copy(input);
   try {
     return pug.render(
       koios.data, 
@@ -37,7 +38,8 @@ async function pugToHtml(koios) {
  * Pug doc parser
  */
 
-async function pugdoc(koios) {
+async function pugdoc(input) {
+  const koios = copy(input);
   try {
     const component = getPugdocDocuments(koios.data, koios.source, locals)[0];
     
@@ -63,7 +65,7 @@ async function pugdoc(koios) {
  */
 
 async function writeFragment(fragment) {
-  const input = htmlComponent
+  const data = htmlComponent
     .replace("{{output}}", fragment.output || "")
     .replace("{{title}}", fragment.meta.name);
   
@@ -72,8 +74,7 @@ async function writeFragment(fragment) {
     slugify(fragment.meta.name) + ".html"
   );
 
-  const koios = KoiosThought({ input, destination });
-  await addBanner(koios);
+  const koios = await addBanner(KoiosThought({ data, destination }));
   return koios.write();
 }
 
@@ -81,7 +82,9 @@ async function writeFragment(fragment) {
  * Check accessibility
  */
 
-async function a11y(koios) {
+async function a11y(input) {
+  const koios = copy(input);
+
   if (!checkA11y) return koios;
 
   try {
@@ -127,51 +130,26 @@ function getSourceType(source) {
 
 function build(koios, type) {
   const builders = {
-    pages: async koios => {
-      try {
-        await koios.read();
-        koios = await pugToHtml(copy(koios));
-        koios = await a11y(copy(koios));
-        koios = await addBanner(copy(koios));
-        await koios.write();
-        return koios;
-      } catch (err) { 
-        throw err;
-      }
-    },
-
-    components: async koios => {
-      try {
-        await koios.read();
-        koios = await pugdoc(copy(koios));
-        // no koios.write() because components are written via pugdoc
-        return koios;
-      } catch (err) {
-        throw err;
-      }
-    },
-
-    icons: async koios => {
-      try {
-        await koios.read();
-        koios = await pugToHtml(copy(koios));
-        koios = await addBanner(copy(koios));
-        await koios.write();
-        return koios;
-      } catch (err) {
-        throw err;
-      }
-    }
+    pages: async koios => koios.read()
+      .then(k => pugToHtml(k))
+      .then(k => a11y(k))
+      .then(k => addBanner(k))
+      .then(k => k.write()),
+    
+    components: async koios => koios.read()
+      .then(k => pugdoc(k)),
+    
+    icons: async koios => koios.read()
+      .then(k => pugToHtml(k))
+      .then(k => addBanner(k))
+      .then(k => k.write())
   };
 
   // check if builder is present
   if (!builders[type]) throw new Error("No builder defined for " + type);
 
   // use the corresponding builder
-  return builders[type](koios).catch(err => {
-    koios.err = err;
-    return koios;
-  });
+  return builders[type](koios).catch(err => Object.assign({}, koios, { err }));
 }
 
 /**
