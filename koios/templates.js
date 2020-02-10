@@ -18,8 +18,8 @@ const checkA11y = process.argv.includes("-a11y");
  */
 
 async function pugToHtml(input) {
-  const koios = copy(input);
   try {
+    const koios = copy(input);
     return pug.render(
       koios.data, 
       Object.assign(locals, { self: true, filename: koios.source }), 
@@ -39,8 +39,8 @@ async function pugToHtml(input) {
  */
 
 async function pugdoc(input) {
-  const koios = copy(input);
   try {
+    const koios = copy(input);
     const component = getPugdocDocuments(koios.data, koios.source, locals)[0];
     
     if (!component) {
@@ -82,12 +82,12 @@ async function writeFragment(fragment) {
  * Check accessibility
  */
 
-async function a11y(input) {
-  const koios = copy(input);
-
-  if (!checkA11y) return koios;
-
+async function a11y(input) { 
   try {
+    const koios = copy(input);
+  
+    if (!checkA11y) return koios;
+
     const a11yPage = await a11yBrowser.newPage();
 
     const report = await pa11y(`http://localhost:8000${path.sep}` + pathDiff(paths.BLD.pages, koios.destination), 
@@ -109,19 +109,10 @@ async function a11y(input) {
  * Add banner
  */
 
-async function addBanner(koios) {
+async function addBanner(input) {
+  const koios = copy(input);
   koios.data = `<!-- ${process.env.npm_package_name} v${process.env.npm_package_version} --> ${koios.data}\n`;
   return koios;
-}
-
-/**
- * Check inside which templates folder source resides
- */
-
-function getSourceType(source) {
-  return pathDiff(paths.SRC.templates, source)
-    .split(path.sep)
-    .shift();
 }
 
 /**
@@ -131,17 +122,17 @@ function getSourceType(source) {
 function build(koios, type) {
   const builders = {
     pages: async koios => koios.read()
-      .then(k => pugToHtml(k))
-      .then(k => a11y(k))
-      .then(k => addBanner(k))
+      .then(pugToHtml)
+      .then(a11y)
+      .then(addBanner)
       .then(k => k.write()),
     
     components: async koios => koios.read()
-      .then(k => pugdoc(k)),
+      .then(pugdoc),
     
     icons: async koios => koios.read()
-      .then(k => pugToHtml(k))
-      .then(k => addBanner(k))
+      .then(pugToHtml)
+      .then(addBanner)
       .then(k => k.write())
   };
 
@@ -171,7 +162,7 @@ exports.default = async function (changed) {
   if (changed && checkA11y) a11yBrowser = await puppeteer.launch({ ignoreHTTPSErrors: true });
 
   entries.forEach(entry => {
-    const type = getSourceType(entry);
+    const type = pathDiff(paths.SRC.templates, entry).split(path.sep).shift();
     const source = path.resolve(entry);
     const subdir = type === "pages" ? pathDiff(paths.SRC.pages, path.dirname(entry)) : "";
     const destination = path.resolve(paths[ENV][type], subdir, `${path.basename(entry, ".pug")}.html`);

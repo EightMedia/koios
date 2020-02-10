@@ -134,11 +134,11 @@ async function addBanner(input) {
 
 async function buildStyle(koios) {
   return koios.read()
-    .then(k => lint(k))
-    .then(k => compile(k))
-    .then(k => prep(k))
-    .then(k => minify(k))
-    .then(k => addBanner(k))
+    .then(lint)
+    .then(compile)
+    .then(prep)
+    .then(minify)
+    .then(addBanner)
     .then(k => k.write())
     .catch(err => ({ ...koios, err }));
 }
