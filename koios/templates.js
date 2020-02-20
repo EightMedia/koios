@@ -3,7 +3,7 @@ const KoiosThought = require("./utils/koios-thought");
 const copy = require("./utils/immutable-clone");
 const pathDiff = require("./utils/path-diff");
 const slugify = require("./utils/slugify");
-const { getPugdocDocuments } = require("./utils/pugdoc-parser");
+const pugdoc = require("./utils/pugdoc-parser");
 const globby = require("globby");
 const chalk = require("chalk");
 const path = require("path");
@@ -17,47 +17,39 @@ const checkA11y = process.argv.includes("-a11y");
  * Compile pug into html
  */
 
-async function pugToHtml(input) {
-  try {
-    const koios = copy(input);
-    return pug.render(
-      koios.data, 
-      Object.assign(locals, { self: true, filename: koios.source }), 
-      (err, html) => {
-        if (err) throw err;
-        koios.data = html;
-        return koios;
-      }
-    );
-  } catch (err) {
-    throw err;
-  }
+async function pugPage(input) {
+  const koios = copy(input);
+  return pug.render(
+    koios.data, 
+    Object.assign(locals, { self: true, filename: koios.source }), 
+    (err, html) => {
+      if (err) throw err;
+      koios.data = html;
+      return koios;
+    }
+  );
 }
 
 /**
  * Pug doc parser
  */
 
-async function pugdoc(input) {
-  try {
-    const koios = copy(input);
-    const component = getPugdocDocuments(koios.data, koios.source, locals)[0];
-    
-    if (!component) {
-      koios.log = { type: "info", msg: `no pug-doc in ${pathDiff(process.cwd(), koios.source)}` };
-      return koios;
-    }
-
-    const promises = [writeFragment(component)];
-    if (component.fragments) component.fragments.forEach(fragment => promises.push(writeFragment(fragment)));
-
-    const fragments = await Promise.all(promises);
-
-    koios.log = pathDiff(process.cwd(), koios.destination) + ` (${fragments.length} fragment${fragments.length !== 1 ? "s" : ""})`;
+async function pugComponent(input) {
+  const koios = copy(input);
+  const component = pugdoc(koios.data, koios.source, locals)[0];
+  
+  if (!component) {
+    koios.log = { type: "info", msg: `no pug-doc in ${pathDiff(process.cwd(), koios.source)}` };
     return koios;
-  } catch (err) {
-    throw err;
   }
+
+  const promises = [writeFragment(component)];
+  if (component.fragments) component.fragments.forEach(fragment => promises.push(writeFragment(fragment)));
+
+  const fragments = await Promise.all(promises);
+
+  koios.log = pathDiff(process.cwd(), koios.destination) + ` (${fragments.length} fragment${fragments.length !== 1 ? "s" : ""})`;
+  return koios;
 }
 
 /**
@@ -83,26 +75,22 @@ async function writeFragment(fragment) {
  */
 
 async function a11y(input) { 
-  try {
-    const koios = copy(input);
-  
-    if (!checkA11y) return koios;
+  const koios = copy(input);
 
-    const a11yPage = await a11yBrowser.newPage();
+  if (!checkA11y) return koios;
 
-    const report = await pa11y(`http://localhost:8000${path.sep}` + pathDiff(paths.BLD.pages, koios.destination), 
-      { browser: a11yBrowser, page: a11yPage });
+  const a11yPage = await a11yBrowser.newPage();
 
-    if (report) {
-      koios.log = { type: "warn", msg: `${koios.destination} is compiled, but contains some a11y issues:`, verbose: [] }
-      report.issues.forEach(issue => {
-        koios.log.verbose.push(`${issue.code}\n    ${chalk.grey(`${issue.message}\n    ${issue.context}`)}`);
-      })
-    }
-    return koios;
-  } catch (err) {
-    throw err;
+  const report = await pa11y(`http://localhost:8000${path.sep}` + pathDiff(paths.BLD.pages, koios.destination), 
+    { browser: a11yBrowser, page: a11yPage });
+
+  if (report) {
+    koios.log = { type: "warn", msg: `${koios.destination} is compiled, but contains some a11y issues:`, verbose: [] }
+    report.issues.forEach(issue => {
+      koios.log.verbose.push(`${issue.code}\n    ${chalk.grey(`${issue.message}\n    ${issue.context}`)}`);
+    })
   }
+  return koios;
 }
 
 /**
@@ -119,33 +107,35 @@ async function addBanner(input) {
  * Compiles source pug to destination html
  */
 
-function build(koios, type) {
+function build(type) {
   const builders = {
     pages: async koios => koios.read()
-      .then(pugToHtml)
+      .then(pugPage)
       .then(a11y)
       .then(addBanner)
       .then(k => k.write()),
     
     components: async koios => koios.read()
-      .then(pugdoc),
+      .then(pugComponent),
     
     icons: async koios => koios.read()
-      .then(pugToHtml)
+      .then(pugPage)
       .then(addBanner)
       .then(k => k.write())
   };
 
-  // check if builder is present
-  if (!builders[type]) throw new Error("No builder defined for " + type);
+  return function(koios) {
+    // check if builder is present
+    if (!builders[type]) throw new Error("No builder defined for " + type);
 
-  // use the corresponding builder
-  return builders[type](koios).catch(err => ({ ...koios, err }));
+    // use the corresponding builder
+    return builders[type](koios).catch(err => ({ ...koios, err }));
+  }
 }
 
 /**
- * Entry point for run.js
- * $ node tasks/run templates
+ * Entry point for koios:
+ * $ node koios templates
  */
 
 exports.default = async function (changed) {
@@ -175,7 +165,7 @@ exports.default = async function (changed) {
     if (path.basename(source).charAt(0) === "_" && type !== "icons") return;
 
     promises.push(
-      build(KoiosThought({ source, destination, changed, children }), type)
+      build(type)(KoiosThought({ source, destination, changed, children }))
     );
   });
 

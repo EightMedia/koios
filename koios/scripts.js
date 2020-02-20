@@ -16,34 +16,30 @@ const depTree = require("dependency-tree");
  */
 
 function lint(input) {
-  try {
-    const koios = copy(input);
-    const report = new eslint().executeOnFiles(koios.changed || koios.children);
-    const issues = [];
+  const koios = copy(input);
+  const report = new eslint().executeOnFiles(koios.changed || koios.children);
+  const issues = [];
 
-    report.results.forEach(result => {
-      if (result.errorCount === 0 && result.warningCount === 0) return;
-      result.messages.forEach(issue => {
-        issues.push(`${pathDiff(result.filePath, process.cwd())} [${issue.line}:${issue.column}] ${issue.ruleId}\n  ${chalk.grey(issue.message)}`);
-      });
+  report.results.forEach(result => {
+    if (result.errorCount === 0 && result.warningCount === 0) return;
+    result.messages.forEach(issue => {
+      issues.push(`${pathDiff(result.filePath, process.cwd())} [${issue.line}:${issue.column}] ${issue.ruleId}\n  ${chalk.grey(issue.message)}`);
     });
+  });
 
-    if (issues.length > 0) {
-      koios.log = {
-        type: "warn",
-        scope: "linter",
-        msg: `Found ${issues.length} issues concerning ${pathDiff(
-          process.cwd(),
-          koios.destination
-        )}:`,
-        verbose: issues
-      };
-    }
-
-    return koios;
-  } catch (err) {
-    throw err;
+  if (issues.length > 0) {
+    koios.log = {
+      type: "warn",
+      scope: "linter",
+      msg: `Found ${issues.length} issues concerning ${pathDiff(
+        process.cwd(),
+        koios.destination
+      )}:`,
+      verbose: issues
+    };
   }
+
+  return koios;
 }
 
 /**
@@ -108,7 +104,7 @@ async function bundle(input) {
  * Build
  */
 
-async function buildScript(koios) {
+async function build(koios) {
   return koios.read()
     .then(lint)
     .then(bundle)
@@ -117,8 +113,8 @@ async function buildScript(koios) {
 }
 
 /**
- * Entry point for run.js
- * $ node tasks/run scripts
+ * Entry point for koios:
+ * $ node koios scripts
  */
 
 exports.default = async function (changed) {
@@ -142,7 +138,7 @@ exports.default = async function (changed) {
     if (changed && !children.includes(changed)) return;
 
     promises.push(
-      buildScript(KoiosThought({ source, destination, changed, children }))
+      build(KoiosThought({ source, destination, changed, children }))
     );
   });
 

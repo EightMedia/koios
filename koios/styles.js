@@ -19,36 +19,32 @@ const preprocess = require("preprocess").preprocess;
 
 async function lint(input) {
   const koios = copy(input);
-  try {
-    const result = await stylelint.lint({
-        syntax: "scss",
-        files: koios.changed || koios.children,
-        formatter: (result, retval) => {
-          retval.logs = [];
-          result.forEach(file => {
-            file.warnings.forEach(issue =>
-              retval.logs.push(
-                `${pathDiff(file.source, process.cwd())} [${issue.line}:${issue.column}]\n  ${chalk.grey(issue.text)}`
-              )
-            );
-          });
-          return retval;
-        }
-      });
+  const result = await stylelint.lint({
+      syntax: "scss",
+      files: koios.changed || koios.children,
+      formatter: (result, retval) => {
+        retval.logs = [];
+        result.forEach(file => {
+          file.warnings.forEach(issue =>
+            retval.logs.push(
+              `${pathDiff(file.source, process.cwd())} [${issue.line}:${issue.column}]\n  ${chalk.grey(issue.text)}`
+            )
+          );
+        });
+        return retval;
+      }
+    });
 
-    if (result.logs.length > 0) {
-      koios.log = {
-        type: "warn",
-        scope: "linter",
-        msg: `Found ${result.logs.length} issues concerning ${pathDiff(process.cwd(), koios.destination)}:`,
-        verbose: result.logs
-      };
-    }
-
-    return koios;
-  } catch (err) {
-    throw err;
+  if (result.logs.length > 0) {
+    koios.log = {
+      type: "warn",
+      scope: "linter",
+      msg: `Found ${result.logs.length} issues concerning ${pathDiff(process.cwd(), koios.destination)}:`,
+      verbose: result.logs
+    };
   }
+
+  return koios;
 }
 
 /**
@@ -79,32 +75,28 @@ function compile(input) {
 
 async function minify(input) {
   const koios = copy(input);
-  try {
-    const result = await postcss([
-      autoprefixer({
-        cascade: false
-      }),
-      cssnano({
-        preset: [
-          "default",
-          {
-            discardComments: {
-              removeAll: true
-            },
-            discardDuplicates: true,
-            discardEmpty: true,
-            minifyFontValues: true,
-            minifySelectors: true
-          }
-        ]
-      })
-    ]).process(koios.data, { from: undefined });
-    
-    koios.data = result.css;
-    return koios;
-  } catch (err) {
-    throw err;
-  }
+  const result = await postcss([
+    autoprefixer({
+      cascade: false
+    }),
+    cssnano({
+      preset: [
+        "default",
+        {
+          discardComments: {
+            removeAll: true
+          },
+          discardDuplicates: true,
+          discardEmpty: true,
+          minifyFontValues: true,
+          minifySelectors: true
+        }
+      ]
+    })
+  ]).process(koios.data, { from: undefined });
+  
+  koios.data = result.css;
+  return koios;
 }
 
 /**
@@ -132,7 +124,7 @@ async function addBanner(input) {
  * pass copy of koios to enforce immutability
  */
 
-async function buildStyle(koios) {
+async function build(koios) {
   return koios.read()
     .then(lint)
     .then(compile)
@@ -144,8 +136,8 @@ async function buildStyle(koios) {
 }
 
 /**
- * Entry point for run.js
- * $ node tasks/run styles
+ * Entry point for koios:
+ * $ node koios styles
  */
 
 exports.default = async function (changed) {
@@ -162,7 +154,7 @@ exports.default = async function (changed) {
     if (changed && !children.includes(changed)) return;
 
     promises.push(
-      buildStyle(KoiosThought({ source, destination, changed, children }))
+      build(KoiosThought({ source, destination, changed, children }))
     );
   });
 

@@ -7,8 +7,8 @@ const path = require("path");
 
 
 /**
- * Entry point for run.js
- * $ node tasks/run clean
+ * Entry point for koios:
+ * $ node koios clean
  */
 
 exports.default = async function () {

@@ -58,7 +58,7 @@ module.exports.paths = paths;
  * Locals
  */
 
-module.exports.locals = Object.assign(
+module.exports.locals = Object.assign({},
   {
     version: process.env.npm_package_version,
     imageSizes: require(`${process.cwd()}${S}${

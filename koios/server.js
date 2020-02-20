@@ -6,10 +6,11 @@ const proxyMiddleware = require("http-proxy-middleware");
 const chokidar = require("chokidar");
 
 /**
- * Run server and watch changes in SRC
+ * Entry point for koios:
+ * $ node koios server
  */
 
-function server() {
+exports.default = function () {
   return new Promise(function(resolve, reject) {
     const chokidarOptions = {
       awaitWriteFinish: {
@@ -66,5 +67,3 @@ function server() {
     });
   });
 }
-
-exports.default = server;

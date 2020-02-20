@@ -3,8 +3,8 @@ const qoa = require("qoa");
 const bumper = require("bump-regex");
 
 /**
- * Entry point for run.js
- * $ node tasks/run bump
+ * Entry point for koios:
+ * $ node koios bump
  */
 
 exports.default = async function () {

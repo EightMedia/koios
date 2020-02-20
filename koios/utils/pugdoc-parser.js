@@ -94,90 +94,6 @@ function extractPugdocBlocks(templateSrc) {
 }
 
 /**
- * Returns all pugdocDocuments for the given code
- *
- * @param templateSrc {string}
- * @param filename {string}
- */
-
-function getPugdocDocuments(templateSrc, filename, locals) {
-  return extractPugdocBlocks(templateSrc).map(function (pugdocBlock) {
-    var meta = parsePugdocComment(pugdocBlock.comment);
-    var fragments = [];
-
-    // parse jsdoc style arguments list
-    if (meta.arguments) {
-      meta.arguments = meta.arguments.map(function (arg) {
-        return pugdocArguments.parse(arg, true);
-      });
-    }
-
-    // parse jsdoc style attributes list
-    if (meta.attributes) {
-      meta.attributes = meta.attributes.map(function (arg) {
-        return pugdocArguments.parse(arg, true);
-      });
-    }
-
-    var source = pugdocBlock.code;
-    source = source.replace(/\u2028|\u200B/g, "");
-
-    // get example objects and add them to parent example
-    // also return them as separate pugdoc blocks
-    if (meta.examples) {
-      for (let i = 0, l = meta.examples.length; i < l; ++i) {
-        const x = meta.examples[i];
-
-        // do nothing for simple examples
-        if (typeof x === "string") {
-          continue;
-        }
-
-        // merge example/examples with parent examples
-        meta.examples[i] = getExamples(x).reduce(
-          (acc, val) => acc.concat(val),
-          []
-        );
-
-        // add fragments
-        fragments.push(x);
-      }
-
-      meta.examples = meta.examples.reduce((acc, val) => acc.concat(val), []);
-    }
-
-    var obj = {
-      // get meta
-      meta: meta,
-      // add file path
-      file: path.relative(".", filename),
-      // get pug code block matching the comments indent
-      source: source,
-      // get html output
-      output: compilePug(source, meta, filename, locals)
-    };
-
-    // add fragments
-    if (fragments && fragments.length) {
-      obj.fragments = fragments.map(subexample => {
-        return {
-          // get meta
-          meta: subexample,
-          // get html output
-          output: compilePug(source, subexample, filename, locals)
-        };
-      });
-    }
-
-    if (obj.output) {
-      return obj;
-    }
-
-    return null;
-  });
-}
-
-/**
  * Extract pug attributes from comment block
  */
 
@@ -249,10 +165,78 @@ function compilePug(source, meta, filename, locals) {
   return fn(Object.assign({}, locals, meta.locals));
 }
 
+/**
+ * Returns all pugdocDocuments for the given code
+ *
+ * @param templateSrc {string}
+ * @param filename {string}
+ */
+
+function getPugdocDocuments(templateSrc, filename, locals) {
+  return extractPugdocBlocks(templateSrc).map(function (pugdocBlock) {
+    var meta = parsePugdocComment(pugdocBlock.comment);
+    var fragments = [];
+
+    // parse jsdoc style arguments list
+    if (meta.arguments) {
+      meta.arguments = meta.arguments.map(function (arg) {
+        return pugdocArguments.parse(arg, true);
+      });
+    }
+
+    // parse jsdoc style attributes list
+    if (meta.attributes) {
+      meta.attributes = meta.attributes.map(function (arg) {
+        return pugdocArguments.parse(arg, true);
+      });
+    }
+
+    var source = pugdocBlock.code;
+    source = source.replace(/\u2028|\u200B/g, "");
+
+    // get example objects and add them to parent example
+    // also return them as separate pugdoc blocks
+    if (meta.examples) {
+      for (let i = 0, l = meta.examples.length; i < l; ++i) {
+        const x = meta.examples[i];
+
+        // do nothing for simple examples
+        if (typeof x === "string") {
+          continue;
+        }
+
+        // merge example/examples with parent examples
+        meta.examples[i] = getExamples(x).reduce(
+          (acc, val) => acc.concat(val),
+          []
+        );
+
+        // add fragments
+        fragments.push(x);
+      }
+
+      meta.examples = meta.examples.reduce((acc, val) => acc.concat(val), []);
+    }
+
+    var obj = {
+      meta: meta,
+      file: path.relative(".", filename),
+      source: source,
+      output: compilePug(source, meta, filename, locals)
+    };
+
+    // add fragments
+    if (fragments && fragments.length) {
+      obj.fragments = fragments.map(subexample => ({ meta: subexample, output: compilePug(source, subexample, filename, locals) }));
+    }
+
+    if (obj.output) {
+      return obj;
+    }
+
+    return null;
+  });
+}
+
 // Exports
-module.exports = {
-  extractPugdocBlocks: extractPugdocBlocks,
-  getPugdocDocuments: getPugdocDocuments,
-  parsePugdocComment: parsePugdocComment,
-  getExamples: getExamples
-};
+module.exports = getPugdocDocuments;
