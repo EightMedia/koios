@@ -124,7 +124,7 @@ function build(type) {
       .then(k => k.write())
   };
 
-  return function(koios) {
+  return koios => {
     // check if builder is present
     if (!builders[type]) throw new Error("No builder defined for " + type);
 

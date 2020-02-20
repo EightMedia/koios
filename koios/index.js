@@ -62,7 +62,7 @@ async function run(task, input) {
   await fs.promises.mkdir(paths[ENV].root).catch((err) => err);
 
   return fn(input).then(promises => {
-    return promiseProgress(promises, (i, item) => {
+    return promiseProgress(promises)((i, item) => {
       if (item instanceof Error) throw item;
       if (!item.log && !item.err && !item.source && !item.destination) throw new Error("Task returned an invalid koios-object.");
 
@@ -84,10 +84,9 @@ async function run(task, input) {
       let errors = result.filter(item => item.err);
       
       if (errors.length > 0) {
-        logger.warn(`Reported ${errors.length} error${errors.length !== 1 ? "s" : ""}`);
+        log.warn(`Reported ${errors.length} error${errors.length !== 1 ? "s" : ""}`);
       }
     })
-    .catch(err => logger.error(err))
     .finally(() => {
       const end = new Date();
       const time = convertMs(end.getTime() - start.getTime());
@@ -112,12 +111,12 @@ if (require.main === module && process.argv.length > 2) {
   }
   
   // run tasks one after another
-  tasks.reduce(async (previousPromise, nextTask) => {
-    await previousPromise;
+  tasks.reduce(async (previousTask, nextTask) => {
+    await previousTask;
     
     console.log(""); // insert blank line for clarity
 
-    if (typeof nextTask === "function") return Promise.resolve(nextTask());
+    if (typeof nextTask === "function") return nextTask();
     
     return run(nextTask).catch(err => {
       logger.error(err);
