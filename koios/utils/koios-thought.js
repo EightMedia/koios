@@ -1,3 +1,4 @@
+const pathDiff = require("./path-diff");
 const fs = require("fs");
 const path = require("path");
 const { promisify } = require("util");
@@ -18,7 +19,7 @@ module.exports = ({source, destination, changed, children, data}) => ({
    */
 
   async read() {
-    if (!this.source) throw new Error(`No source to read from.`);
+    if (!this.source) return this.error(`No source to read from.`);
     const readStream = fs.createReadStream(this.source, { encoding: "utf8" });
 
     let data = "";
@@ -36,7 +37,7 @@ module.exports = ({source, destination, changed, children, data}) => ({
    */
 
   async write() {
-    if (!this.destination) throw new Error(`No destination to write to.`);
+    if (!this.destination) return this.error(`No destination to write to.`);
     await fs.promises.mkdir(path.dirname(this.destination), {
       recursive: true
     });
@@ -54,5 +55,35 @@ module.exports = ({source, destination, changed, children, data}) => ({
     await finished(writeStream);
     
     return this;
+  },
+
+  /**
+   * Set error
+   */
+
+  async error(err) {
+    const msg = err instanceof Error ? err : new Error(err);
+    this.log = this.log || { type: "error", msg };
+    return this;
+  },
+
+  async done(msg) {
+    if (!msg) msg = pathDiff(process.cwd(), this.destination);
+    this.log = this.log || { type: "success", msg };
+    return this;
+  },
+
+  async info(msg) {
+    this.log = this.log || { type: "info", msg };
+    return this;
+  },
+
+  async warn(msg) {
+    this.log = this.log || typeof msg === "string" ? { type: "warn", msg } : Object.assign(msg, { type: "warn" });
+    return this;
+  },
+
+  hasError() {
+    return this.log && this.log.type === "error";
   }
 })

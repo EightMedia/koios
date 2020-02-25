@@ -36,12 +36,11 @@ async function lint(input) {
     });
 
   if (result.logs.length > 0) {
-    koios.log = {
-      type: "warn",
+    return koios.warn({
       scope: "linter",
-      msg: `Found ${result.logs.length} issues concerning ${pathDiff(process.cwd(), koios.destination)}:`,
-      verbose: result.logs
-    };
+      message: `Found ${result.logs.length} issues concerning ${pathDiff(process.cwd(), koios.destination)}:`,
+      sub: result.logs
+    });
   }
 
   return koios;
@@ -132,7 +131,8 @@ async function build(koios) {
     .then(minify)
     .then(addBanner)
     .then(k => k.write())
-    .catch(err => ({ ...koios, err }));
+    .then(k => k.done())
+    .catch(err => koios.error(err));
 }
 
 /**

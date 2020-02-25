@@ -1,4 +1,5 @@
 const { ENV, paths } = require(`${process.cwd()}/.koiosrc`);
+const KoiosThought = require("./utils/koios-thought");
 const del = require("del");
 
 const fs = require("fs");
@@ -16,9 +17,9 @@ exports.default = async function () {
     new Promise(async (resolve, reject) => {
       del(`${paths[ENV].root}**/*`)
         .then((result) => { 
-          return { log: `deleted everything inside ${paths[ENV].root} (${result.length} items)` };
+          return `deleted everything inside ${paths[ENV].root} (${result.length} items)`;
         })
-        .then(async (koios) => {
+        .then(async (msg) => {
           return await fs.promises
             .symlink(
               path.resolve(paths.static),
@@ -26,8 +27,7 @@ exports.default = async function () {
               "dir"
             )
             .then(() => {
-              koios.log += ` and added the symlink to ${paths.static} inside ${paths[ENV].root}`;
-              return koios;
+              return KoiosThought({}).done(msg + ` and added the symlink to ${paths.static} inside ${paths[ENV].root}`);
             });
         })
         .then((koios) => resolve(koios))

@@ -38,18 +38,13 @@ async function pugComponent(input) {
   const koios = copy(input);
   const component = pugdoc(koios.data, koios.source, locals)[0];
   
-  if (!component) {
-    koios.log = { type: "info", msg: `no pug-doc in ${pathDiff(process.cwd(), koios.source)}` };
-    return koios;
-  }
+  if (!component) return koios.info(`no pug-doc in ${pathDiff(process.cwd(), koios.source)}`);
 
   const promises = [writeFragment(component)];
   if (component.fragments) component.fragments.forEach(fragment => promises.push(writeFragment(fragment)));
-
   const fragments = await Promise.all(promises);
 
-  koios.log = pathDiff(process.cwd(), koios.destination) + ` (${fragments.length} fragment${fragments.length !== 1 ? "s" : ""})`;
-  return koios;
+  return koios.done(pathDiff(process.cwd(), koios.destination) + ` (${fragments.length} fragment${fragments.length !== 1 ? "s" : ""})`);
 }
 
 /**
@@ -85,10 +80,12 @@ async function a11y(input) {
     { browser: a11yBrowser, page: a11yPage });
 
   if (report) {
-    koios.log = { type: "warn", msg: `${koios.destination} is compiled, but contains some a11y issues:`, verbose: [] }
-    report.issues.forEach(issue => {
-      koios.log.verbose.push(`${issue.code}\n    ${chalk.grey(`${issue.message}\n    ${issue.context}`)}`);
-    })
+    koios.warn({
+      msg: `${koios.destination} is compiled, but contains some a11y issues:`,
+      verbose: report.issues.reduce((collection, issue) => {
+        collection.push(`${issue.code}\n    ${chalk.grey(`${issue.message}\n    ${issue.context}`)}`);
+      }, [])
+    });
   }
   return koios;
 }
@@ -113,7 +110,8 @@ function build(type) {
       .then(pugPage)
       .then(a11y)
       .then(addBanner)
-      .then(k => k.write()),
+      .then(k => k.write())
+      .then(k => k.done()),
     
     components: async koios => koios.read()
       .then(pugComponent),
@@ -122,15 +120,10 @@ function build(type) {
       .then(pugPage)
       .then(addBanner)
       .then(k => k.write())
+      .then(k => k.done())
   };
 
-  return koios => {
-    // check if builder is present
-    if (!builders[type]) throw new Error("No builder defined for " + type);
-
-    // use the corresponding builder
-    return builders[type](koios).catch(err => ({ ...koios, err }));
-  }
+  return koios => builders[type] ? builders[type](koios).catch(err => koios.error(err)) : koios.error("No builder defined for " + type);
 }
 
 /**

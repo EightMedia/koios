@@ -28,15 +28,11 @@ function lint(input) {
   });
 
   if (issues.length > 0) {
-    koios.log = {
-      type: "warn",
+    return koios.warn({
       scope: "linter",
-      msg: `Found ${issues.length} issues concerning ${pathDiff(
-        process.cwd(),
-        koios.destination
-      )}:`,
-      verbose: issues
-    };
+      msg: `Found ${issues.length} issue${issues.length !== 1 ? "s" : ""} concerning ${pathDiff(process.cwd(), koios.destination)}:`,
+      sub: issues
+    });
   }
 
   return koios;
@@ -109,7 +105,8 @@ async function build(koios) {
     .then(lint)
     .then(bundle)
     // no koios.write() because scripts are written via webpack
-    .catch(err => ({ ...koios, err }));
+    .then(k => k.done())
+    .catch(err => koios.error(err));
 }
 
 /**
