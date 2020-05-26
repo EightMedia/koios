@@ -2,7 +2,7 @@ const { paths } = require(`${process.cwd()}/.koiosrc`);
 const koios = require("./index").default;
 const path = require("path");
 const bs = require("browser-sync").create("localdev");
-const proxyMiddleware = require("http-proxy-middleware");
+const { createProxyMiddleware } = require("http-proxy-middleware");
 const chokidar = require("chokidar");
 
 /**
@@ -23,7 +23,7 @@ exports.default = function () {
      * Run BrowserSync
      */
 
-    const apiProxy = proxyMiddleware("/.netlify/functions/*", {
+    const apiProxy = createProxyMiddleware("/.netlify/functions/*", {
       target: "http://localhost:9000/"
     });
 
