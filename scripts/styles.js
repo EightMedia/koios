@@ -1,4 +1,4 @@
-const { ENV, paths } = require(`${process.cwd()}/.koiosrc`);
+const { package, ENV, paths } = require(`${process.cwd()}/.koiosrc`);
 const KoiosThought = require("./utils/koios-thought");
 const pathDiff = require("./utils/path-diff");
 const copy = require("./utils/immutable-clone");
@@ -20,6 +20,9 @@ const preprocess = require("preprocess").preprocess;
 async function lint(input) {
   const koios = copy(input);
   const result = await stylelint.lint({
+      configOverrides: {
+        "extends": path.resolve(__dirname, "../node_modules", "stylelint-config-recommended-scss")
+      },
       syntax: "scss",
       files: koios.changed || koios.children,
       formatter: (result, retval) => {
@@ -114,7 +117,7 @@ async function prep(input) {
 
 async function addBanner(input) {
   const koios = copy(input);
-  koios.data = `/* ${process.env.npm_package_name} v${process.env.npm_package_version} */ ${koios.data}`;
+  koios.data = `/* ${package.name} v${package.version} */ ${koios.data}`;
   return koios;
 }
 
@@ -147,7 +150,7 @@ exports.default = async function (changed) {
 
   entries.forEach(entry => {
     const source = path.resolve(entry);
-    const destination = path.resolve(paths[ENV].styles, `${path.basename(entry, ".scss")}.v${process.env.npm_package_version}.css`);
+    const destination = path.resolve(paths[ENV].styles, `${path.basename(entry, ".scss")}.v${package.version}.css`);
     const children = sassGraph.parseFile(source).index[source].imports;
     
     // skip this entry if a changed file is given which isn't imported by entry

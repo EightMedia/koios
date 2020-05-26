@@ -21,7 +21,7 @@ exports.default = async function () {
         if (err) return reject(err);
 
         await fs.promises.writeFile(`${process.cwd()}/package.json`, out.str);
-        process.env.npm_package_version = out.new;
+        package.version = out.new;
 
         return resolve({
           log: `Bumped version from ${out.prev} to ${out.new}`

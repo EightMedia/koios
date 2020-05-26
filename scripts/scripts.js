@@ -1,4 +1,4 @@
-const { ENV, paths } = require(`${process.cwd()}/.koiosrc`);
+const { package, ENV, paths } = require(`${process.cwd()}/.koiosrc`);
 const KoiosThought = require("./utils/koios-thought");
 const pathDiff = require("./utils/path-diff");
 const copy = require("./utils/immutable-clone");
@@ -60,7 +60,7 @@ async function bundle(input) {
       devtool: "source-map",
       plugins: [
         new webpack.BannerPlugin({
-          banner: `${process.env.npm_package_name} v${process.env.npm_package_version}`
+          banner: `${package.name} v${package.version}`
         })
       ],
       module: {
@@ -124,7 +124,7 @@ exports.default = async function (changed) {
 
   entries.forEach(entry => {
     const source = path.resolve(entry);
-    const destination = path.resolve(paths[ENV].scripts, `${path.basename(entry, ".js")}.v${process.env.npm_package_version}.js`);
+    const destination = path.resolve(paths[ENV].scripts, `${path.basename(entry, ".js")}.v${package.version}.js`);
     const children = depTree.toList({ 
       filename: source, 
       directory: paths.SRC.scripts,

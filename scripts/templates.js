@@ -1,4 +1,4 @@
-const { ENV, paths, locals, htmlComponent } = require(`${process.cwd()}/.koiosrc`);
+const { package, ENV, paths, locals, htmlComponent } = require(`${process.cwd()}/.koiosrc`);
 const KoiosThought = require("./utils/koios-thought");
 const copy = require("./utils/immutable-clone");
 const pathDiff = require("./utils/path-diff");
@@ -96,7 +96,7 @@ async function a11y(input) {
 
 async function addBanner(input) {
   const koios = copy(input);
-  koios.data = `<!-- ${process.env.npm_package_name} v${process.env.npm_package_version} --> ${koios.data}\n`;
+  koios.data = `<!-- ${package.name} v${package.version} --> ${koios.data}\n`;
   return koios;
 }
 
