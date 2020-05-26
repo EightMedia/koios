@@ -45,7 +45,7 @@ function lint(input) {
 async function bundle(input) {
   return new Promise(async (resolve, reject) => {
     const koios = copy(input);
-    const extraConfigFile = path.resolve(path.dirname(koios.source), `webpack.${path.basename(koios.source)}`);
+    const extraConfigFile = path.resolve(path.dirname(koios.source), `${path.basename(koios.source)}.webpack`);
     const extraConfigExists = await fs.promises.stat(extraConfigFile).catch(() => false);
     const extraConfig = extraConfigExists ? require(extraConfigFile) : {};
 
