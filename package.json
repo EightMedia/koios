@@ -3,20 +3,18 @@
   "version": "0.0.1",
   "description": "",
   "main": "scripts/index.js",
+  "bin": {
+    "koios": "scripts/index.js"
+  },
+  "files": [
+    "scripts/*.js"
+  ],
   "scripts": {
-    "clean:build": "NODE_ENV=development node koios clean",
-    "clean:export": "NODE_ENV=production node koios clean",
-    "build:styles": "NODE_ENV=development node koios styles",
-    "build:scripts": "NODE_ENV=development node koios scripts",
-    "build:templates": "NODE_ENV=development node koios templates",
-    "build": "NODE_ENV=development node koios clean styles scripts templates",
-    "start": "NODE_ENV=development node koios server",
-    "export": "NODE_ENV=production node koios bump clean styles scripts templates",
-    "netlify": "netlify-lambda serve source/api"
+    "start": "koios"
   },
   "author": "hylmar@eight.nl",
   "license": "ISC",
-  "devDependencies": {
+  "dependencies": {
     "@babel/core": "^7.8.3",
     "@babel/plugin-transform-runtime": "^7.8.3",
     "@babel/preset-env": "^7.8.3",
@@ -45,6 +43,7 @@
     "preprocess": "^3.1.0",
     "pug": "^3.0.0",
     "pug-code-block": "^3.5.0",
+    "pug-dependencies": "^2.0.0",
     "puppeteer": "^3.1.0",
     "qoa": "^0.2.0",
     "rebase-indent": "^1.5.0",

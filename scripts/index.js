@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const { ENV, paths } = require(`${process.cwd()}/.koiosrc`);
 const { Signale } = require("signale");
 const logger = new Signale();
@@ -52,7 +54,13 @@ function convertMs(ms) {
  * Run a task
  */
 
+const availableTasks = ["bump", "clean", "scripts", "server", "styles", "templates"]
+
 async function run(task, input) {
+  if (!availableTasks.includes(task)) {
+    throw Error("Use one of the following tasks: " + availableTasks.join(", "));
+  }
+
   const fn = require(`./${task}.js`).default;
   const start = new Date();
 
