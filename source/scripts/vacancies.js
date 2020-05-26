@@ -1,1 +1,0 @@
-require("./vacancies/index.js");

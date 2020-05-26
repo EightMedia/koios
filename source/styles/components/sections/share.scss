@@ -1,9 +1,0 @@
-.share__title {
-  @include h2;
-  margin-bottom: 10px;
-
-  @include breakpoint($bp-m) {
-    font-size: 22px;
-    margin-bottom: 12px;
-  }
-}
