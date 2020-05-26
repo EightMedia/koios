@@ -118,7 +118,7 @@ exports.default = async function (changed) {
   changed = changed ? path.resolve(process.cwd(), changed) : null;
   const entries = await globby([
     `${paths.SRC.scripts}*.js`,
-    `!${paths.SRC.scripts}webpack.*.js`
+    `!${paths.SRC.scripts}*.webpack.js`
   ]);
   const promises = [];
 
