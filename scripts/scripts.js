@@ -17,7 +17,26 @@ const depTree = require("dependency-tree");
 
 function lint(input) {
   const koios = copy(input);
-  const report = new eslint().executeOnFiles(koios.changed || koios.children);
+  const report = new eslint({ 
+    baseConfig: {
+      "env": {
+        "browser": true,
+        "node": true
+      },
+      "parser": require.resolve("babel-eslint"),
+      "extends": [
+        "eslint:recommended"
+      ],
+      "rules": {
+        "global-require": 1,
+        "no-mixed-requires": 1
+      },
+      "globals": {
+        "window": true,
+        "document": true
+      }
+    }
+   }).executeOnFiles(koios.changed || koios.children);
   const issues = [];
 
   report.results.forEach(result => {
@@ -45,7 +64,7 @@ function lint(input) {
 async function bundle(input) {
   return new Promise(async (resolve, reject) => {
     const koios = copy(input);
-    const extraConfigFile = path.resolve(path.dirname(koios.source), `${path.basename(koios.source)}.webpack`);
+    const extraConfigFile = path.resolve(path.dirname(koios.source), `${path.basename(koios.source, ".js")}.webpack.js`);
     const extraConfigExists = await fs.promises.stat(extraConfigFile).catch(() => false);
     const extraConfig = extraConfigExists ? require(extraConfigFile) : {};
 
