@@ -21,7 +21,7 @@ async function lint(input) {
   const koios = copy(input);
   const result = await stylelint.lint({
       configOverrides: {
-        "extends": path.resolve(__dirname, "../node_modules", "stylelint-config-recommended-scss")
+        "extends": "stylelint-config-recommended-scss"
       },
       syntax: "scss",
       files: koios.changed || koios.children,
