@@ -15,19 +15,19 @@ const path = require("path");
 exports.default = async function () {
   return [
     new Promise(async (resolve, reject) => {
-      del(`${paths[ENV].root}**/*`)
+      del(`${paths.roots.to}**/*`)
         .then((result) => { 
-          return `deleted everything inside ${paths[ENV].root} (${result.length} items)`;
+          return `cleaned ${paths.roots.to}`;
         })
         .then(async (msg) => {
           return await fs.promises
             .symlink(
               path.resolve(paths.static),
-              path.resolve(paths[ENV].root, paths.static),
+              path.resolve(paths.roots.to, paths.static),
               "dir"
             )
             .then(() => {
-              return KoiosThought({}).done(msg + ` and added the symlink to ${paths.static} inside ${paths[ENV].root}`);
+              return KoiosThought({}).done(msg + ` and added the symlink to ${paths.static}`);
             });
         })
         .then((koios) => resolve(koios))

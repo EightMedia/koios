@@ -143,7 +143,7 @@ exports.default = async function (changed) {
 
   entries.forEach(entry => {
     const source = path.resolve(entry);
-    const destination = path.resolve(paths[ENV].scripts, `${path.basename(entry, ".js")}.v${package.version}.js`);
+    const destination = path.resolve(paths.BLD.scripts, `${path.basename(entry, ".js")}.v${package.version}.js`);
     const children = depTree.toList({ 
       filename: source, 
       directory: paths.SRC.scripts,

@@ -67,7 +67,7 @@ async function run(task, input) {
   const log = logger.scope(task);
   log.pending(`Started at ${format(start)} for`, input || `${task}`);
 
-  await fs.promises.mkdir(paths[ENV].root).catch((err) => err);
+  await fs.promises.mkdir(paths.roots.to).catch((err) => err);
 
   return fn(input).then(promises => {
     return promiseProgress(promises)((i, item) => {

@@ -5,13 +5,11 @@ const pathDiff = require("./utils/path-diff");
 const slugify = require("./utils/slugify");
 const pugdoc = require("./utils/pugdoc-parser");
 const globby = require("globby");
-const chalk = require("chalk");
 const path = require("path");
 const pug = require("pug");
 const resolveDependencies = require("pug-dependencies");
-const pa11y = require("pa11y");
-const puppeteer = require("puppeteer");
-const checkA11y = process.argv.includes("-a11y");
+const minimatch = require("minimatch");
+const fs = require("fs");
 
 /**
  * Compile pug into html
@@ -66,31 +64,6 @@ async function writeFragment(fragment) {
 }
 
 /**
- * Check accessibility
- */
-
-async function a11y(input) { 
-  const koios = copy(input);
-
-  if (!checkA11y) return koios;
-
-  const a11yPage = await a11yBrowser.newPage();
-
-  const report = await pa11y(`http://localhost:8000${path.sep}` + pathDiff(paths.BLD.pages, koios.destination), 
-    { browser: a11yBrowser, page: a11yPage });
-
-  if (report) {
-    koios.warn({
-      msg: `${koios.destination} is compiled, but contains some a11y issues:`,
-      verbose: report.issues.reduce((collection, issue) => {
-        collection.push(`${issue.code}\n    ${chalk.grey(`${issue.message}\n    ${issue.context}`)}`);
-      }, [])
-    });
-  }
-  return koios;
-}
-
-/**
  * Add banner
  */
 
@@ -108,19 +81,12 @@ function build(type) {
   const builders = {
     pages: async koios => koios.read()
       .then(pugPage)
-      .then(a11y)
       .then(addBanner)
       .then(k => k.write())
       .then(k => k.done()),
     
     components: async koios => koios.read()
-      .then(pugComponent),
-    
-    icons: async koios => koios.read()
-      .then(pugPage)
-      .then(addBanner)
-      .then(k => k.write())
-      .then(k => k.done())
+      .then(pugComponent)
   };
 
   return koios => builders[type] ? builders[type](koios).catch(err => koios.error(err)) : koios.error("No builder defined for " + type);
@@ -133,32 +99,35 @@ function build(type) {
 
 exports.default = async function (changed) {
   changed = changed ? path.resolve(process.cwd(), changed) : null;
-  const entries = await globby([
-    `${paths.SRC.pages}**${path.sep}*.pug`,
-    `!${paths.SRC.pages}**${path.sep}_*.pug`,
-    `${paths.SRC.components}**${path.sep}*.pug`,
-    `!${paths.SRC.components}**${path.sep}_*.pug`,
-    `${paths.SRC.templates}icons${path.sep}_symbols.pug`
-  ]);
+
+  const patterns = { pages: Object.keys(paths.templates.pages) , components: Object.keys(paths.templates.components) };
+  const entries = await globby([...patterns.pages, ...patterns.components], { cwd: path.resolve(paths.roots.from) });
+  
   const promises = [];
 
-  if (changed && checkA11y) a11yBrowser = await puppeteer.launch({ ignoreHTTPSErrors: true });
-
   entries.forEach(entry => {
-    const type = pathDiff(paths.SRC.templates, entry).split(path.sep).shift();
-    const source = path.resolve(entry);
-    const subdir = type === "pages" ? pathDiff(paths.SRC.pages, path.dirname(entry)) : "";
-    const destination = path.resolve(paths[ENV][type], subdir, `${path.basename(entry, ".pug")}.html`);
+    const source = path.resolve(paths.roots.from, entry);
+    const pattern = 
+      patterns.pages.find((pattern) => minimatch(source, path.resolve(paths.roots.from, pattern))) ||
+      patterns.components.find((pattern) => minimatch(source, path.resolve(paths.roots.from, pattern)));
+    
+    const type = patterns.components.includes(pattern) ? "components" : "pages";
+
+    const destination = [
+      paths.roots.to, 
+      paths.templates[type][pattern]
+    ];
+
+    if (!path.extname(path.join(...destination)))
+      destination.push(`${path.basename(source, ".pug")}.html`);
+
     const children = resolveDependencies(source);
 
     // skip this entry if a changed file is given which isn't included or extended by entry
     if (changed && changed !== source && !children.includes(changed.slice(0, -4))) return;
 
-    // skip this entry if the filename starts with "_"
-    if (path.basename(source).charAt(0) === "_" && type !== "icons") return;
-
     promises.push(
-      build(type)(KoiosThought({ source, destination, changed, children }))
+      build(type)(KoiosThought({ source, destination: path.join(...destination), changed, children }))
     );
   });
 
