@@ -42,7 +42,7 @@ async function lint(input) {
   if (result.logs.length > 0) {
     return koios.warn({
       scope: "linter",
-      msg: `Found ${result.logs.length} issues concerning ${pathDiff(process.cwd(), koios.destination)}:`,
+      msg: `Found ${result.logs.length} issues concerning ${pathDiff(process.cwd(), koios.source)}:`,
       sub: result.logs
     });
   }

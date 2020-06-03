@@ -68,7 +68,7 @@ module.exports = ({source, destination, changed, children, data}) => ({
   },
 
   async done(msg) {
-    if (!msg) msg = pathDiff(process.cwd(), this.destination);
+    if (!msg) msg = pathDiff(process.cwd(), this.source);
     this.log = this.log || { type: "success", msg };
     return this;
   },

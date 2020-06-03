@@ -50,7 +50,7 @@ function lint(input) {
   if (issues.length > 0) {
     return koios.warn({
       scope: "linter",
-      msg: `Found ${issues.length} issue${issues.length !== 1 ? "s" : ""} concerning ${pathDiff(process.cwd(), koios.destination)}:`,
+      msg: `Found ${issues.length} issue${issues.length !== 1 ? "s" : ""} concerning ${pathDiff(process.cwd(), koios.source)}:`,
       sub: issues
     });
   }
