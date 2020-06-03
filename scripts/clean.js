@@ -16,19 +16,19 @@ exports.default = async function () {
   return [
     new Promise(async (resolve, reject) => {
       del(`${paths.roots.to}**/*`)
-        .then((result) => { 
-          return `cleaned ${paths.roots.to}`;
+        .then((result) => {
+          return `removed ${result.length} files from ${paths.roots.to}`;
         })
         .then(async (msg) => {
-          return await fs.promises
-            .symlink(
-              path.resolve(paths.static),
-              path.resolve(paths.roots.to, paths.static),
+          for (const target in paths.symlinks) {
+            await fs.promises.symlink(
+              path.resolve(target),
+              path.resolve(paths.roots.to, paths.symlinks[target]),
               "dir"
-            )
-            .then(() => {
-              return KoiosThought({}).done(msg + ` and added the symlink to ${paths.static}`);
-            });
+            );
+          }
+          
+          return KoiosThought({}).done(msg + ` and added the symlinks`);
         })
         .then((koios) => resolve(koios))
         .catch(err => reject(err));
