@@ -33,6 +33,11 @@ exports.default = function () {
         directory: true,
         middleware: [apiProxy]
       },
+      files: [
+        path.join(paths.roots.to, paths.locals.CSS_URL, "*.css"),
+        path.join(paths.roots.to, paths.locals.JS_URL, "*.js"),
+        path.join(paths.roots.to, "*.html"),
+      ],
       watchOptions: chokidarOptions,
       notify: false,
       port: 8000,
