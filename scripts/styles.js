@@ -3,6 +3,7 @@ const KoiosThought = require("./utils/koios-thought");
 const pathDiff = require("./utils/path-diff");
 const copy = require("./utils/immutable-clone");
 const globby = require("globby");
+const micromatch = require("micromatch");
 const path = require("path");
 const chalk = require("chalk");
 const sass = require("node-sass");
@@ -41,7 +42,7 @@ async function lint(input) {
   if (result.logs.length > 0) {
     return koios.warn({
       scope: "linter",
-      message: `Found ${result.logs.length} issues concerning ${pathDiff(process.cwd(), koios.destination)}:`,
+      msg: `Found ${result.logs.length} issues concerning ${pathDiff(process.cwd(), koios.destination)}:`,
       sub: result.logs
     });
   }
@@ -145,16 +146,28 @@ async function build(koios) {
 
 exports.default = async function (changed) {
   changed = changed ? path.resolve(process.cwd(), changed) : null;
-  const entries = await globby(paths.SRC.styles + "*.scss");
+  
+  const patterns = Object.keys(paths.styles);
+  const entries = await globby(patterns, { cwd: path.resolve(paths.roots.from) });
+
   const promises = [];
 
   entries.forEach(entry => {
-    const source = path.resolve(entry);
-    const destination = path.resolve(paths.BLD.styles, `${path.basename(entry, ".scss")}.v${package.version}.css`);
+    const source = path.join(process.cwd(), paths.roots.from, entry);
+    
+    const pattern = patterns.find((pattern) => micromatch.isMatch(entry, pattern));
+
     const children = sassGraph.parseFile(source).index[source].imports;
     
     // skip this entry if a changed file is given which isn't imported by entry
     if (changed && !children.includes(changed)) return;
+
+    const destination = path.join(
+      process.cwd(),
+      paths.roots.to,
+      paths.styles[pattern],
+      `${path.basename(entry, ".scss")}.v${package.version}.css`
+    );
 
     promises.push(
       build(KoiosThought({ source, destination, changed, children }))
