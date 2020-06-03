@@ -113,7 +113,7 @@ exports.default = async function (changed) {
       
       // skip this entry if a changed file is given which isn't included or extended by entry
       const children = resolveDependencies(source);
-      if (changed && changed !== source && !children.includes(path.basename(changed, ".pug"))) return;
+      if (changed && changed !== source && !children.includes(changed.slice(0, -4))) return;
   
       // find the glob pattern that matches this source
       const pattern = patterns.find((pattern) => micromatch.isMatch(entry, pattern));
