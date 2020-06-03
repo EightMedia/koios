@@ -29,11 +29,10 @@ exports.default = function () {
 
     bs.init({
       server: {
-        baseDir: paths.BLD.pages,
+        baseDir: paths.roots.from,
         directory: true,
         middleware: [apiProxy]
       },
-      files: [paths.BLD.pages, paths.BLD.styles, paths.BLD.scripts],
       watchOptions: chokidarOptions,
       notify: false,
       port: 8000,
