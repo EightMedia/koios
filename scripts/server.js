@@ -29,7 +29,7 @@ exports.default = function () {
 
     bs.init({
       server: {
-        baseDir: paths.roots.from,
+        baseDir: paths.roots.to,
         directory: true,
         middleware: [apiProxy]
       },
@@ -51,9 +51,9 @@ exports.default = function () {
 
     const watcher = chokidar.watch(
       [
-        `${paths.SRC.styles}**/*.scss`,
-        `${paths.SRC.scripts}**/*.js`,
-        `${paths.SRC.templates}**/*.pug`
+        `${paths.roots.from}/**/*.scss`,
+        `${paths.roots.from}/**/*.js`,
+        `${paths.roots.from}/**/*.pug`
       ],
       chokidarOptions
     );
