@@ -8,7 +8,8 @@ const globby = require("globby");
 const path = require("path");
 const pug = require("pug");
 const resolveDependencies = require("pug-dependencies");
-const minimatch = require("minimatch");
+const micromatch = require("micromatch");
+const globParent = require("glob-parent");
 const fs = require("fs");
 
 /**
@@ -38,24 +39,24 @@ async function pugComponent(input) {
   
   if (!component) return koios.info(`no pug-doc in ${pathDiff(process.cwd(), koios.source)}`);
 
-  const promises = [writeFragment(component)];
-  if (component.fragments) component.fragments.forEach(fragment => promises.push(writeFragment(fragment)));
+  const promises = [writeFragment(component, koios.destination)];
+  if (component.fragments) component.fragments.forEach(fragment => promises.push(writeFragment(fragment, koios.destination)));
   const fragments = await Promise.all(promises);
 
-  return koios.done(pathDiff(process.cwd(), koios.destination) + ` (${fragments.length} fragment${fragments.length !== 1 ? "s" : ""})`);
+  return koios.done(pathDiff(process.cwd(), koios.source) + ` (${fragments.length} fragment${fragments.length !== 1 ? "s" : ""})`);
 }
 
 /**
  * Write component fragment
  */
 
-async function writeFragment(fragment) {
+async function writeFragment(fragment, parentDestination) {
   const data = htmlComponent
     .replace("{{output}}", fragment.output || "")
     .replace("{{title}}", fragment.meta.name);
   
   const destination = path.resolve(
-    paths.BLD.components,
+    path.dirname(parentDestination),
     slugify(fragment.meta.name) + ".html"
   );
 
@@ -100,36 +101,42 @@ function build(type) {
 exports.default = async function (changed) {
   changed = changed ? path.resolve(process.cwd(), changed) : null;
 
-  const patterns = { pages: Object.keys(paths.templates.pages) , components: Object.keys(paths.templates.components) };
-  const entries = await globby([...patterns.pages, ...patterns.components], { cwd: path.resolve(paths.roots.from) });
-  
+  const types = ["pages", "components"];
   const promises = [];
 
-  entries.forEach(entry => {
-    const source = path.resolve(paths.roots.from, entry);
-    const pattern = 
-      patterns.pages.find((pattern) => minimatch(source, path.resolve(paths.roots.from, pattern))) ||
-      patterns.components.find((pattern) => minimatch(source, path.resolve(paths.roots.from, pattern)));
-    
-    const type = patterns.components.includes(pattern) ? "components" : "pages";
-
-    const destination = [
-      paths.roots.to, 
-      paths.templates[type][pattern]
-    ];
-
-    if (!path.extname(path.join(...destination)))
-      destination.push(`${path.basename(source, ".pug")}.html`);
-
-    const children = resolveDependencies(source);
-
-    // skip this entry if a changed file is given which isn't included or extended by entry
-    if (changed && changed !== source && !children.includes(changed.slice(0, -4))) return;
-
-    promises.push(
-      build(type)(KoiosThought({ source, destination: path.join(...destination), changed, children }))
-    );
-  });
+  while (type = types.pop()) {
+    const patterns = Object.keys(paths.templates[type]);
+    const entries = await globby(patterns, { cwd: path.resolve(paths.roots.from) });
+  
+    entries.forEach(entry => {
+      const source = path.join(process.cwd(), paths.roots.from, entry);
+      
+      // skip this entry if a changed file is given which isn't included or extended by entry
+      const children = resolveDependencies(source);
+      if (changed && changed !== source && !children.includes(path.basename(changed, ".pug"))) return;
+  
+      // find the glob pattern that matches this source
+      const pattern = patterns.find((pattern) => micromatch.isMatch(entry, pattern));
+  
+      const subdir = path.dirname(pathDiff(globParent(pattern), entry));
+  
+      // assemble the destination path and filename
+      const destination = [
+        process.cwd(),
+        paths.roots.to, 
+        paths.templates[type][pattern],
+        subdir
+      ];
+  
+      if (!path.extname(paths.templates[type][pattern]))
+        destination.push(`${path.basename(source, ".pug")}.html`);
+  
+      // collect the build promise
+      promises.push(
+        build(type)(KoiosThought({ source, destination: path.join(...destination), changed, children }))
+      );
+    });
+  }
 
   return promises;
 }
