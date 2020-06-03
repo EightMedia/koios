@@ -5,6 +5,7 @@ const copy = require("./utils/immutable-clone");
 const fs = require("fs");
 const path = require("path");
 const globby = require("globby");
+const micromatch = require("micromatch");
 const chalk = require("chalk");
 const webpack = require("webpack");
 const merge = require("webpack-merge");
@@ -135,23 +136,32 @@ async function build(koios) {
 
 exports.default = async function (changed) {
   changed = changed ? path.resolve(process.cwd(), changed) : null;
-  const entries = await globby([
-    `${paths.SRC.scripts}*.js`,
-    `!${paths.SRC.scripts}*.webpack.js`
-  ]);
+  
+  const patterns = Object.keys(paths.scripts);
+  const entries = await globby(patterns, { cwd: path.resolve(paths.roots.from) });
+
   const promises = [];
 
   entries.forEach(entry => {
-    const source = path.resolve(entry);
-    const destination = path.resolve(paths.BLD.scripts, `${path.basename(entry, ".js")}.v${package.version}.js`);
+    const source = path.join(process.cwd(), paths.roots.from, entry);
+    
+    const pattern = patterns.find((pattern) => micromatch.isMatch(entry, pattern));
+
     const children = depTree.toList({ 
       filename: source, 
-      directory: paths.SRC.scripts,
+      directory: paths.scripts[pattern],
       filter: path => path.indexOf('node_modules') === -1 
     });
-
+    
     // skip this entry if a changed file is given which isn't imported by entry
     if (changed && !children.includes(changed)) return;
+
+    const destination = path.join(
+      process.cwd(),
+      paths.roots.to,
+      paths.scripts[pattern],
+      `${path.basename(entry, ".js")}.v${package.version}.js`
+    );
 
     promises.push(
       build(KoiosThought({ source, destination, changed, children }))

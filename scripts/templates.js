@@ -5,10 +5,10 @@ const pathDiff = require("./utils/path-diff");
 const slugify = require("./utils/slugify");
 const pugdoc = require("./utils/pugdoc-parser");
 const globby = require("globby");
+const micromatch = require("micromatch");
 const path = require("path");
 const pug = require("pug");
 const resolveDependencies = require("pug-dependencies");
-const micromatch = require("micromatch");
 const globParent = require("glob-parent");
 const fs = require("fs");
 
