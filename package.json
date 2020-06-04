@@ -14,7 +14,7 @@
   },
   "author": "hylmar@eight.nl",
   "license": "ISC",
-  "dependencies": {
+  "devDependencies": {
     "@babel/core": "^7.8.3",
     "@babel/preset-env": "^7.8.3",
     "autoprefixer": "^9.7.3",
@@ -36,13 +36,11 @@
     "micromatch": "^4.0.2",
     "netlify-lambda": "^1.6.3",
     "node-sass": "^4.13.1",
-    "pa11y": "^5.3.0",
     "postcss": "^7.0.26",
     "preprocess": "^3.1.0",
     "pug": "^3.0.0",
     "pug-code-block": "^3.5.0",
     "pug-dependencies": "^2.0.0",
-    "puppeteer": "^3.1.0",
     "qoa": "^0.2.0",
     "rebase-indent": "^1.5.0",
     "sass-graph": "^3.0.4",
@@ -54,5 +52,6 @@
     "terser-webpack-plugin": "^3.0.1",
     "webpack": "^4.41.5",
     "webpack-merge": "^4.2.2"
-  }
+  },
+  "dependencies": {}
 }
