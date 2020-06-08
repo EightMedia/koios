@@ -145,8 +145,10 @@ exports.default = async function (changed) {
   entries.forEach(entry => {
     const source = path.join(process.cwd(), paths.roots.from, entry);
     
-    const pattern = patterns.find((pattern) => micromatch.isMatch(entry, pattern));
-
+    const pattern = patterns.find((pattern) => {
+      return micromatch.isMatch(entry, pattern);
+    });
+    
     const children = depTree.toList({ 
       filename: source, 
       directory: paths.scripts[pattern],
@@ -155,12 +157,18 @@ exports.default = async function (changed) {
     
     // skip this entry if a changed file is given which isn't imported by entry
     if (changed && !children.includes(changed)) return;
+    
+    const filename = path.extname(paths.scripts[pattern]) === ".js" ?
+      path.basename(paths.scripts[pattern])
+        .replace(/\$\{name\}/g, path.basename(source, ".js"))
+        .replace(/\$\{version\}/g, package.version)
+      : `${path.basename(source, ".js")}.js`;
 
     const destination = path.join(
       process.cwd(),
       paths.roots.to,
-      paths.scripts[pattern],
-      `${path.basename(entry, ".js")}.v${package.version}.js`
+      path.dirname(paths.scripts[pattern]),
+      filename
     );
 
     promises.push(

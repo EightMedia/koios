@@ -162,11 +162,17 @@ exports.default = async function (changed) {
     // skip this entry if a changed file is given which isn't imported by entry
     if (changed && !children.includes(changed)) return;
 
+    const filename = path.extname(paths.styles[pattern]) === ".css" ?
+      path.basename(paths.scripts[pattern])
+        .replace(/\$\{name\}/g, path.basename(source, ".scss"))
+        .replace(/\$\{version\}/g, package.version)
+      : `${path.basename(source, ".scss")}.css`;
+
     const destination = path.join(
       process.cwd(),
       paths.roots.to,
-      paths.styles[pattern],
-      `${path.basename(entry, ".scss")}.v${package.version}.css`
+      path.dirname(paths.styles[pattern]),
+      filename
     );
 
     promises.push(

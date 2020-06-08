@@ -120,20 +120,24 @@ exports.default = async function (changed) {
   
       const subdir = path.dirname(pathDiff(globParent(pattern), entry));
   
+      const filename = path.extname(paths.templates[type][pattern]) === ".html" ?
+          path.basename(paths.templates[type][pattern])
+            .replace(/\$\{name\}/g, path.basename(source, ".pug"))
+            .replace(/\$\{version\}/g, package.version)
+          : `${path.basename(source, ".pug")}.html`;
+
       // assemble the destination path and filename
-      const destination = [
+      const destination = path.join(
         process.cwd(),
         paths.roots.to, 
-        paths.templates[type][pattern],
-        subdir
-      ];
-  
-      if (!path.extname(paths.templates[type][pattern]))
-        destination.push(`${path.basename(source, ".pug")}.html`);
-  
+        path.dirname(paths.templates[type][pattern]),
+        subdir,
+        filename
+      );
+
       // collect the build promise
       promises.push(
-        build(type)(KoiosThought({ source, destination: path.join(...destination), changed, children }))
+        build(type)(KoiosThought({ source, destination, changed, children }))
       );
     });
   }
