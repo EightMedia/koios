@@ -14,7 +14,7 @@
   },
   "author": "hylmar@eight.nl",
   "license": "ISC",
-  "devDependencies": {
+  "dependencies": {
     "@babel/core": "^7.8.3",
     "@babel/preset-env": "^7.8.3",
     "autoprefixer": "^9.7.3",
@@ -35,6 +35,7 @@
     "indented-code-block": "^1.1.0",
     "micromatch": "^4.0.2",
     "netlify-lambda": "^1.6.3",
+    "mvdir": "^1.0.17",
     "node-sass": "^4.13.1",
     "postcss": "^7.0.26",
     "preprocess": "^3.1.0",
@@ -52,8 +53,5 @@
     "terser-webpack-plugin": "^3.0.1",
     "webpack": "^4.41.5",
     "webpack-merge": "^4.2.2"
-  },
-  "dependencies": {
-    "mvdir": "^1.0.17"
   }
 }
