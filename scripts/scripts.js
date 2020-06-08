@@ -101,7 +101,9 @@ async function bundle(input) {
       }
     };
 
-    const config = merge.smart(baseConfig, extraConfig);
+    const config = merge.smartStrategy({
+      "module.rules": "replace"
+    })(baseConfig, extraConfig);
     
     return webpack(config,
       (err, stats) => {
