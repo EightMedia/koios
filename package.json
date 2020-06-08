@@ -53,5 +53,7 @@
     "webpack": "^4.41.5",
     "webpack-merge": "^4.2.2"
   },
-  "dependencies": {}
+  "dependencies": {
+    "mvdir": "^1.0.17"
+  }
 }

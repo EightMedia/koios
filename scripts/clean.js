@@ -1,4 +1,4 @@
-const { ENV, paths, robotsTxt } = require(`${process.cwd()}/.koiosrc`);
+const { paths, robotsTxt } = require(`${process.cwd()}/.koiosrc`);
 const KoiosThought = require("./utils/koios-thought");
 const del = require("del");
 
@@ -20,19 +20,8 @@ exports.default = async function () {
           return `removed ${result.length} files from ${paths.roots.to}`;
         })
         .then(async (msg) => {
-          for (const target in paths.symlinks) {
-            await fs.promises.symlink(
-              path.resolve(target),
-              path.resolve(paths.roots.to, paths.symlinks[target]),
-              "dir"
-            );
-          }
-          
-          return msg + `, added symlinks`;
-        })
-        .then(async (msg) => {
           await fs.promises.writeFile(path.join(paths.roots.to, "robots.txt"), robotsTxt);
-          return msg + ` and robots.txt`;
+          return msg + `, added robots.txt`;
         })
         .then((msg) => KoiosThought({}).done(msg))
         .then((koios) => resolve(koios))

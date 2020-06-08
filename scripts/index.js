@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const { ENV, paths } = require(`${process.cwd()}/.koiosrc`);
+const { paths } = require(`${process.cwd()}/.koiosrc`);
 const { Signale } = require("signale");
 const logger = new Signale();
 const promiseProgress = require("./utils/promise-progress");
@@ -54,7 +54,7 @@ function convertMs(ms) {
  * Run a task
  */
 
-const availableTasks = ["bump", "clean", "scripts", "server", "styles", "templates"]
+const availableTasks = ["bump", "clean", "resources", "scripts", "server", "styles", "symlinks", "templates"]
 
 async function run(task, input) {
   if (!availableTasks.includes(task)) {
