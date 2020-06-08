@@ -163,7 +163,7 @@ exports.default = async function (changed) {
     if (changed && !children.includes(changed)) return;
 
     const filename = path.extname(paths.styles[pattern]) === ".css" ?
-      path.basename(paths.scripts[pattern])
+      path.basename(paths.styles[pattern])
         .replace(/\$\{name\}/g, path.basename(source, ".scss"))
         .replace(/\$\{version\}/g, package.version)
       : `${path.basename(source, ".scss")}.css`;
