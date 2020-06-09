@@ -65,9 +65,6 @@ function lint(input) {
 async function bundle(input) {
   return new Promise(async (resolve, reject) => {
     const koios = copy(input);
-    const extraConfigFile = path.resolve(path.dirname(koios.source), `${path.basename(koios.source, ".js")}.webpack.js`);
-    const extraConfigExists = await fs.promises.stat(extraConfigFile).catch(() => false);
-    const extraConfig = extraConfigExists ? require(extraConfigFile) : {};
 
     const baseConfig = {
       entry: koios.source,
@@ -101,10 +98,22 @@ async function bundle(input) {
       }
     };
 
+    // load "webpack.config.js" if it exists
+    const extraConfigFile = path.resolve(path.dirname(koios.source), `webpack.config.js`);
+    const extraConfigExists = await fs.promises.stat(extraConfigFile).catch(() => false);
+    const extraConfig = extraConfigExists ? require(extraConfigFile) : {};
+
+    // load "{entry}.webpack.js" if it exists
+    const entryConfigFile = path.resolve(path.dirname(koios.source), `${path.basename(koios.source, ".js")}.webpack.js`);
+    const entryConfigExists = await fs.promises.stat(entryConfigFile).catch(() => false);
+    const entryConfig = entryConfigExists ? require(entryConfigFile) : {};
+
     const config = merge.smartStrategy({
       "module.rules": "replace"
-    })(baseConfig, extraConfig);
-    
+    })(baseConfig, extraConfig, entryConfig);
+
+    console.log(config);
+
     return webpack(config,
       (err, stats) => {
         if (err) return reject(err);
@@ -138,6 +147,8 @@ exports.default = async function (changed) {
   changed = changed ? path.resolve(process.cwd(), changed) : null;
   
   const patterns = Object.keys(paths.scripts);
+  patterns.push("!**/*.webpack.js");
+  patterns.push("!**/webpack.config.js");
   const entries = await globby(patterns, { cwd: path.resolve(paths.roots.from) });
 
   const promises = [];
@@ -152,7 +163,7 @@ exports.default = async function (changed) {
     const children = depTree.toList({ 
       filename: source, 
       directory: paths.scripts[pattern],
-      filter: path => path.indexOf('node_modules') === -1 
+      filter: path => path.indexOf("node_modules") === -1 
     });
     
     // skip this entry if a changed file is given which isn't imported by entry
