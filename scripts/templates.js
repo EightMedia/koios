@@ -131,9 +131,8 @@ exports.default = async function (changed) {
         process.cwd(),
         paths.roots.to, 
         path.dirname(paths.templates[type][pattern]),
-        subdir,
         filename
-      );
+      ).replace(/\$\{dir\}/g, subdir);
 
       // collect the build promise
       promises.push(
