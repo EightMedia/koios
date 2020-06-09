@@ -112,8 +112,6 @@ async function bundle(input) {
       "module.rules": "replace"
     })(baseConfig, extraConfig, entryConfig);
 
-    console.log(config);
-
     return webpack(config,
       (err, stats) => {
         if (err) return reject(err);
