@@ -13,15 +13,15 @@ const mvdir = require("mvdir");
 
 exports.default = async function () {
 
-  const promises = [];
+  const koios = { before: null, promises: [], after: null };
   
   for (const entry in paths.resources) {
     const source = path.resolve(entry);
     const destination = path.resolve(paths.roots.to, paths.resources[entry]);
     const err = await mvdir(source, destination, { copy: true });
     const p = !err ? KoiosThought({}).done(pathDiff(process.cwd(), source)) : KoiosThought({}).error(err);
-    promises.push(p);
+    koios.promises.push(p);
   }
 
-  return promises;
+  return koios;
 }

@@ -149,7 +149,7 @@ exports.default = async function (changed) {
   patterns.push("!**/webpack.config.js");
   const entries = await globby(patterns, { cwd: path.resolve(paths.roots.from) });
 
-  const promises = [];
+  const koios = { before: null, promises: [], after: null };
 
   entries.forEach(entry => {
     const source = path.join(process.cwd(), paths.roots.from, entry);
@@ -180,10 +180,10 @@ exports.default = async function (changed) {
       filename
     );
 
-    promises.push(
+    koios.promises.push(
       build(KoiosThought({ source, destination, changed, children }))
     );
   });
 
-  return promises;
+  return koios;
 }

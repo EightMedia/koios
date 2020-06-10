@@ -13,19 +13,23 @@ const path = require("path");
  */
 
 exports.default = async function () {
-  return [
-    new Promise(async (resolve, reject) => {
-      del(`${paths.roots.to}**/*`)
-        .then((result) => {
-          return `removed ${result.length} files from ${paths.roots.to}`;
-        })
-        .then(async (msg) => {
-          await fs.promises.writeFile(path.join(paths.roots.to, "robots.txt"), robotsTxt);
-          return msg + `, added robots.txt`;
-        })
-        .then((msg) => KoiosThought({}).done(msg))
-        .then((koios) => resolve(koios))
-        .catch(err => reject(err));
-    })
-  ];
+  return {
+    before: null,
+    promises: [
+      new Promise(async (resolve, reject) => {
+        del(`${paths.roots.to}**/*`)
+          .then((result) => {
+            return `removed ${result.length} files from ${paths.roots.to}`;
+          })
+          .then(async (msg) => {
+            await fs.promises.writeFile(path.join(paths.roots.to, "robots.txt"), robotsTxt);
+            return msg + `, added robots.txt`;
+          })
+          .then((msg) => KoiosThought({}).done(msg))
+          .then((koios) => resolve(koios))
+          .catch(err => reject(err));
+      })
+    ],
+    after: null
+  };
 }

@@ -10,7 +10,56 @@ const path = require("path");
 const pug = require("pug");
 const resolveDependencies = require("pug-dependencies");
 const globParent = require("glob-parent");
-const fs = require("fs");
+const cp = require("child_process");
+const serveStatic = require("serve-static");
+const http = require("http");
+const finalhandler = require("finalhandler");
+const killable = require("killable");
+
+/*
+ * Setup puppeteer and static-server
+ */
+
+const puppetServer = {
+  puppet: null,
+  server: null,
+
+  start() {
+    return new Promise((resolve, reject) => {
+      if (this.puppet || this.server) this.stop();
+      this.puppet = cp.fork(`${__dirname}/utils/puppet.js`, [], { silent: true });
+      this.server = http.createServer((req, res) => serveStatic(paths.roots.to)(req, res, finalhandler(req, res)));
+      this.server.listen(3000);
+      killable(this.server);
+      this.server.on("error", (err) => {});
+      process.on("exit", () => puppetServer.stop());
+      process.on("SIGINT", () => puppetServer.stop());
+      
+      this.puppet.once("message", (data) => {
+        if (data = "puppeteer-ready") {
+          return resolve();
+        }
+        
+        reject(new Error("Puppeteer is not ready"));
+      });
+    });
+  },
+
+  stop() {
+    if (this.puppet) {
+      this.puppet.kill("SIGINT");
+      this.puppet = null;
+    }
+  
+    if (this.server) {
+      this.server.kill();
+      this.server = null;
+    }
+  
+    process.removeListener("exit", () => puppetServer.stop());
+    process.removeListener("SIGINT", () => puppetServer.stop());
+  },
+};
 
 /**
  * Compile pug into html
@@ -51,17 +100,67 @@ async function pugComponent(input) {
  */
 
 async function writeFragment(fragment, parentDestination) {
+  return writeFragmentHTML(fragment, parentDestination).then((koiosHTML) => 
+    writeFragmentJSON(
+      fragment, 
+      parentDestination,
+      pathDiff(path.resolve(paths.roots.to), koiosHTML.destination))
+  );
+}
+
+/**
+ * Write component fragment HTML
+ */
+
+async function writeFragmentHTML(fragment, parentDestination) {
   const data = htmlComponent
     .replace("{{output}}", fragment.output || "")
     .replace("{{title}}", fragment.meta.name);
-  
+
   const destination = path.resolve(
     path.dirname(parentDestination),
     slugify(fragment.meta.name) + ".html"
   );
 
   const koios = await addBanner(KoiosThought({ data, destination }));
+
   return koios.write();
+}
+
+/**
+ * Write component fragment JSON
+ */
+
+async function writeFragmentJSON(fragment, parentDestination, htmlFile) {
+  const data = JSON.stringify({
+    name: fragment.meta.name,
+    slug: slugify(fragment.meta.name),
+    height: await getFragmentHeight(htmlFile),
+    description: fragment.meta.description,
+    source: fragment.output,
+  });
+
+  const destination = path.resolve(
+    path.dirname(parentDestination),
+    slugify(fragment.meta.name) + ".json"
+  );
+
+  const koios = await KoiosThought({ data, destination });
+
+  return koios.write();
+}
+
+/*
+ * Prerender html fragment to determine the height
+ */
+
+async function getFragmentHeight(htmlFile) {
+  return new Promise((resolve) => {
+    puppetServer.puppet.send({ url: `http://localhost:3000/${htmlFile}` });
+    puppetServer.puppet.once("message", (height) => {
+      resolve(height);
+    });
+  });
 }
 
 /**
@@ -102,7 +201,12 @@ exports.default = async function (changed) {
   changed = changed ? path.resolve(process.cwd(), changed) : null;
 
   const types = ["pages", "components"];
-  const promises = [];
+  
+  const koios = {
+    before: () => puppetServer.start(),
+    promises: [], 
+    after: () => puppetServer.stop()
+  };
 
   while (type = types.pop()) {
     const patterns = Object.keys(paths.templates[type]);
@@ -135,11 +239,11 @@ exports.default = async function (changed) {
       ).replace(/\$\{dir\}/g, subdir);
 
       // collect the build promise
-      promises.push(
+      koios.promises.push(
         build(type)(KoiosThought({ source, destination, changed, children }))
       );
     });
   }
 
-  return promises;
+  return koios;
 }

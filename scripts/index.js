@@ -69,10 +69,12 @@ async function run(task, input) {
 
   await fs.promises.mkdir(paths.roots.to).catch((err) => err);
 
-  return fn(input).then(promises => {
-    return promiseProgress(promises)((i, item) => {
+  return fn(input).then(async koios => {
+    if (typeof koios.before === "function") await koios.before();
+
+    return promiseProgress(koios.promises)((i, item) => {
       log[item.log.type]({ 
-        prefix: `[${(i).toString().padStart(2, "0")}/${promises.length.toString().padStart(2, "0")}]`, 
+        prefix: `[${(i).toString().padStart(2, "0")}/${koios.promises.length.toString().padStart(2, "0")}]`, 
         message: item.log.msg 
       });
 
@@ -91,7 +93,8 @@ async function run(task, input) {
         log.warn(`Reported ${errors.length} error${errors.length !== 1 ? "s" : ""}`);
       }
     })
-    .finally(() => {
+    .finally(async () => {
+      if (typeof koios.after === "function") await koios.after();
       const end = new Date();
       const time = convertMs(end.getTime() - start.getTime());
       log.complete(`Finished after ${time}`);

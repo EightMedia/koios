@@ -82,8 +82,8 @@ function extractPugdocBlocks(templateSrc) {
 
         return {
           lineNumber: lineIndex + 1,
-          comment: comment,
-          code: code
+          comment,
+          code
         };
       })
       // Remove skiped lines
