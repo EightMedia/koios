@@ -2,14 +2,14 @@
 
 const { paths } = require(`${process.cwd()}/.koiosrc`);
 const { Signale } = require("signale");
-const logger = new Signale();
+const logger = new Signale({ interactive: true });
 const promiseProgress = require("./utils/promise-progress");
 const pathDiff = require("./utils/path-diff");
 const semver = require("semver");
 const fs = require("fs");
 
 /**
- * Check if NodeJS uses version 12.14.0
+ * Check if NodeJS version is at least 12.14.0
  */
 
 if (!semver.satisfies(process.version, ">=12.14.0")) {
@@ -17,13 +17,13 @@ if (!semver.satisfies(process.version, ">=12.14.0")) {
   process.exit(0);
 }
 
-  /**
-   * Format time string to 2 digits
-   */
+/**
+ * Format time string to 2 digits
+ */
 
-  function format(time) {
-    return time.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
-  }
+function format(time) {
+  return time.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
+}
 
 /**
  * Convert milliseconds to string with days, hours, minutes and seconds
@@ -75,14 +75,14 @@ async function run(task, input) {
     return promiseProgress(koios.promises)((i, item) => {
       log[item.log.type]({ 
         prefix: `[${(i).toString().padStart(2, "0")}/${koios.promises.length.toString().padStart(2, "0")}]`, 
-        message: item.log.msg 
+        message: item.log.msg
       });
 
       if (item.log.sub) {
-        const sublog = log.scope(task, item.log.scope);
+        const sublog = new Signale({ scope: [task, item.log.scope] });
         item.log.sub.forEach((issue, i) => sublog.note({ 
-          prefix: `[${(i).toString().padStart(2, "0")}/${item.log.sub.length.toString().padStart(2, "0")}]`, 
-          message: issue 
+          prefix: `[${(i+1).toString().padStart(2, "0")}/${item.log.sub.length.toString().padStart(2, "0")}]`, 
+          message: issue
         }));
       }
     })
@@ -98,7 +98,7 @@ async function run(task, input) {
 
       const end = new Date();
       const time = convertMs(end.getTime() - start.getTime());
-      log.complete(`Finished after ${time}`);
+      log.complete(`finished in ${time}`);
     });
   });
 }

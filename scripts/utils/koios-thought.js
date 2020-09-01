@@ -1,4 +1,5 @@
 const pathDiff = require("./path-diff");
+const chalk = require("chalk");
 const fs = require("fs");
 const path = require("path");
 const { promisify } = require("util");
@@ -63,7 +64,7 @@ module.exports = ({source, destination, changed, children, data}) => ({
 
   async error(err) {
     const msg = err instanceof Error ? err : new Error(err);
-    this.log = this.log || { type: "error", msg };
+    this.log = this.log || { type: "error", msg: `${pathDiff(process.cwd(), this.source)}\n  ${chalk.grey(msg.stack)}\n` };
     return this;
   },
 
