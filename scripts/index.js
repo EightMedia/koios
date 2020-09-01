@@ -95,6 +95,7 @@ async function run(task, input) {
     })
     .finally(async () => {
       if (typeof koios.after === "function") await koios.after();
+
       const end = new Date();
       const time = convertMs(end.getTime() - start.getTime());
       log.complete(`Finished after ${time}`);

@@ -4,62 +4,13 @@ const copy = require("./utils/immutable-clone");
 const pathDiff = require("./utils/path-diff");
 const slugify = require("./utils/slugify");
 const pugdoc = require("./utils/pugdoc-parser");
+const puppetServer = require("./utils/puppet-server");
 const globby = require("globby");
 const micromatch = require("micromatch");
 const path = require("path");
 const pug = require("pug");
 const resolveDependencies = require("pug-dependencies");
 const globParent = require("glob-parent");
-const cp = require("child_process");
-const serveStatic = require("serve-static");
-const http = require("http");
-const finalhandler = require("finalhandler");
-const killable = require("killable");
-
-/*
- * Setup puppeteer and static-server
- */
-
-const puppetServer = {
-  puppet: null,
-  server: null,
-
-  start() {
-    return new Promise((resolve, reject) => {
-      if (this.puppet || this.server) this.stop();
-      this.puppet = cp.fork(`${__dirname}/utils/puppet.js`, [], { silent: true });
-      this.server = http.createServer((req, res) => serveStatic(paths.roots.to)(req, res, finalhandler(req, res)));
-      this.server.listen(3000);
-      killable(this.server);
-      this.server.on("error", (err) => {});
-      process.on("exit", () => puppetServer.stop());
-      process.on("SIGINT", () => puppetServer.stop());
-      
-      this.puppet.once("message", (data) => {
-        if (data = "puppeteer-ready") {
-          return resolve();
-        }
-        
-        reject(new Error("Puppeteer is not ready"));
-      });
-    });
-  },
-
-  stop() {
-    if (this.puppet) {
-      this.puppet.kill("SIGINT");
-      this.puppet = null;
-    }
-  
-    if (this.server) {
-      this.server.kill();
-      this.server = null;
-    }
-  
-    process.removeListener("exit", () => puppetServer.stop());
-    process.removeListener("SIGINT", () => puppetServer.stop());
-  },
-};
 
 /**
  * Compile pug into html
@@ -90,7 +41,7 @@ async function pugComponent(input) {
 
   const promises = [writeFragment(component, koios.destination)];
   if (component.fragments) component.fragments.forEach(fragment => promises.push(writeFragment(fragment, koios.destination)));
-  const fragments = await Promise.all(promises);
+  const fragments = await Promise.all(promises).catch(err => koios.error(err));
 
   return koios.done(pathDiff(process.cwd(), koios.source) + ` (${fragments.length} fragment${fragments.length !== 1 ? "s" : ""})`);
 }
@@ -155,12 +106,14 @@ async function writeFragmentJSON(fragment, parentDestination, htmlFile) {
  */
 
 async function getFragmentHeight(htmlFile) {
-  return new Promise((resolve) => {
-    puppetServer.puppet.send({ url: `http://localhost:3000/${htmlFile}` });
-    puppetServer.puppet.once("message", (height) => {
-      resolve(height);
-    });
+  const page = await puppetServer.browser.newPage();
+  await page.setViewport(Object.assign(page.viewport(), { width: 1200 }));
+  await page.goto(`http://localhost:3333/${htmlFile}`, { waitUntil: "networkidle2" });
+  const height = await page.evaluate(() => {
+    return document.body.getBoundingClientRect().height;
   });
+  await page.close();
+  return height;
 }
 
 /**
@@ -202,11 +155,9 @@ exports.default = async function (changed) {
 
   const types = ["pages", "components"];
   
-  const koios = {
-    before: () => puppetServer.start(),
-    promises: [], 
-    after: () => puppetServer.stop()
-  };
+  const koios = { before: null, promises: [], after: () => puppetServer.stop() };
+
+  await puppetServer.start();
 
   while (type = types.pop()) {
     const patterns = Object.keys(paths.templates[type]);
