@@ -1,4 +1,4 @@
 build/
 export/
-node_modules/
+.yarn/
 .DS_Store
