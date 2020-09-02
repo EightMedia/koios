@@ -54,7 +54,7 @@ function convertMs(ms) {
  * Run a task
  */
 
-const availableTasks = ["bump", "clean", "dev", "resources", "scripts", "styles", "symlinks", "templates"]
+const availableTasks = ["bump", "clean", "dev", "resources", "robots", "scripts", "styles", "symlinks", "templates"]
 
 async function run(task, input) {
   if (!availableTasks.includes(task)) {
@@ -65,7 +65,7 @@ async function run(task, input) {
   const start = new Date();
 
   const log = logger.scope(task);
-  log.pending(`Started at ${format(start)} for`, input || `${task}`);
+  log.pending(`started at ${format(start)}`, input ? ` (${input})` : '');
 
   await fs.promises.mkdir(paths.roots.to).catch((err) => err);
 
