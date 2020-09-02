@@ -54,7 +54,7 @@ function convertMs(ms) {
  * Run a task
  */
 
-const availableTasks = ["bump", "clean", "resources", "scripts", "server", "styles", "symlinks", "templates"]
+const availableTasks = ["bump", "clean", "dev", "resources", "scripts", "styles", "symlinks", "templates"]
 
 async function run(task, input) {
   if (!availableTasks.includes(task)) {

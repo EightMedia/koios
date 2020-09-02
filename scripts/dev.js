@@ -7,7 +7,7 @@ const chokidar = require("chokidar");
 
 /**
  * Entry point for koios:
- * $ node koios server
+ * $ node koios dev
  */
 
 exports.default = function () {
