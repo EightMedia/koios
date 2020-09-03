@@ -4,16 +4,16 @@
   "author": "hylmar@eight.nl",
   "license": "ISC",
   "description": "",
-  "main": "scripts/index.js",
-  "bin": "scripts/index.js",
+  "main": "source/cli.js",
+  "bin": "source/cli.js",
   "files": [
-    "scripts/*.js"
+    "source/*.js"
   ],
   "scripts": {
     "start": "koios"
   },
-  "publishConfig": { 
-    "registry": "https://npm.pkg.github.com/" 
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
   },
   "dependencies": {
     "@babel/core": "^7.8.3",
@@ -37,7 +37,6 @@
     "killable": "^1.0.1",
     "micromatch": "^4.0.2",
     "mvdir": "^1.0.17",
-    "netlify-lambda": "^1.6.3",
     "node-sass": "^4.13.1",
     "postcss": "^7.0.26",
     "preprocess": "^3.1.0",

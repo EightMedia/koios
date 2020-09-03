@@ -1,5 +1,5 @@
 const { paths } = require(`${process.cwd()}/.koiosrc`);
-const koios = require("./index").default;
+const koios = require("./cli").default;
 const path = require("path");
 const bs = require("browser-sync").create("localdev");
 const { createProxyMiddleware } = require("http-proxy-middleware");
