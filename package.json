@@ -1,13 +1,13 @@
 {
   "name": "@EightMedia/koios",
-  "version": "0.0.2",
+  "version": "0.0.1",
   "author": "hylmar@eight.nl",
   "license": "ISC",
   "description": "",
   "main": "source/cli.js",
   "bin": "source/cli.js",
   "files": [
-    "source/*.js"
+    "source/**/*.js"
   ],
   "scripts": {
     "start": "koios"
