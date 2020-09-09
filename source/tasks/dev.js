@@ -1,5 +1,5 @@
 const { paths } = require(`${process.cwd()}/.koiosrc`);
-const koios = require("./cli").default;
+const run = require("../run");
 const path = require("path");
 const bs = require("browser-sync").create("localdev");
 const { createProxyMiddleware } = require("http-proxy-middleware");
@@ -49,9 +49,24 @@ exports.default = function () {
      */
 
     const tasks = {
-      scss: "styles",
-      js: "scripts",
-      pug: "templates"
+      scss: (file) => {
+        run("styles", file).catch(err => {
+          reject(err);
+        });
+      },
+      js: (file) => {
+        run("scripts", file).catch(err => {
+          reject(err);
+        });
+      },
+      pug: (file) => {
+        run("components", file).catch(err => {
+          reject(err);
+        });
+        run("pages", file).catch(err => {
+          reject(err);
+        });
+      }
     };
 
     const watcher = chokidar.watch(
@@ -65,9 +80,7 @@ exports.default = function () {
 
     watcher.on("change", function(file) {
       const ext = path.extname(file).substr(1);
-      koios(tasks[ext], file).catch(err => {
-        reject(err);
-      });
+      tasks[ext](file);
     });
   });
 }

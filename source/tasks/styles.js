@@ -1,7 +1,7 @@
 const { package, ENV, paths } = require(`${process.cwd()}/.koiosrc`);
-const KoiosThought = require("./utils/koios-thought");
-const pathDiff = require("./utils/path-diff");
-const copy = require("./utils/immutable-clone");
+const KoiosThought = require("../utils/koios-thought");
+const pathDiff = require("../utils/path-diff");
+const copy = require("../utils/immutable-clone");
 const globby = require("globby");
 const micromatch = require("micromatch");
 const path = require("path");
