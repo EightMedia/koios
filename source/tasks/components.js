@@ -1,5 +1,5 @@
 const { package, ENV, paths, locals, htmlComponent } = require(`${process.cwd()}/.koiosrc`);
-const KoiosThought = require("../utils/koios-thought");
+const Thought = require("../utils/thought");
 const copy = require("../utils/immutable-clone");
 const pathDiff = require("../utils/path-diff");
 const slugify = require("../utils/slugify");
@@ -55,7 +55,7 @@ async function writeFragmentHTML(fragment, parentDestination) {
     slugify(fragment.meta.name) + ".html"
   );
 
-  const koios = await addBanner(KoiosThought({ data, destination }));
+  const koios = await addBanner(Thought({ data, destination }));
 
   return koios.write();
 }
@@ -78,7 +78,7 @@ async function writeFragmentJSON(fragment, parentDestination, htmlFile) {
     slugify(fragment.meta.name) + ".json"
   );
 
-  const koios = await KoiosThought({ data, destination });
+  const koios = await Thought({ data, destination });
 
   return koios.write();
 }
@@ -160,7 +160,7 @@ exports.default = async function (changed) {
 
     // collect the build promise
     koios.promises.push(
-      build(KoiosThought({ source, destination, changed, children }))
+      build(Thought({ source, destination, changed, children }))
     );
   });
 

@@ -1,5 +1,5 @@
 const { paths } = require(`${process.cwd()}/.koiosrc`);
-const KoiosThought = require("../utils/koios-thought");
+const Thought = require("../utils/thought");
 const pathDiff = require("../utils/path-diff");
 
 const fs = require("fs");
@@ -18,7 +18,7 @@ exports.default = async function () {
     const source = path.resolve(entry);
     const destination = path.resolve(paths.roots.to, paths.resources[entry]);
     const err = await fs.promises.symlink(source, destination);
-    const p = !err ? KoiosThought({}).done(pathDiff(process.cwd(), source)) : KoiosThought({}).error(err);
+    const p = !err ? Thought({}).done(pathDiff(process.cwd(), source)) : Thought({}).error(err);
     koios.promises.push(p);
   }
 

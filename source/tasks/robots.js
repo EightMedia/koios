@@ -1,5 +1,5 @@
 const { paths, robotsTxt } = require(`${process.cwd()}/.koiosrc`);
-const KoiosThought = require("../utils/koios-thought");
+const Thought = require("../utils/thought");
 
 const fs = require("fs");
 const path = require("path");
@@ -17,7 +17,7 @@ exports.default = async function () {
     promises: [
       new Promise(async (resolve, reject) => {
         fs.promises.writeFile(path.join(paths.roots.to, "robots.txt"), robotsTxt)
-          .then(() => KoiosThought({}).done(`added robots.txt to ${path.join(paths.roots.to, "robots.txt")}`))
+          .then(() => Thought({}).done(`added robots.txt to ${path.join(paths.roots.to, "robots.txt")}`))
           .then((koios) => resolve(koios))
           .catch(err => reject(err));
       })

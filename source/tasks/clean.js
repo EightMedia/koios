@@ -1,5 +1,5 @@
 const { paths } = require(`${process.cwd()}/.koiosrc`);
-const KoiosThought = require("../utils/koios-thought");
+const Thought = require("../utils/thought");
 const del = require("del");
 
 const fs = require("fs");
@@ -21,7 +21,7 @@ exports.default = async function () {
           .then((result) => {
             return `removed ${result.length} files from ${paths.roots.to}`;
           })
-          .then((msg) => KoiosThought({}).done(msg))
+          .then((msg) => Thought({}).done(msg))
           .then((koios) => resolve(koios))
           .catch(err => reject(err));
       })

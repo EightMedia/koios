@@ -1,5 +1,5 @@
 const { package, ENV, paths, locals, htmlComponent } = require(`${process.cwd()}/.koiosrc`);
-const KoiosThought = require("../utils/koios-thought");
+const Thought = require("../utils/thought");
 const copy = require("../utils/immutable-clone");
 const pathDiff = require("../utils/path-diff");
 const globby = require("globby");
@@ -89,7 +89,7 @@ exports.default = async function (changed) {
 
     // collect the build promise
     koios.promises.push(
-      build(KoiosThought({ source, destination, changed, children }))
+      build(Thought({ source, destination, changed, children }))
     );
   });
   
