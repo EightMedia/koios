@@ -1,33 +1,15 @@
 const { package, ENV, paths, locals, htmlComponent } = require(`${process.cwd()}/.koiosrc`);
-const KoiosThought = require("./utils/koios-thought");
-const copy = require("./utils/immutable-clone");
-const pathDiff = require("./utils/path-diff");
-const slugify = require("./utils/slugify");
-const pugdoc = require("./utils/pugdoc-parser");
-const puppetServer = require("./utils/puppet-server");
+const KoiosThought = require("../utils/koios-thought");
+const copy = require("../utils/immutable-clone");
+const pathDiff = require("../utils/path-diff");
+const slugify = require("../utils/slugify");
+const pugdoc = require("../utils/pugdoc-parser");
+const puppetServer = require("../utils/puppet-server");
 const globby = require("globby");
 const micromatch = require("micromatch");
 const path = require("path");
-const pug = require("pug");
 const resolveDependencies = require("pug-dependencies");
 const globParent = require("glob-parent");
-
-/**
- * Compile pug into html
- */
-
-async function pugPage(input) {
-  const koios = copy(input);
-  return pug.render(
-    koios.data, 
-    Object.assign(locals, { self: true, filename: koios.source }), 
-    (err, html) => {
-      if (err) throw err;
-      koios.data = html;
-      return koios;
-    }
-  );
-}
 
 /**
  * Pug doc parser
@@ -130,71 +112,57 @@ async function addBanner(input) {
  * Compiles source pug to destination html
  */
 
-function build(type) {
-  const builders = {
-    pages: async koios => koios.read()
-      .then(pugPage)
-      .then(addBanner)
-      .then(k => k.write())
-      .then(k => k.done()),
-    
-    components: async koios => koios.read()
-      .then(pugComponent)
-  };
-
-  return koios => builders[type] ? builders[type](koios).catch(err => koios.error(err)) : koios.error("No builder defined for " + type);
+async function build(koios) {
+  return koios.read()
+    .then(pugComponent);
 }
 
 /**
  * Entry point for koios:
- * $ node koios templates
+ * $ node koios components
  */
 
 exports.default = async function (changed) {
   changed = changed ? path.resolve(process.cwd(), changed) : null;
 
-  const types = ["pages", "components"];
-  
   const koios = { before: null, promises: [], after: () => puppetServer.stop() };
 
   await puppetServer.start();
 
-  while (type = types.pop()) {
-    const patterns = Object.keys(paths.templates[type]);
-    const entries = await globby(patterns, { cwd: path.resolve(paths.roots.from) });
-  
-    entries.forEach(entry => {
-      const source = path.join(process.cwd(), paths.roots.from, entry);
-      
-      // skip this entry if a changed file is given which isn't included or extended by entry
-      const children = resolveDependencies(source);
-      if (changed && changed !== source && !children.includes(changed.slice(0, -4))) return;
-  
-      // find the glob pattern that matches this source
-      const pattern = patterns.find((pattern) => micromatch.isMatch(entry, pattern));
-  
-      const subdir = path.dirname(pathDiff(globParent(pattern), entry));
-  
-      const filename = path.extname(paths.templates[type][pattern]) === ".html" ?
-          path.basename(paths.templates[type][pattern])
-            .replace(/\$\{name\}/g, path.basename(source, ".pug"))
-            .replace(/\$\{version\}/g, package.version)
-          : `${path.basename(source, ".pug")}.html`;
+  const patterns = Object.keys(paths.templates["components"]);
+  const entries = await globby(patterns, { cwd: path.resolve(paths.roots.from) });
 
-      // assemble the destination path and filename
-      const destination = path.join(
-        process.cwd(),
-        paths.roots.to, 
-        path.dirname(paths.templates[type][pattern]),
-        filename
-      ).replace(/\$\{dir\}/g, subdir);
+  entries.forEach(entry => {
+    const source = path.join(process.cwd(), paths.roots.from, entry);
+    
+    // skip this entry if a changed file is given which isn't included or extended by entry
+    const children = resolveDependencies(source);
+    if (changed && changed !== source && !children.includes(changed.slice(0, -4))) return;
 
-      // collect the build promise
-      koios.promises.push(
-        build(type)(KoiosThought({ source, destination, changed, children }))
-      );
-    });
-  }
+    // find the glob pattern that matches this source
+    const pattern = patterns.find((pattern) => micromatch.isMatch(entry, pattern));
+
+    const subdir = path.dirname(pathDiff(globParent(pattern), entry));
+
+    const filename = path.extname(paths.templates["components"][pattern]) === ".html" ?
+        path.basename(paths.templates["components"][pattern])
+          .replace(/\$\{name\}/g, path.basename(source, ".pug"))
+          .replace(/\$\{version\}/g, package.version)
+        : `${path.basename(source, ".pug")}.html`;
+
+    // assemble the destination path and filename
+    const destination = path.join(
+      process.cwd(),
+      paths.roots.to, 
+      path.dirname(paths.templates["components"][pattern]),
+      filename
+    ).replace(/\$\{dir\}/g, subdir);
+
+    // collect the build promise
+    koios.promises.push(
+      build(KoiosThought({ source, destination, changed, children }))
+    );
+  });
 
   return koios;
 }

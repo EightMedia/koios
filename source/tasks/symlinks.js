@@ -1,6 +1,6 @@
 const { paths } = require(`${process.cwd()}/.koiosrc`);
-const KoiosThought = require("./utils/koios-thought");
-const pathDiff = require("./utils/path-diff");
+const KoiosThought = require("../utils/koios-thought");
+const pathDiff = require("../utils/path-diff");
 
 const fs = require("fs");
 const path = require("path");

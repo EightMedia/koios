@@ -1,5 +1,5 @@
-const { paths, robotsTxt } = require(`${process.cwd()}/.koiosrc`);
-const KoiosThought = require("./utils/koios-thought");
+const { paths } = require(`${process.cwd()}/.koiosrc`);
+const KoiosThought = require("../utils/koios-thought");
 const del = require("del");
 
 const fs = require("fs");
