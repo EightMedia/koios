@@ -2,6 +2,7 @@ const { package, ENV, paths } = require(`${process.cwd()}/.koiosrc`);
 const Thought = require("../utils/thought");
 const pathDiff = require("../utils/path-diff");
 const copy = require("../utils/immutable-clone");
+const getChildren = require("../utils/get-children");
 const fs = require("fs");
 const path = require("path");
 const globby = require("globby");
@@ -10,7 +11,6 @@ const chalk = require("chalk");
 const webpack = require("webpack");
 const merge = require("webpack-merge");
 const eslint = require("eslint").CLIEngine;
-const depTree = require("dependency-tree");
 
 /**
  * Lint
@@ -158,13 +158,8 @@ exports.default = async function (changed) {
       return micromatch.isMatch(entry, pattern);
     });
     
-    const children = depTree.toList({ 
-      filename: source, 
-      directory: paths.scripts[pattern],
-      filter: path => path.indexOf("node_modules") === -1 
-    });
-    
     // skip this entry if a changed file is given which isn't imported by entry
+    const children = getChildren(source);
     if (changed && !children.includes(changed)) return;
     
     const filename = path.extname(paths.scripts[pattern]) === ".js" ?

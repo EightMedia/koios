@@ -2,12 +2,12 @@ const { package, ENV, paths } = require(`${process.cwd()}/.koiosrc`);
 const Thought = require("../utils/thought");
 const pathDiff = require("../utils/path-diff");
 const copy = require("../utils/immutable-clone");
+const getChildren = require("../utils/get-children");
 const globby = require("globby");
 const micromatch = require("micromatch");
 const path = require("path");
 const chalk = require("chalk");
 const sass = require("node-sass");
-const sassGraph = require("sass-graph");
 const postcss = require("postcss");
 const autoprefixer = require("autoprefixer");
 const cssnano = require("cssnano");
@@ -157,9 +157,8 @@ exports.default = async function (changed) {
     
     const pattern = patterns.find((pattern) => micromatch.isMatch(entry, pattern));
 
-    const children = sassGraph.parseFile(source).index[source].imports;
-    
     // skip this entry if a changed file is given which isn't imported by entry
+    const children = getChildren(source);
     if (changed && !children.includes(changed)) return;
 
     const filename = path.extname(paths.styles[pattern]) === ".css" ?
