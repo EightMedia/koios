@@ -59,12 +59,11 @@ module.exports = function () {
         });
       },
       pug: (file) => {
-        run("components", file).catch(err => {
-          reject(err);
-        });
-        run("pages", file).catch(err => {
-          reject(err);
-        });
+        run("components", file)
+          .then(() => run("pages", file))
+          .catch(err => {
+            reject(err);
+          });
       }
     };
 
