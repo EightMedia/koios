@@ -28,7 +28,7 @@ module.exports = async function ({ changed, build, rules, before, after }) {
     
     // skip this entry if a changed file is given which isn't included or extended by entry
     const children = getChildren(source);
-    if (changed && !children.includes(changed)) return;
+    if (changed && source != changed && !children.includes(changed)) return;
 
     const subdir = path.dirname(pathDiff(globParent(pattern), entry));
 

@@ -1,10 +1,11 @@
 const { paths } = require(`${process.cwd()}/.koiosrc`);
 const promiseProgress = require("./utils/promise-progress");
 const { Signale } = require("signale");
-const logger = new Signale({ interactive: true });
 const formatTime = require("./utils/format-time");
 const convertMs = require("./utils/convert-ms.js");
 const fs = require("fs");
+
+const logger = new Signale({ interactive: false });
 
 /**
  * Run a task
