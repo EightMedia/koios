@@ -6,21 +6,20 @@ const fs = require("fs");
 const path = require("path");
 
 /**
- * Entry point for koios:
- * $ node koios symlinks
+ * Entry point
  */
 
-exports.default = async function () {
+module.exports = async function () {
   
-  const koios = { before: null, promises: [], after: null };
+  const thinker = { before: null, thoughts: [], after: null };
   
   for (const entry in paths.resources) {
     const source = path.resolve(entry);
     const destination = path.resolve(paths.roots.to, paths.resources[entry]);
     const err = await fs.promises.symlink(source, destination);
     const p = !err ? Thought({}).done(pathDiff(process.cwd(), source)) : Thought({}).error(err);
-    koios.promises.push(p);
+    thinker.thoughts.push(p);
   }
 
-  return koios;
+  return thinker;
 }

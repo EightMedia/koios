@@ -1,12 +1,9 @@
-const { package, ENV, paths } = require(`${process.cwd()}/.koiosrc`);
-const Thought = require("../utils/thought");
-const pathDiff = require("../utils/path-diff");
+const { package, paths } = require(`${process.cwd()}/.koiosrc`);
+const think = require("../utils/think");
 const copy = require("../utils/immutable-clone");
-const getChildren = require("../utils/get-children");
+const pathDiff = require("../utils/path-diff");
 const fs = require("fs");
 const path = require("path");
-const globby = require("globby");
-const micromatch = require("micromatch");
 const chalk = require("chalk");
 const webpack = require("webpack");
 const merge = require("webpack-merge");
@@ -17,7 +14,7 @@ const eslint = require("eslint").CLIEngine;
  */
 
 function lint(input) {
-  const koios = copy(input);
+  const thought = copy(input);
   const report = new eslint({ 
     baseConfig: {
       "env": {
@@ -37,7 +34,7 @@ function lint(input) {
         "document": true
       }
     }
-   }).executeOnFiles(koios.changed || koios.children);
+   }).executeOnFiles(thought.changed || thought.children);
   const issues = [];
 
   report.results.forEach(result => {
@@ -48,14 +45,14 @@ function lint(input) {
   });
 
   if (issues.length > 0) {
-    return koios.warn({
+    return thought.warn({
       scope: "linter",
-      msg: `Found ${issues.length} issue${issues.length !== 1 ? "s" : ""} concerning ${pathDiff(process.cwd(), koios.source)}:`,
+      msg: `Found ${issues.length} issue${issues.length !== 1 ? "s" : ""} concerning ${pathDiff(process.cwd(), thought.source)}:`,
       sub: issues
     });
   }
 
-  return koios;
+  return thought;
 }
 
 /**
@@ -64,15 +61,15 @@ function lint(input) {
 
 async function bundle(input) {
   return new Promise(async (resolve, reject) => {
-    const koios = copy(input);
+    const thought = copy(input);
 
     const baseConfig = {
-      entry: koios.source,
+      entry: thought.source,
       target: "web",
       output: {
-        path: path.dirname(koios.destination),
-        filename: path.basename(koios.destination),
-        sourceMapFilename: path.basename(koios.destination) + ".map"
+        path: path.dirname(thought.destination),
+        filename: path.basename(thought.destination),
+        sourceMapFilename: path.basename(thought.destination) + ".map"
       },
       devtool: "source-map",
       plugins: [
@@ -99,12 +96,12 @@ async function bundle(input) {
     };
 
     // load "webpack.config.js" if it exists
-    const extraConfigFile = path.resolve(path.dirname(koios.source), `webpack.config.js`);
+    const extraConfigFile = path.resolve(path.dirname(thought.source), `webpack.config.js`);
     const extraConfigExists = await fs.promises.stat(extraConfigFile).catch(() => false);
     const extraConfig = extraConfigExists ? require(extraConfigFile) : {};
 
     // load "{entry}.webpack.js" if it exists
-    const entryConfigFile = path.resolve(path.dirname(koios.source), `${path.basename(koios.source, ".js")}.webpack.js`);
+    const entryConfigFile = path.resolve(path.dirname(thought.source), `${path.basename(thought.source, ".js")}.webpack.js`);
     const entryConfigExists = await fs.promises.stat(entryConfigFile).catch(() => false);
     const entryConfig = entryConfigExists ? require(entryConfigFile) : {};
 
@@ -117,68 +114,41 @@ async function bundle(input) {
         if (err) return reject(err);
         const info = stats.toJson();
         if (stats.hasErrors()) return reject(new Error(info.errors));
-        return resolve(koios);
+        return resolve(thought);
       }
     );
   });
+}
+
+/*
+ * Say we're done
+ */
+
+async function save(input) {
+  const thought = copy(input);
+  return thought.done();
 }
 
 /**
  * Build
  */
 
-async function build(koios) {
-  return koios.read()
+function build(input) {
+  const thought = copy(input);
+  return thought.read()
     .then(lint)
     .then(bundle)
-    // no koios.write() because scripts are written via webpack
-    .then(k => k.done())
-    .catch(err => koios.error(err));
+    .then(save);
 }
 
 /**
- * Entry point for koios:
- * $ node koios scripts
+ * Entry point
  */
 
-exports.default = async function (changed) {
-  changed = changed ? path.resolve(process.cwd(), changed) : null;
-  
-  const patterns = Object.keys(paths.scripts);
-  patterns.push("!**/*.webpack.js");
-  patterns.push("!**/webpack.config.js");
-  const entries = await globby(patterns, { cwd: path.resolve(paths.roots.from) });
-
-  const koios = { before: null, promises: [], after: null };
-
-  entries.forEach(entry => {
-    const source = path.join(process.cwd(), paths.roots.from, entry);
-    
-    const pattern = patterns.find((pattern) => {
-      return micromatch.isMatch(entry, pattern);
-    });
-    
-    // skip this entry if a changed file is given which isn't imported by entry
-    const children = getChildren(source);
-    if (changed && !children.includes(changed)) return;
-    
-    const filename = path.extname(paths.scripts[pattern]) === ".js" ?
-      path.basename(paths.scripts[pattern])
-        .replace(/\$\{name\}/g, path.basename(source, ".js"))
-        .replace(/\$\{version\}/g, package.version)
-      : `${path.basename(source, ".js")}.js`;
-
-    const destination = path.join(
-      process.cwd(),
-      paths.roots.to,
-      path.dirname(paths.scripts[pattern]),
-      filename
-    );
-
-    koios.promises.push(
-      build(Thought({ source, destination, changed, children }))
-    );
-  });
-
-  return koios;
-}
+module.exports = (changed) => think({
+  changed,
+  build,
+  rules: paths.scripts,
+  before: null,
+  after: null
+});

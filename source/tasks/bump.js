@@ -3,14 +3,13 @@ const qoa = require("qoa");
 const bumper = require("bump-regex");
 
 /**
- * Entry point for koios:
- * $ node koios bump
+ * Entry point
  */
 
-exports.default = async function () {
+module.exports = async function () {
   return {
     before: null,
-    promises: [new Promise(async (resolve, reject) => {
+    thoughts: [new Promise(async (resolve, reject) => {
         return qoa.interactive({
           type: "interactive",
           query: "How far should we bump the version?",

@@ -1,31 +1,28 @@
-const { package, ENV, paths, locals, htmlComponent } = require(`${process.cwd()}/.koiosrc`);
+const { package, paths, locals, htmlComponent } = require(`${process.cwd()}/.koiosrc`);
 const Thought = require("../utils/thought");
+const think = require("../utils/think");
 const copy = require("../utils/immutable-clone");
 const pathDiff = require("../utils/path-diff");
 const slugify = require("../utils/slugify");
 const pugdoc = require("../utils/pugdoc-parser");
 const puppetServer = require("../utils/puppet-server");
-const getChildren = require("../utils/get-children");
-const globby = require("globby");
-const micromatch = require("micromatch");
 const path = require("path");
-const globParent = require("glob-parent");
 
 /**
- * Pug doc parser
+ * Compile pug into html
  */
 
-async function pugComponent(input) {
-  const koios = copy(input);
-  const component = pugdoc(koios.data, koios.source, locals)[0];
+async function compile(input) {
+  const thought = copy(input);
+  const component = pugdoc(thought.data, thought.source, locals)[0];
   
-  if (!component) return koios.info(`no pug-doc in ${pathDiff(process.cwd(), koios.source)}`);
+  if (!component) return thought.info(`no pug-doc in ${pathDiff(process.cwd(), thought.source)}`);
 
-  const promises = [writeFragment(component, koios.destination)];
-  if (component.fragments) component.fragments.forEach(fragment => promises.push(writeFragment(fragment, koios.destination)));
-  const fragments = await Promise.all(promises).catch(err => koios.error(err));
+  const promises = [writeFragment(component, thought.destination)];
+  if (component.fragments) component.fragments.forEach(fragment => promises.push(writeFragment(fragment, thought.destination)));
+  const fragments = await Promise.all(promises).catch(err => thought.error(err));
 
-  return koios.done(pathDiff(process.cwd(), koios.source) + ` (${fragments.length} fragment${fragments.length !== 1 ? "s" : ""})`);
+  return thought.done(pathDiff(process.cwd(), thought.source) + ` (${fragments.length} fragment${fragments.length !== 1 ? "s" : ""})`);
 }
 
 /**
@@ -33,11 +30,11 @@ async function pugComponent(input) {
  */
 
 async function writeFragment(fragment, parentDestination) {
-  return writeFragmentHTML(fragment, parentDestination).then((koiosHTML) => 
+  return writeFragmentHTML(fragment, parentDestination).then((thought) => 
     writeFragmentJSON(
-      fragment, 
+      fragment,
       parentDestination,
-      pathDiff(path.resolve(paths.roots.to), koiosHTML.destination))
+      pathDiff(path.resolve(paths.roots.to), thought.destination))
   );
 }
 
@@ -47,17 +44,17 @@ async function writeFragment(fragment, parentDestination) {
 
 async function writeFragmentHTML(fragment, parentDestination) {
   const data = htmlComponent
-    .replace("{{output}}", fragment.output || "")
-    .replace("{{title}}", fragment.meta.name);
-
+  .replace("{{output}}", fragment.output || "")
+  .replace("{{title}}", fragment.meta.name);
+  
   const destination = path.resolve(
     path.dirname(parentDestination),
     slugify(fragment.meta.name) + ".html"
   );
 
-  const koios = await addBanner(Thought({ data, destination }));
-
-  return koios.write();
+  const thought = await addBanner(Thought({ data, destination }));
+    
+  return thought.write();
 }
 
 /**
@@ -78,9 +75,9 @@ async function writeFragmentJSON(fragment, parentDestination, htmlFile) {
     slugify(fragment.meta.name) + ".json"
   );
 
-  const koios = await Thought({ data, destination });
+  const thought = await Thought({ data, destination });
 
-  return koios.write();
+  return thought.write();
 }
 
 /*
@@ -88,14 +85,18 @@ async function writeFragmentJSON(fragment, parentDestination, htmlFile) {
  */
 
 async function getFragmentHeight(htmlFile) {
-  const page = await puppetServer.browser.newPage();
-  await page.setViewport(Object.assign(page.viewport(), { width: 1200 }));
-  await page.goto(`http://localhost:3333/${htmlFile}`, { waitUntil: "networkidle2" });
-  const height = await page.evaluate(() => {
-    return document.body.getBoundingClientRect().height;
-  });
-  await page.close();
-  return height;
+  try {
+    const page = await puppetServer.browser.newPage();
+    await page.setViewport(Object.assign(page.viewport(), { width: 1200 }));
+    await page.goto(`http://localhost:3333/${htmlFile}`, { waitUntil: "networkidle2" });
+    const height = await page.evaluate(() => {
+      return document.body.getBoundingClientRect().height;
+    });
+    await page.close();
+    return height;
+  } catch (err) {
+    throw (err);
+  }
 }
 
 /**
@@ -103,66 +104,29 @@ async function getFragmentHeight(htmlFile) {
  */
 
 async function addBanner(input) {
-  const koios = copy(input);
-  koios.data = `<!-- ${package.name} v${package.version} --> ${koios.data}\n`;
-  return koios;
+  const thought = copy(input);
+  thought.data = `<!-- ${package.name} v${package.version} -->\n${thought.data}\n`;
+  return thought;
 }
 
 /**
  * Compiles source pug to destination html
  */
 
-async function build(koios) {
-  return koios.read()
-    .then(pugComponent);
+function build(input) {
+  const thought = copy(input);
+  return thought.read()
+    .then(compile);
 }
 
 /**
- * Entry point for koios:
- * $ node koios components
+ * Entry point
  */
 
-exports.default = async function (changed) {
-  changed = changed ? path.resolve(process.cwd(), changed) : null;
-
-  const koios = { before: null, promises: [], after: () => puppetServer.stop() };
-
-  await puppetServer.start();
-
-  const patterns = Object.keys(paths.components);
-  const entries = await globby(patterns, { cwd: path.resolve(paths.roots.from) });
-
-  entries.forEach(entry => {
-    const source = path.join(process.cwd(), paths.roots.from, entry);
-    
-    // find the glob pattern that matches this source
-    const pattern = patterns.find((pattern) => micromatch.isMatch(entry, pattern));
-
-    // skip this entry if a changed file is given which isn't included or extended by entry
-    const children = getChildren(source);
-    if (changed && changed !== source && !children.includes(changed.slice(0, -4))) return;
-
-    const subdir = path.dirname(pathDiff(globParent(pattern), entry));
-
-    const filename = path.extname(paths.components[pattern]) === ".html" ?
-        path.basename(paths.components[pattern])
-          .replace(/\$\{name\}/g, path.basename(source, ".pug"))
-          .replace(/\$\{version\}/g, package.version)
-        : `${path.basename(source, ".pug")}.html`;
-
-    // assemble the destination path and filename
-    const destination = path.join(
-      process.cwd(),
-      paths.roots.to, 
-      path.dirname(paths.components[pattern]),
-      filename
-    ).replace(/\$\{dir\}/g, subdir);
-
-    // collect the build promise
-    koios.promises.push(
-      build(Thought({ source, destination, changed, children }))
-    );
-  });
-
-  return koios;
-}
+module.exports = (changed) => think({
+  changed,
+  build,
+  rules: paths.components,
+  before: () => puppetServer.start(),
+  after: () => puppetServer.stop()
+});

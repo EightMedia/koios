@@ -7,21 +7,20 @@ const path = require("path");
 const mvdir = require("mvdir");
 
 /**
- * Entry point for koios:
- * $ node koios resources
+ * Entry point
  */
 
-exports.default = async function () {
+module.exports = async function () {
 
-  const koios = { before: null, promises: [], after: null };
+  const thinker = { before: null, thoughts: [], after: null };
   
   for (const entry in paths.resources) {
     const source = path.resolve(entry);
     const destination = path.resolve(paths.roots.to, paths.resources[entry]);
     const err = await mvdir(source, destination, { copy: true });
     const p = !err ? Thought({}).done(pathDiff(process.cwd(), source)) : Thought({}).error(err);
-    koios.promises.push(p);
+    thinker.thoughts.push(p);
   }
 
-  return koios;
+  return thinker;
 }

@@ -5,24 +5,21 @@ const del = require("del");
 const fs = require("fs");
 const path = require("path");
 
-
-
 /**
- * Entry point for koios:
- * $ node koios clean
+ * Entry point
  */
 
-exports.default = async function () {
+module.exports = async function () {
   return {
     before: null,
-    promises: [
+    thoughts: [
       new Promise(async (resolve, reject) => {
         del(`${paths.roots.to}**/*`)
           .then((result) => {
             return `removed ${result.length} files from ${paths.roots.to}`;
           })
-          .then((msg) => Thought({}).done(msg))
-          .then((koios) => resolve(koios))
+          .then(msg => Thought({}).done(msg))
+          .then(thought => resolve(thought))
           .catch(err => reject(err));
       })
     ],
