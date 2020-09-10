@@ -16,13 +16,15 @@ async function compile(input) {
   const thought = copy(input);
   const component = pugdoc(thought.data, thought.source, locals)[0];
   
-  if (!component) return thought.info(`no pug-doc in ${pathDiff(process.cwd(), thought.source)}`);
+  const shortPath = pathDiff(path.join(process.cwd(), paths.roots.from), thought.source);
+
+  if (!component) return thought.info(`skip ${shortPath}`);
 
   const promises = [writeFragment(component, thought.destination)];
   if (component.fragments) component.fragments.forEach(fragment => promises.push(writeFragment(fragment, thought.destination)));
   const fragments = await Promise.all(promises).catch(err => thought.error(err));
 
-  return thought.done(pathDiff(process.cwd(), thought.source) + ` (${fragments.length} fragment${fragments.length !== 1 ? "s" : ""})`);
+  return thought.done(`${shortPath} (${fragments.length})`);
 }
 
 /**
@@ -88,7 +90,7 @@ async function getFragmentHeight(htmlFile) {
   try {
     const page = await puppetServer.browser.newPage();
     await page.setViewport(Object.assign(page.viewport(), { width: 1200 }));
-    await page.goto(`http://localhost:3333/${htmlFile}`, { waitUntil: "networkidle2" });
+    await page.goto(`http://localhost:3333/${htmlFile}`, { waitUntil: "domcontentloaded" });
     const height = await page.evaluate(() => {
       return document.body.getBoundingClientRect().height;
     });
@@ -116,7 +118,8 @@ async function addBanner(input) {
 function build(input) {
   const thought = copy(input);
   return thought.read()
-    .then(compile);
+    .then(compile)
+    .catch(err => thought.error(err));
 }
 
 /**
@@ -126,7 +129,7 @@ function build(input) {
 module.exports = (changed) => think({
   changed,
   build,
-  rules: paths.components,
+  rules: paths.parts,
   before: () => puppetServer.start(),
   after: () => puppetServer.stop()
 });

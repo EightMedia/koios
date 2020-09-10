@@ -8,15 +8,12 @@ const puppeteer = require("puppeteer");
 exports.start = () => {
   return new Promise(async resolve => { 
     // start browser
-    exports.browser = await puppeteer.launch({
-      headless     : true
-    });
+    exports.browser = await puppeteer.launch({ headless: true });
 
     // start server
     const serve = serveStatic(paths.roots.to);
     exports.server = http.createServer(function(req, res) {
-      var done = finalhandler(req, res);
-      serve(req, res, done);
+      serve(req, res, finalhandler(req, res));
     });
 
     exports.server.listen(3333);

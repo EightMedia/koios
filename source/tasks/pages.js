@@ -49,7 +49,8 @@ function build(input) {
   return thought.read()
     .then(compile)
     .then(addBanner)
-    .then(save);
+    .then(save)
+    .catch(err => thought.error(err));
 }
 
 /**

@@ -39,8 +39,8 @@ async function lint(input) {
   if (result.logs.length > 0) {
     return thought.warn({
       scope: "linter",
-      msg: `Found ${result.logs.length} issues concerning ${pathDiff(process.cwd(), thought.source)}:`,
-      sub: result.logs
+      msg: `${pathDiff(process.cwd(), thought.source)}`,
+      issues: result.logs
     });
   }
 
@@ -141,7 +141,8 @@ function build(input) {
     .then(prep)
     .then(minify)
     .then(addBanner)
-    .then(save);
+    .then(save)
+    .catch(err => thought.error(err));
 }
 
 /**

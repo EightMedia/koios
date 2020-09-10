@@ -47,8 +47,8 @@ function lint(input) {
   if (issues.length > 0) {
     return thought.warn({
       scope: "linter",
-      msg: `Found ${issues.length} issue${issues.length !== 1 ? "s" : ""} concerning ${pathDiff(process.cwd(), thought.source)}:`,
-      sub: issues
+      msg: `${pathDiff(process.cwd(), thought.source)}`,
+      issues
     });
   }
 
@@ -138,7 +138,8 @@ function build(input) {
   return thought.read()
     .then(lint)
     .then(bundle)
-    .then(save);
+    .then(save)
+    .catch(err => thought.error(err));
 }
 
 /**

@@ -59,7 +59,7 @@ module.exports = function () {
         });
       },
       pug: (file) => {
-        run("components", file)
+        run("parts", file)
           .then(() => run("pages", file))
           .catch(err => {
             reject(err);

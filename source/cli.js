@@ -33,8 +33,6 @@ if (require.main === module && process.argv.length > 2) {
   // run tasks one after another
   tasks.reduce(async (previousTask, nextTask) => {
     await previousTask;
-    
-    console.log(""); // insert blank line for clarity
 
     if (typeof nextTask === "function") return nextTask();
     
