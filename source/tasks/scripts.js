@@ -151,7 +151,7 @@ function build(input) {
 module.exports = (changed) => think({
   changed,
   build,
-  rules: paths.scripts,
+  rules: { ...paths.scripts, "!**/webpack.config.js": null, "!**/*.webpack.js": null },
   before: null,
   after: null
 });
