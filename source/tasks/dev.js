@@ -64,7 +64,7 @@ module.exports = function () {
 
     watcher.on("change", function(file) {
       const ext = path.extname(file).substr(1);
-      run(tasks[ext], file).catch(err => {
+      run({ tasks: tasks[ext], file }).catch(err => {
         reject(err);
       });
     });

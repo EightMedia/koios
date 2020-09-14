@@ -9,20 +9,24 @@ const fs = require("fs");
 
 const logger = new Signale({ scope: "koios", interactive: true });
 
-const availableTasks = ["assets", "clean", "dev", "pages", "parts", "robots", "scripts", "styles"]
+/*
+ * Run a single task
+ */
 
-async function single(task, file) {
+const availableTasks = ["assets", "clean", "dev", "pages", "parts", "scripts", "styles"]
+
+async function task({ task, file }) {
   if (!availableTasks.includes(task)) {
     throw Error(`Unknown task '${task}'. Use one of the following: ${availableTasks.join(", ")}`);
   }
 
-  const build = require(`./tasks/${task}`);
   const start = new Date();
-
   const log = logger.scope(task);
   log.pending(`${formatTime(start)}`, file ? ` (${file})` : '');
-
+  
   await fs.promises.mkdir(paths.roots.to).catch((err) => err);
+
+  const build = require(`./tasks/${task}`);
 
   return build(file).then(async thinker => {
     return promiseProgress(thinker.thoughts)((i, thought) => {
@@ -65,7 +69,7 @@ async function single(task, file) {
 
       const end = new Date();
       const time = convertMs(end.getTime() - start.getTime());
-      const errorInfo = amounts.errors > 0 ? `(${amounts.errors} errors)` : '';
+      const errorInfo = amounts.errors > 0 ? `(${amounts.errors} error${amounts.errors === 1 ? '' : 's'})` : '';
       log.complete(`${amounts.total} entr${amounts.total === 1 ? 'y' : 'ies'} in ${time} ${errorInfo}`);
     });
   });
@@ -75,8 +79,10 @@ async function single(task, file) {
  * Run task(s)
  */
 
-module.exports = async function(tasks, file) {
-  tasks = Array.isArray(tasks) ? tasks : [tasks];
+module.exports = async function({ tasks, file }) {
+  if (typeof tasks === "string") tasks = [tasks];
+  if (!tasks || tasks.length === 0) tasks = ["clean", "assets", "styles", "scripts", "parts", "pages"];
+  
   const start = new Date();
 
   if (tasks.length > 1) {
@@ -96,7 +102,7 @@ module.exports = async function(tasks, file) {
 
     if (typeof nextTask === "function") return nextTask();
     
-    return single(nextTask, file).catch(err => {
+    return task({ task: nextTask, file }).catch(err => {
       logger.error(err);
       process.exit(0);
     });

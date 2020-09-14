@@ -15,10 +15,10 @@ if (!semver.satisfies(process.version, ">=12.14.0")) {
 }
 
 /**
- * Read which module(s) to run from the 2nd terminal argument
+ * Run tasks given as 2nd terminal argument
  */
 
-if (require.main === module && process.argv.length > 2) {
+if (require.main === module) {
   delete require.cache[__filename];
-  run(process.argv.slice(2));
+  run({ tasks: process.argv.slice(2) });
 }

@@ -8,7 +8,7 @@ const stream = require("stream");
 const { once } = require('events');
 const finished = promisify(stream.finished);
 
-module.exports = ({source, destination, changed, children, data}) => ({
+module.exports = ({ source, destination, changed, children, data }) => ({
   source,
   destination,
   changed,
