@@ -14,6 +14,8 @@ const eslint = require("eslint").CLIEngine;
  */
 
 function lint(input) {
+  if (process.env.NODE_ENV !== "development") return input;
+
   const thought = copy(input);
   const report = new eslint({ 
     baseConfig: {

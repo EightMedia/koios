@@ -4,19 +4,19 @@ const pathDiff = require("../utils/path-diff");
 
 const fs = require("fs");
 const path = require("path");
+const mvdir = require("mvdir");
 
 /**
  * Entry point
  */
 
 module.exports = async function () {
-  
   const thinker = { before: null, thoughts: [], after: null };
   
-  for (const entry in paths.resources) {
+  for (const entry in paths.assets) {
     const source = path.resolve(entry);
-    const destination = path.resolve(paths.roots.to, paths.resources[entry]);
-    const err = await fs.promises.symlink(source, destination);
+    const destination = path.resolve(paths.roots.to, paths.assets[entry]);
+    const err = process.env.NODE_ENV === "development" ? await fs.promises.symlink(source, destination) : await mvdir(source, destination, { copy: true });
     const p = !err ? Thought({}).done(pathDiff(process.cwd(), source)) : Thought({}).error(err);
     thinker.thoughts.push(p);
   }
