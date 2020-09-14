@@ -6,11 +6,10 @@ const { createProxyMiddleware } = require("http-proxy-middleware");
 const chokidar = require("chokidar");
 
 /**
- * Entry point for koios:
- * $ node koios dev
+ * Entry point
  */
 
-exports.default = function () {
+module.exports = function () {
   return new Promise(function(resolve, reject) {
     const chokidarOptions = {
       awaitWriteFinish: {
@@ -60,12 +59,11 @@ exports.default = function () {
         });
       },
       pug: (file) => {
-        run("components", file).catch(err => {
-          reject(err);
-        });
-        run("pages", file).catch(err => {
-          reject(err);
-        });
+        run("parts", file)
+          .then(() => run("pages", file))
+          .catch(err => {
+            reject(err);
+          });
       }
     };
 

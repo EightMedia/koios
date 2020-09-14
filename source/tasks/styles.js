@@ -1,13 +1,10 @@
-const { package, ENV, paths } = require(`${process.cwd()}/.koiosrc`);
-const KoiosThought = require("../utils/koios-thought");
+const { package, paths } = require(`${process.cwd()}/.koiosrc`);
+const think = require("../utils/think");
 const pathDiff = require("../utils/path-diff");
 const copy = require("../utils/immutable-clone");
-const globby = require("globby");
-const micromatch = require("micromatch");
 const path = require("path");
 const chalk = require("chalk");
 const sass = require("node-sass");
-const sassGraph = require("sass-graph");
 const postcss = require("postcss");
 const autoprefixer = require("autoprefixer");
 const cssnano = require("cssnano");
@@ -19,13 +16,13 @@ const preprocess = require("preprocess").preprocess;
  */
 
 async function lint(input) {
-  const koios = copy(input);
+  const thought = copy(input);
   const result = await stylelint.lint({
       configOverrides: {
         "extends": "stylelint-config-recommended-scss"
       },
       syntax: "scss",
-      files: koios.changed || koios.children,
+      files: thought.changed || thought.children,
       formatter: (result, retval) => {
         retval.logs = [];
         result.forEach(file => {
@@ -40,14 +37,14 @@ async function lint(input) {
     });
 
   if (result.logs.length > 0) {
-    return koios.warn({
+    return thought.warn({
       scope: "linter",
-      msg: `Found ${result.logs.length} issues concerning ${pathDiff(process.cwd(), koios.source)}:`,
-      sub: result.logs
+      msg: `${pathDiff(process.cwd(), thought.source)}`,
+      issues: result.logs
     });
   }
 
-  return koios;
+  return thought;
 }
 
 /**
@@ -55,18 +52,18 @@ async function lint(input) {
  */
 
 function compile(input) {
-  const koios = copy(input);
+  const thought = copy(input);
   return new Promise((resolve, reject) => {
     return sass.render(
       {
-        data: koios.data,
+        data: thought.data,
         outputStyle: "expanded",
-        includePaths: [path.dirname(koios.source)]
+        includePaths: [path.dirname(thought.source)]
       },
       (err, result) => {
         if (err) return reject(err);
-        koios.data = result.css;
-        return resolve(koios);
+        thought.data = result.css;
+        return resolve(thought);
       }
     );
   });
@@ -77,7 +74,7 @@ function compile(input) {
  */
 
 async function minify(input) {
-  const koios = copy(input);
+  const thought = copy(input);
   const result = await postcss([
     autoprefixer({
       cascade: false
@@ -96,10 +93,10 @@ async function minify(input) {
         }
       ]
     })
-  ]).process(koios.data, { from: undefined });
+  ]).process(thought.data, { from: undefined });
   
-  koios.data = result.css;
-  return koios;
+  thought.data = result.css;
+  return thought;
 }
 
 /**
@@ -107,9 +104,9 @@ async function minify(input) {
  */
 
 async function prep(input) {
-  const koios = copy(input);
-  koios.data = preprocess(koios.data, paths.locals, "css");
-  return koios;
+  const thought = copy(input);
+  thought.data = preprocess(thought.data, paths.locals, "css");
+  return thought;
 }
 
 /**
@@ -117,68 +114,45 @@ async function prep(input) {
  */
 
 async function addBanner(input) {
-  const koios = copy(input);
-  koios.data = `/* ${package.name} v${package.version} */ ${koios.data}`;
-  return koios;
+  const thought = copy(input);
+  thought.data = `/* ${package.name} v${package.version} */\n${thought.data}`;
+  return thought;
+}
+
+/*
+ * Write thought to destination and say we're done
+ */
+
+async function save(input) {
+  const thought = copy(input);
+  await thought.write();
+  return thought.done();
 }
 
 /**
  * Build
- * pass copy of koios to enforce immutability
  */
 
-async function build(koios) {
-  return koios.read()
+function build(input) {
+  const thought = copy(input);
+  return thought.read()
     .then(lint)
     .then(compile)
     .then(prep)
     .then(minify)
     .then(addBanner)
-    .then(k => k.write())
-    .then(k => k.done())
-    .catch(err => koios.error(err));
+    .then(save)
+    .catch(err => thought.error(err));
 }
 
 /**
- * Entry point for koios:
- * $ node koios styles
+ * Entry point
  */
 
-exports.default = async function (changed) {
-  changed = changed ? path.resolve(process.cwd(), changed) : null;
-  
-  const patterns = Object.keys(paths.styles);
-  const entries = await globby(patterns, { cwd: path.resolve(paths.roots.from) });
-
-  const koios = { before: null, promises: [], after: null };
-
-  entries.forEach(entry => {
-    const source = path.join(process.cwd(), paths.roots.from, entry);
-    
-    const pattern = patterns.find((pattern) => micromatch.isMatch(entry, pattern));
-
-    const children = sassGraph.parseFile(source).index[source].imports;
-    
-    // skip this entry if a changed file is given which isn't imported by entry
-    if (changed && !children.includes(changed)) return;
-
-    const filename = path.extname(paths.styles[pattern]) === ".css" ?
-      path.basename(paths.styles[pattern])
-        .replace(/\$\{name\}/g, path.basename(source, ".scss"))
-        .replace(/\$\{version\}/g, package.version)
-      : `${path.basename(source, ".scss")}.css`;
-
-    const destination = path.join(
-      process.cwd(),
-      paths.roots.to,
-      path.dirname(paths.styles[pattern]),
-      filename
-    );
-
-    koios.promises.push(
-      build(KoiosThought({ source, destination, changed, children }))
-    );
-  });
-
-  return koios;
-}
+module.exports = (changed) => think({
+  changed,
+  build,
+  rules: paths.styles,
+  before: null,
+  after: null
+});

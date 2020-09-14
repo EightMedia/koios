@@ -1,5 +1,5 @@
 const { paths, robotsTxt } = require(`${process.cwd()}/.koiosrc`);
-const KoiosThought = require("../utils/koios-thought");
+const Thought = require("../utils/thought");
 
 const fs = require("fs");
 const path = require("path");
@@ -7,18 +7,17 @@ const path = require("path");
 
 
 /**
- * Entry point for koios:
- * $ node koios robots
+ * Entry point
  */
 
-exports.default = async function () {
+module.exports = async function () {
   return {
     before: null,
-    promises: [
+    thoughts: [
       new Promise(async (resolve, reject) => {
         fs.promises.writeFile(path.join(paths.roots.to, "robots.txt"), robotsTxt)
-          .then(() => KoiosThought({}).done(`added robots.txt to ${path.join(paths.roots.to, "robots.txt")}`))
-          .then((koios) => resolve(koios))
+          .then(() => Thought({}).done(`added robots.txt to ${path.join(paths.roots.to, "robots.txt")}`))
+          .then((thought) => resolve(thought))
           .catch(err => reject(err));
       })
     ],

@@ -17,7 +17,7 @@ module.exports = function(ms) {
   if (d > 0) str += `${d}d `;
   if (h > 0) str += `${h}h `;
   if (m > 0) str += `${m}m `;
-  if (s > 0) str += `${Number.parseFloat(s + "." + ms).toFixed(2)}s`;
+  if (s > 0) str += `${s}s`;
   else str += `${ms}ms`;
 
   return str;

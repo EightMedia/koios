@@ -1,27 +1,21 @@
-const { package, ENV, paths, locals, htmlComponent } = require(`${process.cwd()}/.koiosrc`);
-const KoiosThought = require("../utils/koios-thought");
+const { package, paths, locals } = require(`${process.cwd()}/.koiosrc`);
+const think = require("../utils/think");
 const copy = require("../utils/immutable-clone");
-const pathDiff = require("../utils/path-diff");
-const globby = require("globby");
-const micromatch = require("micromatch");
-const path = require("path");
 const pug = require("pug");
-const resolveDependencies = require("pug-dependencies");
-const globParent = require("glob-parent");
 
 /**
  * Compile pug into html
  */
 
-async function pugPage(input) {
-  const koios = copy(input);
+async function compile(input) {
+  const thought = copy(input);
   return pug.render(
-    koios.data, 
-    Object.assign(locals, { self: true, filename: koios.source }), 
+    thought.data, 
+    Object.assign(locals, { self: true, filename: thought.source }), 
     (err, html) => {
       if (err) throw err;
-      koios.data = html;
-      return koios;
+      thought.data = html;
+      return thought;
     }
   );
 }
@@ -31,67 +25,42 @@ async function pugPage(input) {
  */
 
 async function addBanner(input) {
-  const koios = copy(input);
-  koios.data = `<!-- ${package.name} v${package.version} --> ${koios.data}\n`;
-  return koios;
+  const thought = copy(input);
+  thought.data = `<!-- ${package.name} v${package.version} -->\n${thought.data}\n`;
+  return thought;
+}
+
+/*
+ * Write thought to destination and say we're done
+ */
+
+async function save(input) {
+  const thought = copy(input);
+  await thought.write();
+  return thought.done();
 }
 
 /**
  * Compiles source pug to destination html
  */
 
-async function build(koios) {
-  return koios.read()
-    .then(pugPage)
+function build(input) {
+  const thought = copy(input);
+  return thought.read()
+    .then(compile)
     .then(addBanner)
-    .then(k => k.write())
-    .then(k => k.done());
+    .then(save)
+    .catch(err => thought.error(err));
 }
 
 /**
- * Entry point for koios:
- * $ node koios pages
+ * Entry point
  */
 
-exports.default = async function (changed) {
-  changed = changed ? path.resolve(process.cwd(), changed) : null;
-
-  const koios = { before: null, promises: [], after: null };
-
-  const patterns = Object.keys(paths.templates["pages"]);
-  const entries = await globby(patterns, { cwd: path.resolve(paths.roots.from) });
-
-  entries.forEach(entry => {
-    const source = path.join(process.cwd(), paths.roots.from, entry);
-    
-    // skip this entry if a changed file is given which isn't included or extended by entry
-    const children = resolveDependencies(source);
-    if (changed && changed !== source && !children.includes(changed.slice(0, -4))) return;
-
-    // find the glob pattern that matches this source
-    const pattern = patterns.find((pattern) => micromatch.isMatch(entry, pattern));
-
-    const subdir = path.dirname(pathDiff(globParent(pattern), entry));
-
-    const filename = path.extname(paths.templates["pages"][pattern]) === ".html" ?
-        path.basename(paths.templates["pages"][pattern])
-          .replace(/\$\{name\}/g, path.basename(source, ".pug"))
-          .replace(/\$\{version\}/g, package.version)
-        : `${path.basename(source, ".pug")}.html`;
-
-    // assemble the destination path and filename
-    const destination = path.join(
-      process.cwd(),
-      paths.roots.to, 
-      path.dirname(paths.templates["pages"][pattern]),
-      filename
-    ).replace(/\$\{dir\}/g, subdir);
-
-    // collect the build promise
-    koios.promises.push(
-      build(KoiosThought({ source, destination, changed, children }))
-    );
-  });
-  
-  return koios;
-}
+module.exports = (changed) => think({
+  changed,
+  build,
+  rules: paths.pages,
+  before: null,
+  after: null
+});
