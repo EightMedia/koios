@@ -90,7 +90,7 @@ async function getFragmentHeight(htmlFile) {
   try {
     const page = await puppetServer.browser.newPage();
     await page.setViewport(Object.assign(page.viewport(), { width: 1200 }));
-    await page.goto(`http://localhost:3333/${htmlFile}`, { waitUntil: "domcontentloaded" });
+    await page.goto(`http://localhost:3333/${htmlFile}`);
     const height = await page.evaluate(() => {
       return document.body.getBoundingClientRect().height;
     });
