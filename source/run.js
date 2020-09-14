@@ -13,7 +13,7 @@ const logger = new Signale({ interactive: true });
  * Run a task
  */
 
-const availableTasks = ["bump", "clean", "dev", "pages", "parts", "resources", "robots", "scripts", "styles", "symlinks"]
+const availableTasks = ["clean", "dev", "pages", "parts", "resources", "robots", "scripts", "styles", "symlinks"]
 
 module.exports = async function(task, input) {
   if (!availableTasks.includes(task)) {
