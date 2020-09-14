@@ -24,7 +24,7 @@ module.exports = async function(task, input) {
   const start = new Date();
 
   const log = logger.scope(task);
-  log.pending(`started at ${formatTime(start)}`, input ? ` (${input})` : '');
+  log.pending(`${formatTime(start)}`, input ? ` (${input})` : '');
 
   await fs.promises.mkdir(paths.roots.to).catch((err) => err);
 
@@ -67,7 +67,7 @@ module.exports = async function(task, input) {
 
       const end = new Date();
       const time = convertMs(end.getTime() - start.getTime());
-      log.complete(`finished in ${time}`);
+      log.complete(`${time}`);
     });
   });
 }
