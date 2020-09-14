@@ -7,28 +7,24 @@ const formatTime = require("./utils/format-time");
 const convertMs = require("./utils/convert-ms.js");
 const fs = require("fs");
 
-const logger = new Signale({ interactive: true });
-
-/**
- * Run a task
- */
+const logger = new Signale({ scope: "koios", interactive: true });
 
 const availableTasks = ["assets", "clean", "dev", "pages", "parts", "robots", "scripts", "styles"]
 
-module.exports = async function(task, input) {
+async function single(task, file) {
   if (!availableTasks.includes(task)) {
-    throw Error("Use one of the following tasks: " + availableTasks.join(", "));
+    throw Error(`Unknown task '${task}'. Use one of the following: ${availableTasks.join(", ")}`);
   }
 
-  const fn = require(`./tasks/${task}`);
+  const build = require(`./tasks/${task}`);
   const start = new Date();
 
   const log = logger.scope(task);
-  log.pending(`${formatTime(start)}`, input ? ` (${input})` : '');
+  log.pending(`${formatTime(start)}`, file ? ` (${file})` : '');
 
   await fs.promises.mkdir(paths.roots.to).catch((err) => err);
 
-  return fn(input).then(async thinker => {
+  return build(file).then(async thinker => {
     return promiseProgress(thinker.thoughts)((i, thought) => {
       log[thought.log.type]({ 
         prefix: `[${(i).toString().padStart(2, "0")}/${thinker.thoughts.length.toString().padStart(2, "0")}]`, 
@@ -61,13 +57,48 @@ module.exports = async function(task, input) {
           log.error(`${pathDiff(process.cwd(), thought.source)}:\n${thought.log.stack}`);
         });
       }
+
+      return { total: result.length, issues: issues.length, errors: errors.length };
     })
-    .finally(async () => {
+    .then(async (amounts) => {
       if (typeof thinker.after === "function") await thinker.after();
 
       const end = new Date();
       const time = convertMs(end.getTime() - start.getTime());
-      log.complete(`${time}`);
+      const errorInfo = amounts.errors > 0 ? `(${amounts.errors} errors)` : '';
+      log.complete(`${amounts.total} entr${amounts.total === 1 ? 'y' : 'ies'} in ${time} ${errorInfo}`);
     });
   });
+}
+
+/**
+ * Run task(s)
+ */
+
+module.exports = async function(tasks, file) {
+  tasks = Array.isArray(tasks) ? tasks : [tasks];
+  const start = new Date();
+
+  if (tasks.length > 1) {
+    tasks.unshift(async () => {
+      logger.pending(`${formatTime(start)}`);
+    });
+    tasks.push(async () => {
+      const end = new Date();
+      const time = convertMs(end.getTime() - start.getTime());
+      logger.complete(`${time}`);
+    });
+  }
+  
+  // run tasks one after another
+  tasks.reduce(async (previousTask, nextTask) => {
+    await previousTask;
+
+    if (typeof nextTask === "function") return nextTask();
+    
+    return single(nextTask, file).catch(err => {
+      logger.error(err);
+      process.exit(0);
+    });
+  }, Promise.resolve());
 }

@@ -48,23 +48,9 @@ module.exports = function () {
      */
 
     const tasks = {
-      scss: (file) => {
-        run("styles", file).catch(err => {
-          reject(err);
-        });
-      },
-      js: (file) => {
-        run("scripts", file).catch(err => {
-          reject(err);
-        });
-      },
-      pug: (file) => {
-        run("parts", file)
-          .then(() => run("pages", file))
-          .catch(err => {
-            reject(err);
-          });
-      }
+      scss: "styles",
+      js: "scripts",
+      pug: ["parts", "pages"]
     };
 
     const watcher = chokidar.watch(
@@ -78,7 +64,9 @@ module.exports = function () {
 
     watcher.on("change", function(file) {
       const ext = path.extname(file).substr(1);
-      tasks[ext](file);
+      run(tasks[ext], file).catch(err => {
+        reject(err);
+      });
     });
   });
 }
