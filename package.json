@@ -44,6 +44,7 @@
     "pug-code-block": "^3.5.0",
     "pug-dependencies": "^2.0.0",
     "puppeteer": "^3.3.0",
+    "puppeteer-cluster": "^0.22.0",
     "qoa": "^0.2.0",
     "rebase-indent": "^1.5.0",
     "semver": "^7.1.1",

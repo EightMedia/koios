@@ -65,7 +65,7 @@ async function writeFragmentJSON(fragment, parentDestination, htmlFile) {
   const data = JSON.stringify({
     name: fragment.meta.name,
     slug: slugify(fragment.meta.name),
-    height: await getFragmentHeight(htmlFile),
+    height: await puppetServer.cluster.execute(`http://localhost:3333/${htmlFile}`),
     description: fragment.meta.description,
     source: fragment.output,
   });
@@ -76,25 +76,6 @@ async function writeFragmentJSON(fragment, parentDestination, htmlFile) {
   );
 
   return memory({ data, destination }).write();
-}
-
-/*
- * Prerender html fragment to determine the height
- */
-
-async function getFragmentHeight(htmlFile) {
-  try {
-    const page = await puppetServer.browser.newPage();
-    await page.setViewport(Object.assign(page.viewport(), { width: 1200 }));
-    await page.goto(`http://localhost:3333/${htmlFile}`);
-    const height = await page.evaluate(() => {
-      return document.body.getBoundingClientRect().height;
-    });
-    await page.close();
-    return height;
-  } catch (err) {
-    throw (err);
-  }
 }
 
 /**

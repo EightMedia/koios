@@ -3,12 +3,25 @@ const serveStatic = require("serve-static");
 const http = require("http");
 const finalhandler = require("finalhandler");
 const killable = require("killable");
-const puppeteer = require("puppeteer");
+const { Cluster } = require('puppeteer-cluster');
 
 exports.start = () => {
   return new Promise(async resolve => { 
-    // start browser
-    exports.browser = await puppeteer.launch({ headless: true });
+    // start browser cluster
+    exports.cluster = await Cluster.launch({
+      concurrency: Cluster.CONCURRENCY_PAGE,
+      maxConcurrency: 3,
+    });
+
+    // set cluster task to get document height
+    await exports.cluster.task(async ({ page, data: url }) => {
+      await page.setViewport(Object.assign(page.viewport(), { width: 1200 }));
+      await page.goto(url);
+      const height = await page.evaluate(() => {
+        return document.body.getBoundingClientRect().height;
+      });
+      return height;
+    });
 
     // start server
     const serve = serveStatic(paths.roots.to);
@@ -28,8 +41,9 @@ exports.start = () => {
   });
 }
 
-exports.stop = () => {
-  exports.browser.close();
+exports.stop = async () => {
+  await exports.cluster.idle();
+  await exports.cluster.close();
   exports.server.kill();
   process.removeListener("exit", () => exports.stop());
 }
