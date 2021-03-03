@@ -36,7 +36,7 @@ async function run({ task, file }) {
     })
     .then(result => {
       const issues = result.filter(thought => thought.hasIssues());
-      const errors = result.filter(thought => thought.hasError());
+      const errors = result.filter(thought => thought.hasErrors());
       
       if (issues || errors) {
         readline.moveCursor(process.stdout, 0, -1);
@@ -57,7 +57,11 @@ async function run({ task, file }) {
 
       if (errors.length > 0) {
         errors.forEach(thought => {
-          log.error(`${pathDiff(process.cwd(), thought.source)}:\n${thought.log.stack}`);
+          log.error(`${thought.log.errors.length} error${thought.log.errors.length !== 1 ? "s" : ""} concerning ${pathDiff(process.cwd(), thought.source)}:`);
+          thought.log.errors.forEach((error, i) => log.note({ 
+            prefix: `[${(i+1).toString().padStart(2, "0")}/${thought.log.errors.length.toString().padStart(2, "0")}]`, 
+            message: error
+          }));
         });
       }
 

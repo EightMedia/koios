@@ -23,10 +23,8 @@ function lint(input) {
         "browser": true,
         "node": true
       },
-      "parser": "@babel/eslint-parser",
-      "parserOptions": {
-        "configFile": false
-      },
+      "parser": require.resolve("@babel/eslint-parser"),
+      
       "extends": [
         "eslint:recommended"
       ],
@@ -116,7 +114,17 @@ async function bundle(input) {
       (err, stats) => {
         if (err) return reject(err);
         const info = stats.toJson();
-        if (stats.hasErrors()) return reject(new Error(info.errors));
+        if (stats.hasErrors()) {
+          const errors = [];
+          info.errors.forEach(error => {
+            errors.push(`${pathDiff(error.moduleIdentifier, process.cwd())} [${error.loc}]\n  ${chalk.grey(error.message)}`);
+          })
+          thought.error({
+            scope: "bundler",
+            msg: `${pathDiff(process.cwd(), thought.source)}`,
+            errors
+          })
+        }
         return resolve(thought);
       }
     );

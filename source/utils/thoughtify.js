@@ -35,9 +35,14 @@ module.exports = ({ source, destination, changed, children, data }) => ({
    * Set error
    */
 
-  async error(err) {
-    const msg = err instanceof Error ? err : new Error(err);
-    this.log = this.log || { type: "error", msg: `${pathDiff(process.cwd(), this.source)}`, stack: `${chalk.grey(msg.stack)}` };
+  async error(msg) {
+    if (msg instanceof Error) {
+      msg = {
+        msg: pathDiff(process.cwd(), this.source),
+        errors: [msg.message]
+      }
+    }
+    this.log = this.log || typeof msg === "string" ? { type: "error", msg } : Object.assign(msg, { type: "error" });
     return this;
   },
 
@@ -61,7 +66,7 @@ module.exports = ({ source, destination, changed, children, data }) => ({
     return this.log.issues && this.log.type === "warn";
   },
 
-  hasError() {
-    return this.log && this.log.type === "error";
+  hasErrors() {
+    return this.log.errors && this.log.type === "error";
   }
 })
