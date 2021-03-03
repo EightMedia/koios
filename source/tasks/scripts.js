@@ -24,6 +24,9 @@ function lint(input) {
         "node": true
       },
       "parser": "@babel/eslint-parser",
+      "parserOptions": {
+        "configFile": false
+      },
       "extends": [
         "eslint:recommended"
       ],
