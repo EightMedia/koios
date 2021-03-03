@@ -285,9 +285,4 @@ function getPugdocDocuments(templateSrc, filename, locals) {
 
 
 // Exports
-module.exports = {
-  extractPugdocBlocks: extractPugdocBlocks,
-  getPugdocDocuments: getPugdocDocuments,
-  parsePugdocComment: parsePugdocComment,
-  getExamples: getExamples,
-};
+module.exports = getPugdocDocuments;
