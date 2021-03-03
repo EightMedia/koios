@@ -7,21 +7,20 @@ const formatTime = require("./utils/format-time");
 const convertMs = require("./utils/convert-ms.js");
 const fs = require("fs");
 
-const logger = new Signale({ scope: "koios", interactive: true });
-
 /*
  * Run a single task
  */
 
 const availableTasks = ["assets", "clean", "dev", "pages", "parts", "scripts", "styles"]
 
-async function task({ task, file }) {
+async function run({ task, file }) {
   if (!availableTasks.includes(task)) {
     throw Error(`Unknown task '${task}'. Use one of the following: ${availableTasks.join(", ")}`);
   }
 
+  const log = new Signale({ scope: task, interactive: true });
+  
   const start = new Date();
-  const log = logger.scope(task);
   log.pending(`${formatTime(start)}`, file ? ` (${file})` : '');
   
   await fs.promises.mkdir(paths.roots.to).catch((err) => err);
@@ -76,35 +75,25 @@ async function task({ task, file }) {
 }
 
 /**
- * Run task(s)
+ * Entry point
  */
 
 module.exports = async function({ tasks, file }) {
   if (typeof tasks === "string") tasks = [tasks];
   if (!tasks || tasks.length === 0) tasks = ["clean", "assets", "styles", "scripts", "parts", "pages"];
-  
-  const start = new Date();
+  const log = new Signale({ scope: "koios" });
 
-  if (tasks.length > 1) {
-    tasks.unshift(async () => {
-      logger.pending(`${formatTime(start)}`);
-    });
-    tasks.push(async () => {
-      const end = new Date();
-      const time = convertMs(end.getTime() - start.getTime());
-      logger.complete(`${time}`);
+  const start = new Date();
+  log.pending(`${formatTime(start)}`);
+  
+  while (task = tasks.shift()) {
+    await run({ task, file }).catch(err => {
+      log.error(err);
+      process.exit(1);
     });
   }
-  
-  // run tasks one after another
-  tasks.reduce(async (previousTask, nextTask) => {
-    await previousTask;
 
-    if (typeof nextTask === "function") return nextTask();
-    
-    return task({ task: nextTask, file }).catch(err => {
-      logger.error(err);
-      process.exit(0);
-    });
-  }, Promise.resolve());
+  const end = new Date();
+  const time = convertMs(end.getTime() - start.getTime());
+  log.complete(`${time}`);
 }

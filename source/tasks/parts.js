@@ -1,5 +1,5 @@
 const { package, paths, locals, htmlComponent } = require(`${process.cwd()}/.koiosrc`);
-const memory = require("../utils/memory");
+const thoughtify = require("../utils/thoughtify");
 const think = require("../utils/think");
 const copy = require("../utils/immutable-clone");
 const pathDiff = require("../utils/path-diff");
@@ -54,7 +54,7 @@ async function writeFragmentHTML(fragment, parentDestination) {
     slugify(fragment.meta.name) + ".html"
   );
 
-  return addBanner(memory({ data, destination })).write();
+  return addBanner(thoughtify({ data, destination })).write();
 }
 
 /**
@@ -75,7 +75,7 @@ async function writeFragmentJSON(fragment, parentDestination, htmlFile) {
     slugify(fragment.meta.name) + ".json"
   );
 
-  return memory({ data, destination }).write();
+  return thoughtify({ data, destination }).write();
 }
 
 /**

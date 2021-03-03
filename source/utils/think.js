@@ -1,5 +1,5 @@
 const { package, paths } = require(`${process.cwd()}/.koiosrc`);
-const memory = require("./memory");
+const thoughtify = require("./thoughtify");
 const getChildren = require("./get-children");
 const pathDiff = require("./path-diff");
 const path = require("path");
@@ -46,7 +46,7 @@ module.exports = async function ({ changed, build, rules, before, after }) {
 
     // think the thought
     thinker.thoughts.push(
-      build(memory({ source, destination, changed, children }))
+      build(thoughtify({ source, destination, changed, children }))
     );
   });
   

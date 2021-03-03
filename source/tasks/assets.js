@@ -1,5 +1,5 @@
 const { paths, robotsTxt } = require(`${process.cwd()}/.koiosrc`);
-const memory = require("../utils/memory");
+const thoughtify = require("../utils/thoughtify");
 const pathDiff = require("../utils/path-diff");
 
 const fs = require("fs");
@@ -11,7 +11,7 @@ const mvdir = require("mvdir");
  */
 
 async function writeRobotsTxt() {
-  const thought = memory({ 
+  const thought = thoughtify({ 
     data: robotsTxt, 
     destination: path.join(paths.roots.to, "robots.txt") 
   });
@@ -30,7 +30,7 @@ module.exports = async function () {
     const source = path.resolve(entry);
     const destination = path.resolve(paths.roots.to, paths.assets[entry]);
     const err = process.env.NODE_ENV === "development" ? await fs.promises.symlink(source, destination) : await mvdir(source, destination, { copy: true });
-    const thought = !err ? memory({}).done(pathDiff(process.cwd(), source)) : memory({}).error(err);
+    const thought = !err ? thoughtify({}).done(pathDiff(process.cwd(), source)) : thoughtify({}).error(err);
     thinker.thoughts.push(thought);
   }
 

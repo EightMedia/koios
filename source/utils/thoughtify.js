@@ -1,12 +1,7 @@
 const pathDiff = require("./path-diff");
 const chalk = require("chalk");
-const fs = require("fs");
+const fs = require("fs").promises;
 const path = require("path");
-const { promisify } = require("util");
-const stream = require("stream");
-
-const { once } = require('events');
-const finished = promisify(stream.finished);
 
 module.exports = ({ source, destination, changed, children, data }) => ({
   source,
@@ -21,15 +16,7 @@ module.exports = ({ source, destination, changed, children, data }) => ({
 
   async read() {
     if (!this.source) return this.error(`No source to read from.`);
-    const readStream = fs.createReadStream(this.source, { encoding: "utf8" });
-
-    let data = "";
-    for await (const chunk of readStream) {
-      data += chunk;
-    }
-
-    this.data = data;
-
+    this.data = await fs.readFile(this.source, { encoding: "utf8" });
     return this;
   },
 
@@ -39,22 +26,8 @@ module.exports = ({ source, destination, changed, children, data }) => ({
 
   async write() {
     if (!this.destination) return this.error(`No destination to write to.`);
-    await fs.promises.mkdir(path.dirname(this.destination), {
-      recursive: true
-    });
-    const writeStream = fs.createWriteStream(this.destination, { encoding: "utf8" });
-
-    for await (const chunk of this.data) {
-      if (!writeStream.write(chunk)) {
-        // Handle backpressure
-        await once(writeStream, "drain");
-      }
-    }
-    writeStream.end();
-
-    // wait until writing is done
-    await finished(writeStream);
-    
+    await fs.mkdir(path.dirname(this.destination), { recursive: true });
+    await fs.writeFile(this.destination, this.data);
     return this;
   },
 
