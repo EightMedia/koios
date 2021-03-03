@@ -107,9 +107,7 @@ async function bundle(input) {
     const entryConfigExists = await fs.promises.stat(entryConfigFile).catch(() => false);
     const entryConfig = entryConfigExists ? require(entryConfigFile) : {};
 
-    const config = merge.smartStrategy({
-      "module.rules": "replace"
-    })(baseConfig, extraConfig, entryConfig);
+    const config = merge(baseConfig, extraConfig, entryConfig);
 
     return webpack(config,
       (err, stats) => {
