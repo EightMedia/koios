@@ -1,18 +1,18 @@
-var pug = require("pug");
+const pug = require("pug");
 
-var path = require("path");
-var YAML = require("js-yaml");
-var getCodeBlock = require("pug-code-block");
-var detectIndent = require("detect-indent");
-var rebaseIndent = require("rebase-indent");
-var pugdocArguments = require("./pugdoc-arguments");
+const path = require("path");
+const YAML = require("js-yaml");
+const getCodeBlock = require("pug-code-block");
+const detectIndent = require("detect-indent");
+const rebaseIndent = require("rebase-indent");
+const pugdocArguments = require("./pugdoc-arguments");
 
-var MIXIN_NAME_REGEX = /^mixin +([-\w]+)?/;
-var DOC_REGEX = /^\s*\/\/-\s+?\@pugdoc\s*$/;
-var DOC_STRING = "//- @pugdoc";
-var CAPTURE_ALL = "all";
-var CAPTURE_SECTION = "section";
-var EXAMPLE_BLOCK = "block";
+const MIXIN_NAME_REGEX = /^mixin +([-\w]+)?/;
+const DOC_REGEX = /^\s*\/\/-\s+?\@pugdoc\s*$/;
+const DOC_STRING = "//- @pugdoc";
+const CAPTURE_ALL = "all";
+const CAPTURE_SECTION = "section";
+const EXAMPLE_BLOCK = "block";
 
 /**
  * Returns all pugdoc comment and code blocks for the given code
@@ -34,15 +34,15 @@ function extractPugdocBlocks(templateSrc) {
 
         // If the line contains a pugdoc comment return
         // the comment block and the next code block
-        var comment = getCodeBlock.byLine(templateSrc, lineIndex + 1);
-        var meta = parsePugdocComment(comment);
+        const comment = getCodeBlock.byLine(templateSrc, lineIndex + 1);
+        const meta = parsePugdocComment(comment);
 
         // add number of captured blocks
         if (meta.capture <= 0) {
           return undefined;
         }
 
-        var capture = 2;
+        let capture = 2;
         if (meta.capture) {
           if (meta.capture === CAPTURE_ALL) {
             capture = Infinity;
@@ -54,7 +54,7 @@ function extractPugdocBlocks(templateSrc) {
         }
 
         // get all code blocks
-        var code = getCodeBlock.byLine(templateSrc, lineIndex + 1, capture);
+        let code = getCodeBlock.byLine(templateSrc, lineIndex + 1, capture);
 
         // make string
         if (Array.isArray(code)) {
@@ -69,7 +69,7 @@ function extractPugdocBlocks(templateSrc) {
 
         // filter out all but current pugdoc section
         if (meta.capture === CAPTURE_SECTION) {
-          var nextPugDocIndex = code.indexOf(DOC_STRING);
+          const nextPugDocIndex = code.indexOf(DOC_STRING);
           if (nextPugDocIndex > -1) {
             code = code.substr(0, nextPugDocIndex);
           }
@@ -82,8 +82,8 @@ function extractPugdocBlocks(templateSrc) {
 
         return {
           lineNumber: lineIndex + 1,
-          comment,
-          code
+          comment: comment,
+          code: code,
         };
       })
       // Remove skiped lines
@@ -108,7 +108,7 @@ function parsePugdocComment(comment) {
   comment = pugdocArguments.escapeArgumentsYAML(comment, "attributes");
 
   // parse YAML
-  return YAML.safeLoad(comment) || {};
+  return YAML.load(comment) || {};
 }
 
 /**
@@ -117,7 +117,7 @@ function parsePugdocComment(comment) {
  */
 
 function getExamples(meta) {
-  var examples = [];
+  let examples = [];
   if (meta.example) {
     examples = examples.concat(meta.example);
   }
@@ -131,26 +131,26 @@ function getExamples(meta) {
  * Compile Pug
  */
 
-function compilePug(source, meta, filename, locals) {
-  var newSrc = [source];
+function compilePug(src, meta, filename, locals) {
+  let newSrc = [src];
 
   // add example calls
   getExamples(meta).forEach(function (example, i) {
     // append to pug if it's a mixin example
-    if (MIXIN_NAME_REGEX.test(source)) {
+    if (MIXIN_NAME_REGEX.test(src)) {
       newSrc.push(example);
 
-      // replace example block with source
+      // replace example block with src
     } else {
       if (i === 0) {
         newSrc = [];
       }
 
-      var lines = example.split("\n");
+      const lines = example.split("\n");
       lines.forEach(function (line) {
         if (line.trim() === EXAMPLE_BLOCK) {
-          var indent = detectIndent(line).indent.length;
-          line = rebaseIndent(source.split("\n"), indent).join("\n");
+          const indent = detectIndent(line).indent.length;
+          line = rebaseIndent(src.split("\n"), indent).join("\n");
         }
         newSrc.push(line);
       });
@@ -158,7 +158,7 @@ function compilePug(source, meta, filename, locals) {
   });
 
   newSrc = newSrc.join("\n");
-  
+
   const fn = pug.compile(newSrc, { cache: false, filename, compileDebug: true, self: true });
   
   // compile pug
@@ -174,8 +174,8 @@ function compilePug(source, meta, filename, locals) {
 
 function getPugdocDocuments(templateSrc, filename, locals) {
   return extractPugdocBlocks(templateSrc).map(function (pugdocBlock) {
-    var meta = parsePugdocComment(pugdocBlock.comment);
-    var fragments = [];
+    const meta = parsePugdocComment(pugdocBlock.comment);
+    const fragments = [];
 
     // parse jsdoc style arguments list
     if (meta.arguments) {
@@ -191,18 +191,41 @@ function getPugdocDocuments(templateSrc, filename, locals) {
       });
     }
 
-    var source = pugdocBlock.code;
+    let source = pugdocBlock.code;
     source = source.replace(/\u2028|\u200B/g, "");
+
+    if (meta.example && meta.example !== false) {
+      if (meta.beforeEach) {
+        meta.example = `${meta.beforeEach}\n${meta.example}`;
+      }
+      if (meta.afterEach) {
+        meta.example = `${meta.example}\n${meta.afterEach}`;
+      }
+    }
 
     // get example objects and add them to parent example
     // also return them as separate pugdoc blocks
     if (meta.examples) {
       for (let i = 0, l = meta.examples.length; i < l; ++i) {
-        const x = meta.examples[i];
+        let x = meta.examples[i];
 
         // do nothing for simple examples
         if (typeof x === "string") {
+          if (meta.beforeEach) {
+            meta.examples[i] = `${meta.beforeEach}\n${x}`;
+          }
+          if (meta.afterEach) {
+            meta.examples[i] = `${x}\n${meta.afterEach}`;
+          }
           continue;
+        }
+
+        if (meta.beforeEach && typeof x.beforeEach === "undefined") {
+          x.example = `${meta.beforeEach}\n${x.example}`;
+        }
+
+        if (meta.afterEach && typeof x.afterEach === "undefined") {
+          x.example = `${x.example}\n${meta.afterEach}`;
         }
 
         // merge example/examples with parent examples
@@ -218,19 +241,41 @@ function getPugdocDocuments(templateSrc, filename, locals) {
       meta.examples = meta.examples.reduce((acc, val) => acc.concat(val), []);
     }
 
-    var obj = {
+    // fix pug compilation for boolean use of example
+    const exampleClone = meta.example;
+    if (typeof meta.example === "boolean") {
+      meta.example = "";
+    }
+
+    const obj = {
+      // get meta
       meta: meta,
+      // add file path
       file: path.relative(".", filename),
+      // get pug code block matching the comments indent
       source: source,
-      output: compilePug(source, meta, filename, locals)
+      // get html output
+      output: compilePug(source, meta, filename, locals),
     };
+
+    // remove output if example = false
+    if (exampleClone === false) {
+      obj.output = null;
+    }
 
     // add fragments
     if (fragments && fragments.length) {
-      obj.fragments = fragments.map(subexample => ({ meta: subexample, output: compilePug(source, subexample, filename, locals) }));
+      obj.fragments = fragments.map((subexample) => {
+        return {
+          // get meta
+          meta: subexample,
+          // get html output
+          output: compilePug(source, subexample, filename, locals),
+        };
+      });
     }
 
-    if (obj.output) {
+    if (obj.output || obj.fragments) {
       return obj;
     }
 
@@ -238,5 +283,11 @@ function getPugdocDocuments(templateSrc, filename, locals) {
   });
 }
 
+
 // Exports
-module.exports = getPugdocDocuments;
+module.exports = {
+  extractPugdocBlocks: extractPugdocBlocks,
+  getPugdocDocuments: getPugdocDocuments,
+  parsePugdocComment: parsePugdocComment,
+  getExamples: getExamples,
+};
