@@ -47,12 +47,6 @@ module.exports = function () {
      * Watch changes inside SRC and run tasks accordingly
      */
 
-    const tasks = {
-      scss: "styles",
-      js: "scripts",
-      pug: ["parts", "pages"]
-    };
-
     const watcher = chokidar.watch(
       [
         `${paths.roots.from}/**/*.scss`,
@@ -63,7 +57,14 @@ module.exports = function () {
     );
 
     watcher.on("change", function(file) {
+      const tasks = {
+        scss: "styles",
+        js: "scripts",
+        pug: ["parts", "pages"]
+      };
+
       const ext = path.extname(file).substr(1);
+
       run({ tasks: tasks[ext], file }).catch(err => {
         reject(err);
       });
