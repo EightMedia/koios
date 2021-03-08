@@ -37,7 +37,7 @@ function lint(input) {
         "document": true
       }
     }
-   }).executeOnFiles(thought.changed || thought.children);
+   }).executeOnFiles(thought.changed || thought.dependencies);
   const issues = [];
 
   report.results.forEach(result => {

@@ -24,7 +24,7 @@ async function lint(input) {
         "extends": "stylelint-config-recommended-scss"
       },
       syntax: "scss",
-      files: thought.changed || thought.children,
+      files: thought.changed || thought.dependencies,
       formatter: (result, retval) => {
         retval.logs = [];
         result.forEach(file => {

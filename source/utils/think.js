@@ -1,6 +1,6 @@
 const { package, paths } = require(`${process.cwd()}/.koiosrc`);
 const thoughtify = require("./thoughtify");
-const getChildren = require("./get-children");
+const getDependencies = require("./get-dependencies");
 const pathDiff = require("./path-diff");
 const path = require("path");
 const globby = require("globby");
@@ -27,8 +27,8 @@ module.exports = async function ({ changed, build, rules, before, after }) {
     const pattern = patterns.find((pattern) => micromatch.isMatch(entry, pattern));
     
     // skip this entry if a changed file is given which isn't included or extended by entry
-    const children = getChildren(source);
-    if (changed && source != changed && !children.includes(changed)) return;
+    const dependencies = getDependencies(source);
+    if (changed && source != changed && !dependencies.includes(changed)) return;
 
     const subdir = path.dirname(pathDiff(globParent(pattern), entry));
 
@@ -46,7 +46,7 @@ module.exports = async function ({ changed, build, rules, before, after }) {
 
     // think the thought
     thinker.thoughts.push(
-      build(thoughtify({ source, destination, changed, children }))
+      build(thoughtify({ source, destination, changed, dependencies }))
     );
   });
   
