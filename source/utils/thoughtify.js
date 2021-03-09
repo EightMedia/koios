@@ -39,7 +39,7 @@ module.exports = ({ source, destination, changed, dependencies, data }) => ({
     if (msg instanceof Error) {
       msg = {
         msg: pathDiff(process.cwd(), this.source),
-        errors: [chalk.grey(msg.message)]
+        errors: [chalk.grey(msg.stack)]
       }
     }
     this.log = this.log || typeof msg === "string" ? { type: "error", msg } : Object.assign(msg, { type: "error" });
