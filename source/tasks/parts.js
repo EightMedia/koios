@@ -21,7 +21,7 @@ async function compile(input) {
   if (!component) return thought.info(`skip ${shortPath}`);
 
   const promises = [writeFragment(component, thought.destination)];
-  if (component.fragments) component.fragments.forEach(fragment => promises.push(writeFragment(fragment, thought.destination)));
+  component.fragments.forEach(fragment => fragment.meta.name && promises.push(writeFragment(fragment, thought.destination)));
   const fragments = await Promise.all(promises).catch(err => thought.error(err));
 
   return thought.done(`${shortPath} (${fragments.length})`);
@@ -32,10 +32,17 @@ async function compile(input) {
  */
 
 async function writeFragment(fragment, parentDestination) {
-  return writeFragmentHTML(fragment, parentDestination).then((thought) => 
+  const filename = fragment.meta.name ? slugify(fragment.meta.name) : path.basename(parentDestination);
+
+  const destination = path.resolve(
+    path.dirname(parentDestination),
+    filename
+  );
+
+  return writeFragmentHTML(fragment, destination).then((thought) => 
     writeFragmentJSON(
       fragment,
-      parentDestination,
+      destination,
       pathDiff(path.resolve(paths.roots.to), thought.destination))
   );
 }
@@ -44,24 +51,19 @@ async function writeFragment(fragment, parentDestination) {
  * Write component fragment HTML
  */
 
-async function writeFragmentHTML(fragment, parentDestination) {
+async function writeFragmentHTML(fragment, destination) {
   const data = htmlComponent
   .replace("{{output}}", fragment.output || "")
   .replace("{{title}}", fragment.meta.name);
   
-  const destination = path.resolve(
-    path.dirname(parentDestination),
-    slugify(fragment.meta.name) + ".html"
-  );
-
-  return addBanner(thoughtify({ data, destination })).write();
+  return addBanner(thoughtify({ data, destination: `${destination}.html` })).write();
 }
 
 /**
  * Write component fragment JSON
  */
 
-async function writeFragmentJSON(fragment, parentDestination, htmlFile) {
+async function writeFragmentJSON(fragment, destination, htmlFile) {
   const data = JSON.stringify({
     name: fragment.meta.name,
     slug: slugify(fragment.meta.name),
@@ -70,12 +72,7 @@ async function writeFragmentJSON(fragment, parentDestination, htmlFile) {
     source: fragment.output,
   });
 
-  const destination = path.resolve(
-    path.dirname(parentDestination),
-    slugify(fragment.meta.name) + ".json"
-  );
-
-  return thoughtify({ data, destination }).write();
+  return thoughtify({ data, destination: `${destination}.json` }).write();
 }
 
 /**
