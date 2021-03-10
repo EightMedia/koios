@@ -67,7 +67,7 @@ async function writeFragmentJSON(fragment, destination, htmlFile) {
   const data = JSON.stringify({
     name: fragment.meta.name,
     slug: slugify(fragment.meta.name),
-    height: await puppetServer.cluster.execute(`http://localhost:3333/${htmlFile}`),
+    // height: await puppetServer.cluster.execute(`http://localhost:3333/${htmlFile}`),
     description: fragment.meta.description,
     source: fragment.output,
   });
