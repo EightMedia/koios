@@ -16,9 +16,9 @@
     "registry": "https://npm.pkg.github.com/"
   },
   "dependencies": {
-    "@babel/core": "^7.13.8",
-    "@babel/eslint-parser": "^7.13.8",
-    "@babel/preset-env": "^7.13.9",
+    "@babel/core": "^7.13.10",
+    "@babel/eslint-parser": "^7.13.10",
+    "@babel/preset-env": "^7.13.10",
     "autoprefixer": "^10.2.5",
     "babel-loader": "^8.2.2",
     "browser-sync": "^2.26.14",
@@ -37,7 +37,7 @@
     "micromatch": "^4.0.2",
     "mvdir": "^1.0.21",
     "node-sass": "^5.0.0",
-    "postcss": "^8.2.7",
+    "postcss": "^8.2.8",
     "preprocess": "^3.1.0",
     "pug": "^3.0.2",
     "pug-code-block": "^3.6.1",
