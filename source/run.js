@@ -90,8 +90,8 @@ module.exports = async function({ tasks, file }) {
   const start = new Date();
   log.pending(`${formatTime(start)}`);
   
-  while (task = tasks.shift()) {
-    await run({ task, file }).catch(err => {
+  for (let i = 0; i < tasks.length; i++) {
+    await run({ task: tasks[i], file }).catch(err => {
       log.error(err);
       process.exit(1);
     });
