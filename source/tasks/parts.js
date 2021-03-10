@@ -5,7 +5,6 @@ const copy = require("../utils/immutable-clone");
 const pathDiff = require("../utils/path-diff");
 const slugify = require("../utils/slugify");
 const pugdoc = require("../utils/pugdoc-parser");
-const puppetServer = require("../utils/puppet-server");
 const path = require("path");
 
 /**
@@ -104,6 +103,6 @@ module.exports = (changed) => think({
   changed,
   build,
   rules: paths.parts,
-  before: () => puppetServer.start(),
-  after: () => puppetServer.stop()
+  // before: () => puppetServer.start(),
+  // after: () => puppetServer.stop()
 });
