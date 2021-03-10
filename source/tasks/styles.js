@@ -102,16 +102,6 @@ async function minify(input) {
 }
 
 /**
- * Prep
- */
-
-async function prep(input) {
-  const thought = copy(input);
-  thought.data = preprocess(thought.data, paths.locals, "css");
-  return thought;
-}
-
-/**
  * Banner
  */
 
@@ -140,7 +130,6 @@ function build(input) {
   return thought.read()
     .then(lint)
     .then(compile)
-    .then(prep)
     .then(minify)
     .then(addBanner)
     .then(save)
