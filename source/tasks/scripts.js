@@ -23,7 +23,7 @@ function lint(input) {
         "browser": true,
         "node": true
       },
-      "parser": "@babel/eslint-parser",
+      "parser": require.resolve("@babel/eslint-parser"),
       "parserOptions": {
         "requireConfigFile": false
       },
