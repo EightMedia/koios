@@ -138,7 +138,7 @@ function getPugdocDocuments(templateSrc, filename, locals) {
     // process examples
     meta.examples.forEach(fragment => {
       if (typeof fragment === "string") {
-        fragment = { example: fragment };
+        fragment = { name: meta.name, example: fragment };
       }
       
       meta.beforeEach && (fragment.example = `${meta.beforeEach}\n${fragment.example}`);
@@ -156,7 +156,7 @@ function getPugdocDocuments(templateSrc, filename, locals) {
     });
 
     return {
-      meta, source, fragments, output, file: path.relative(".", filename)
+      meta, fragments, file: path.relative(".", filename)
     };
   });
 }

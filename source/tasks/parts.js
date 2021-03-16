@@ -13,14 +13,16 @@ const path = require("path");
 
 async function compile(input) {
   const thought = copy(input);
-  const component = pugdoc(thought.data, thought.source, locals)[0];
-  
+  const part = pugdoc(thought.data, thought.source, locals);
+
   const shortPath = pathDiff(path.join(process.cwd(), paths.roots.from), thought.source);
 
-  if (!component) return thought.info(`skip ${shortPath}`);
+  if (!part) return thought.info(`skip ${shortPath}`);
 
-  const promises = [writeFragment(component, thought.destination)];
-  component.fragments.forEach(fragment => fragment.meta.name && promises.push(writeFragment(fragment, thought.destination)));
+  const promises = [];
+  part.forEach((component) => {
+    component.fragments.forEach(fragment => fragment.meta.name && promises.push(writeFragment(fragment, thought.destination)));
+  })
   const fragments = await Promise.all(promises).catch(err => thought.error(err));
 
   return thought.done(`${shortPath} (${fragments.length})`);
