@@ -5,6 +5,13 @@ const bs = require("browser-sync").create("localdev");
 const { createProxyMiddleware } = require("http-proxy-middleware");
 const chokidar = require("chokidar");
 
+const yargs = require('yargs/yargs')
+const { hideBin } = require('yargs/helpers')
+const argv = yargs(hideBin(process.argv)).argv
+
+const verbose = argv.v || argv.verbose || false;
+
+
 /**
  * Entry point
  */
@@ -65,7 +72,7 @@ module.exports = function () {
 
       const ext = path.extname(file).substr(1);
 
-      run({ tasks: tasks[ext], file }).catch(err => {
+      run({ tasks: tasks[ext], file, verbose }).catch(err => {
         reject(err);
       });
     });

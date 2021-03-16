@@ -13,12 +13,12 @@ const fs = require("fs");
 
 const availableTasks = ["assets", "clean", "dev", "pages", "parts", "scripts", "styles"]
 
-async function run({ task, file }) {
+async function run({ task, file, verbose }) {
   if (!availableTasks.includes(task)) {
     throw Error(`Unknown task '${task}'. Use one of the following: ${availableTasks.join(", ")}`);
   }
 
-  const log = new Signale({ scope: task, interactive: true });
+  const log = new Signale({ scope: task, interactive: !verbose });
   
   const start = new Date();
   log.pending(`${formatTime(start)}`, file ? ` (${file})` : '');
@@ -38,7 +38,7 @@ async function run({ task, file }) {
       const issues = result.filter(thought => thought.hasIssues());
       const errors = result.filter(thought => thought.hasErrors());
       
-      if (issues || errors) {
+      if (!verbose && (issues || errors)) {
         readline.moveCursor(process.stdout, 0, -1);
         readline.clearLine(process.stdout);
         readline.cursorTo(process.stdout, 0);
@@ -82,7 +82,7 @@ async function run({ task, file }) {
  * Entry point
  */
 
-module.exports = async function({ tasks, file }) {
+module.exports = async function({ tasks, file, verbose }) {
   if (typeof tasks === "string") tasks = [tasks];
   if (!tasks || tasks.length === 0) tasks = ["clean", "assets", "styles", "scripts", "parts", "pages"];
   const log = new Signale({ scope: "koios" });
@@ -91,7 +91,7 @@ module.exports = async function({ tasks, file }) {
   log.pending(`${formatTime(start)}`);
   
   for (let i = 0; i < tasks.length; i++) {
-    await run({ task: tasks[i], file }).catch(err => {
+    await run({ task: tasks[i], file, verbose }).catch(err => {
       log.error(err);
       process.exit(1);
     });
