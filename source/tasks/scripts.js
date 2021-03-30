@@ -7,20 +7,21 @@ const path = require("path");
 const chalk = require("chalk");
 const webpack = require("webpack");
 const { merge } = require("webpack-merge");
-const eslint = require("eslint").CLIEngine;
+const { ESLint } = require("eslint");
 
 /**
  * Lint
  */
 
-function lint(input) {
+async function lint(input) {
   if (process.env.NODE_ENV !== "development") return input;
 
   const thought = copy(input);
-  const report = new eslint({ 
+  const eslint = new ESLint({ 
     baseConfig: {
       "env": {
         "browser": true,
+        "node": true,
       },
       "parser": "@babel/eslint-parser",
       "parserOptions": {
@@ -38,10 +39,12 @@ function lint(input) {
         "document": true
       }
     }
-   }).executeOnFiles(thought.changed || thought.dependencies);
+  })
+
+  const results = await eslint.lintFiles(thought.changed || thought.dependencies);
   const issues = [];
 
-  report.results.forEach(result => {
+  results.forEach(result => {
     if (result.errorCount === 0 && result.warningCount === 0) return;
     result.messages.forEach(issue => {
       issues.push(`${pathDiff(result.filePath, process.cwd())} [${issue.line}:${issue.column}] ${issue.ruleId}\n  ${chalk.grey(issue.message)}`);
