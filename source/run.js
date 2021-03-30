@@ -48,7 +48,7 @@ async function run({ task, file, verbose }) {
       if (issues.length > 0) {
         issues.forEach(thought => {
           log.warn(`${thought.log.issues.length} issue${thought.log.issues.length !== 1 ? "s" : ""} concerning ${pathDiff(process.cwd(), thought.source)}:`);
-          const issueLog = log.scope(thought.log.scope);
+          const issueLog = log.scope(thought.log.scope || task);
           issueLog.config({ displayLabel: false });
           thought.log.issues.forEach((issue, i) => issueLog.note({ 
             prefix: `[${(i+1).toString().padStart(2, "0")}/${thought.log.issues.length.toString().padStart(2, "0")}]`, 
@@ -60,7 +60,8 @@ async function run({ task, file, verbose }) {
       if (errors.length > 0) {
         errors.forEach(thought => {
           log.error(`${thought.log.errors.length} error${thought.log.errors.length !== 1 ? "s" : ""} concerning ${pathDiff(process.cwd(), thought.source)}:`);
-          const errorLog = log.scope(thought.log.scope);
+          const errorLog = log.scope(thought.log.scope || task);
+          errorLog.config({ displayLabel: false });
           thought.log.errors.forEach((error, i) => errorLog.note({ 
             prefix: `[${(i+1).toString().padStart(2, "0")}/${thought.log.errors.length.toString().padStart(2, "0")}]`, 
             message: error
