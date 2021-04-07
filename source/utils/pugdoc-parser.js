@@ -1,5 +1,7 @@
 const pug = require("pug");
 
+const { partExtends=undefined } = require(`${process.cwd()}/.koiosrc`);
+
 const path = require("path");
 const YAML = require("js-yaml");
 const getCodeBlock = require("pug-code-block");
@@ -113,7 +115,7 @@ function compilePug(source, example, filename) {
     });
   }
 
-  return pug.compile(code, { cache: false, filename, compileDebug: true, self: true });
+  return pug.compile(code, { basedir: process.cwd(), cache: false, filename, compileDebug: true, self: true });
 }
 
 /**
@@ -139,11 +141,16 @@ function getPugdocDocuments(templateSrc, filename, locals) {
       return pugdocArguments.parse(arg, true);
     });
 
+    const extend = meta.extend || partExtends || { file: "_base", block: "body" };
+
     // process examples
     meta.examples.forEach(fragment => {
       if (typeof fragment === "string") {
         fragment = { name: meta.name, example: fragment };
       }
+      
+      extend.block && (fragment.example = `block ${extend.block}\n${rebaseIndent(fragment.example, 2).join("\n")}`);
+      extend.file && (fragment.example = `extends ${extend.file}\n${fragment.example}`);
       
       meta.beforeEach && (fragment.example = `${meta.beforeEach}\n${fragment.example}`);
       meta.afterEach && (fragment.example = `${fragment.example}\n${meta.afterEach}`);
