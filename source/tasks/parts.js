@@ -53,9 +53,9 @@ async function writeFragment(fragment, parentDestination) {
  */
 
 async function writeFragmentHTML(fragment, destination) {
-  const data = htmlComponent
+  const data = htmlComponent ? htmlComponent
   .replace("{{output}}", fragment.output || "")
-  .replace("{{title}}", fragment.meta.name);
+  .replace("{{title}}", fragment.meta.name) : fragment.output;
   
   return addBanner(thoughtify({ data, destination: `${destination}.html` })).write();
 }

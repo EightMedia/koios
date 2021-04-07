@@ -8,6 +8,7 @@ const rebaseIndent = require("rebase-indent");
 const pugdocArguments = require("./pugdoc-arguments");
 
 const MIXIN_NAME_REGEX = /^mixin +([-\w]+)?/;
+const EXTENDS_REGEX = /^extends +([-\w]+)?/;
 const DOC_REGEX = /^\s*\/\/-\s+?\@pugdoc\s*$/;
 const DOC_STRING = "//- @pugdoc";
 const CAPTURE_ALL = "all";
@@ -94,11 +95,15 @@ function parsePugdocComment(comment) {
 
 function compilePug(source, example, filename) {
   let code = "";
+  const lines = example.split("\n");
+
+  if (EXTENDS_REGEX.test(lines[0])) {
+    code = `${lines.shift()}\n`;
+  }
 
   if (MIXIN_NAME_REGEX.test(source)) {
-    code = `${source}\n${example}`;
+    code = `${code}${source}\n${lines.join("\n")}`;
   } else {
-    const lines = example.split("\n");
     lines.forEach(function (line) {
       if (line.trim() === EXAMPLE_BLOCK) {
         const indent = detectIndent(line).indent.length;
@@ -123,7 +128,6 @@ function getPugdocDocuments(templateSrc, filename, locals) {
     const meta = block.meta;
     const source = block.code.replace(/^\s*$(?:\r\n?|\n)/gm, "");
     const fragments = [];
-    let output = "";
 
     // parse jsdoc style arguments list
     meta.arguments = meta.arguments && meta.arguments.map(function (arg) {
@@ -144,15 +148,11 @@ function getPugdocDocuments(templateSrc, filename, locals) {
       meta.beforeEach && (fragment.example = `${meta.beforeEach}\n${fragment.example}`);
       meta.afterEach && (fragment.example = `${fragment.example}\n${meta.afterEach}`);
 
-      const fragmentOutput = compilePug(source, fragment.example, filename)({ ...locals, ...meta.locals });
-
       // add fragment
       fragments.push({
         meta: fragment,
-        output: fragmentOutput
+        output: compilePug(source, fragment.example, filename)({ ...locals, ...meta.locals })
       });
-
-      output += fragmentOutput;
     });
 
     return {
