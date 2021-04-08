@@ -2,14 +2,15 @@ const { package, paths } = require(`${process.cwd()}/.koiosrc`);
 const think = require("../utils/think");
 const pathDiff = require("../utils/path-diff");
 const copy = require("../utils/immutable-clone");
+const fs = require("fs");
 const path = require("path");
 const chalk = require("chalk");
-const sass = require("node-sass");
+const sass = require("sass");
 const postcss = require("postcss");
 const autoprefixer = require("autoprefixer");
 const cssnano = require("cssnano");
 const stylelint = require("stylelint");
-const preprocess = require("preprocess").preprocess;
+const extractMediaQuery = require('postcss-extract-media-query');
 
 /**
  * Lint
@@ -77,7 +78,8 @@ function compile(input) {
 
 async function minify(input) {
   const thought = copy(input);
-  const result = await postcss([
+
+  const plugins = [
     autoprefixer({
       cascade: false
     }),
@@ -95,7 +97,25 @@ async function minify(input) {
         }
       ]
     })
-  ]).process(thought.data, { from: undefined });
+  ];
+  
+  const queriesFile = path.resolve(path.dirname(thought.source), `${path.basename(thought.source, ".scss")}.queries.json`);
+  const queriesFileExists = await fs.promises.stat(queriesFile).catch(() => false);
+  const queries = queriesFileExists ? require(queriesFile) : null;
+
+  if (queries !== null) {
+    plugins.push(extractMediaQuery({
+      output: {
+        path: path.dirname(thought.destination),
+        name: `${path.basename(thought.destination, ".css")}-[query].[ext]`,
+      },
+      stats: false,
+      extractAll: false,
+      queries,
+    }));
+  }
+
+  const result = await postcss(plugins).process(thought.data, { from: undefined });
   
   thought.data = result.css;
   return thought;
