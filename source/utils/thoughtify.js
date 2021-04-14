@@ -3,9 +3,10 @@ const chalk = require("chalk");
 const fs = require("fs").promises;
 const path = require("path");
 
-module.exports = ({ source, destination, changed, dependencies, data }) => ({
+module.exports = ({ source, destination, name, changed, dependencies, data }) => ({
   source,
   destination,
+  name,
   changed,
   dependencies,
   data: data || null,

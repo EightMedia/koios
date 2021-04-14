@@ -6,6 +6,7 @@ const path = require("path");
 const globby = require("globby");
 const micromatch = require("micromatch");
 const globParent = require("glob-parent");
+const camelize = require("camelize");
 
 /**
  * Think thoughts
@@ -32,8 +33,10 @@ module.exports = async function ({ changed, build, rules, before, after }) {
 
     const subdir = path.dirname(pathDiff(globParent(pattern), entry));
 
+    const name = path.basename(source, path.extname(pattern));
+
     const filename = path.basename(rules[pattern])
-      .replace(/\$\{name\}/g, path.basename(source, path.extname(pattern)))
+      .replace(/\$\{name\}/g, name)
       .replace(/\$\{version\}/g, package.version);
 
     // assemble the destination path and filename
@@ -46,7 +49,7 @@ module.exports = async function ({ changed, build, rules, before, after }) {
 
     // think the thought
     thinker.thoughts.push(
-      build(thoughtify({ source, destination, changed, dependencies }))
+      build(thoughtify({ source, destination, name: camelize(name), changed, dependencies }))
     );
   });
   

@@ -2,12 +2,17 @@ const { package, paths } = require(`${process.cwd()}/.koiosrc`);
 const think = require("../utils/think");
 const copy = require("../utils/immutable-clone");
 const pathDiff = require("../utils/path-diff");
-const fs = require("fs");
+const thoughtify = require("../utils/thoughtify");
 const path = require("path");
 const chalk = require("chalk");
-const webpack = require("webpack");
-const { merge } = require("webpack-merge");
 const { ESLint } = require("eslint");
+const rollup = require("rollup");
+const terser = require("rollup-plugin-terser").terser;
+const resolve = require('@rollup/plugin-node-resolve').default;
+const commonjs = require("@rollup/plugin-commonjs");
+const babel = require('@rollup/plugin-babel').default;
+const nodePolyfills = require("rollup-plugin-node-polyfills");
+const json = require("@rollup/plugin-json");
 
 /**
  * Lint
@@ -67,72 +72,53 @@ async function lint(input) {
  */
 
 async function bundle(input) {
-  return new Promise(async (resolve, reject) => {
-    const thought = copy(input);
+  const thought = copy(input);
+  
+  const errors = [];
 
-    const baseConfig = {
-      entry: thought.source,
-      target: "web",
-      output: {
-        path: path.dirname(thought.destination),
-        filename: path.basename(thought.destination),
-        sourceMapFilename: path.basename(thought.destination) + ".map"
-      },
-      devtool: "source-map",
-      plugins: [
-        new webpack.BannerPlugin({
-          banner: `${package.name} v${package.version}`
-        })
-      ],
-      module: {
-        rules: [
-          {
-            test: /\.(js)$/,
-            exclude: /node_modules/,
-            use: {
-              loader: "babel-loader",
-              options: {
-                presets: [
-                  ["@babel/preset-env", { modules: "cjs", useBuiltIns: "usage", corejs: 3 }]
-                ]
-              }
-            }
-          }
-        ]
-      }
-    };
-
-    // load "webpack.config.js" if it exists
-    const extraConfigFile = path.resolve(path.dirname(thought.source), `webpack.config.js`);
-    const extraConfigExists = await fs.promises.stat(extraConfigFile).catch(() => false);
-    const extraConfig = extraConfigExists ? require(extraConfigFile) : {};
-
-    // load "{entry}.webpack.js" if it exists
-    const entryConfigFile = path.resolve(path.dirname(thought.source), `${path.basename(thought.source, ".js")}.webpack.js`);
-    const entryConfigExists = await fs.promises.stat(entryConfigFile).catch(() => false);
-    const entryConfig = entryConfigExists ? require(entryConfigFile) : {};
-
-    const config = merge(baseConfig, extraConfig, entryConfig);
-
-    return webpack(config,
-      (err, stats) => {
-        if (err) return reject(err);
-        const info = stats.toJson();
-        if (stats.hasErrors()) {
-          const errors = [];
-          info.errors.forEach(error => {
-            errors.push(`${pathDiff(error.moduleIdentifier, process.cwd())} [${error.loc}]\n  ${chalk.grey(error.message)}`);
-          })
-          thought.error({
-            scope: "bundler",
-            msg: `${pathDiff(process.cwd(), thought.source)}`,
-            errors
-          })
-        }
-        return resolve(thought);
-      }
-    );
+  const bundle = await rollup.rollup({
+    input: thought.source,
+    plugins: [
+      json(),
+      babel({ babelHelpers: "runtime", skipPreflightCheck: true, exclude: "**/node_modules/**" }),
+      nodePolyfills(),
+      resolve({ preferBuiltins: true, browser: true }),
+      commonjs(),
+    ],
+    onwarn ({ loc, message }) {
+      message = chalk.grey(message);
+      const error = loc ? `${pathDiff(loc.file, process.cwd())} [${loc.line}:${loc.column}]\n  ${message}` : message;
+      errors.push(error);
+    }
   });
+
+  if (errors.length > 0) {
+    return thought.error({
+      scope: "bundler",
+      msg: `${pathDiff(process.cwd(), thought.source)}`,
+      errors
+    })
+  }
+
+  const { output } = await bundle.generate({
+    format: "iife",
+    file: thought.destination,
+    name: thought.name,
+    sourcemap: true,
+    banner: `/* ${package.name} v${package.version} */`,
+    plugins: [
+      terser(),
+    ],
+    global: {
+      window: "window"
+    }
+  });
+
+  thought.data = output[0].code + `//# sourceMappingURL=${path.basename(thought.destination)}.map`;
+
+  await thoughtify({ destination: `${thought.destination}.map`, data: output[0].map.toString()}).write();
+
+  return thought;
 }
 
 /*
@@ -141,6 +127,7 @@ async function bundle(input) {
 
 async function save(input) {
   const thought = copy(input);
+  await thought.write();
   return thought.done();
 }
 
@@ -164,7 +151,7 @@ function build(input) {
 module.exports = (changed) => think({
   changed,
   build,
-  rules: { ...paths.scripts, "!**/webpack.config.js": null, "!**/*.webpack.js": null },
+  rules: paths.scripts,
   before: null,
   after: null
 });
