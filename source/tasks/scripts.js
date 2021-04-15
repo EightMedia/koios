@@ -8,11 +8,12 @@ const chalk = require("chalk");
 const { ESLint } = require("eslint");
 const rollup = require("rollup");
 const terser = require("rollup-plugin-terser").terser;
-const resolve = require('@rollup/plugin-node-resolve').default;
+const nodeResolve = require('@rollup/plugin-node-resolve').default;
 const commonjs = require("@rollup/plugin-commonjs");
 const babel = require('@rollup/plugin-babel').default;
-const nodePolyfills = require("rollup-plugin-node-polyfills");
+const nodeBuiltins = require("rollup-plugin-node-builtins");
 const json = require("@rollup/plugin-json");
+const replace = require("@rollup/plugin-replace");
 
 /**
  * Lint
@@ -79,10 +80,11 @@ async function bundle(input) {
   const bundle = await rollup.rollup({
     input: thought.source,
     plugins: [
+      replace({ 'process.env.NODE_ENV': JSON.stringify('production'), preventAssignment: true }),
       json(),
-      babel({ babelHelpers: "runtime", skipPreflightCheck: true, exclude: "**/node_modules/**" }),
-      nodePolyfills(),
-      resolve({ preferBuiltins: true, browser: true }),
+      nodeBuiltins(),
+      babel({ babelHelpers: "runtime", skipPreflightCheck: true, exclude: "node_modules/**" }),
+      nodeResolve({ preferBuiltins: true, browser: true }),
       commonjs(),
     ],
     onwarn ({ loc, message }) {
@@ -107,7 +109,11 @@ async function bundle(input) {
     sourcemap: true,
     banner: `/* ${package.name} v${package.version} */`,
     plugins: [
-      terser(),
+      terser({ 
+        output: { 
+          comments: false 
+        }
+      }),
     ],
     global: {
       window: "window"
