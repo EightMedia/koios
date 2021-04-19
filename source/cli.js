@@ -23,8 +23,9 @@ if (!semver.satisfies(process.version, ">=12.14.0")) {
  */
 
 const verbose = argv.v || argv.verbose || false;
+const file = argv.f || argv.file || undefined;
 
 if (require.main === module) {
   delete require.cache[__filename];
-  run({ tasks: argv._, verbose });
+  run({ tasks: argv._, verbose, file });
 }
