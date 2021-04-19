@@ -80,12 +80,12 @@ async function bundle(input) {
   const bundle = await rollup.rollup({
     input: thought.source,
     plugins: [
-      replace({ 'process.env.NODE_ENV': JSON.stringify('production'), preventAssignment: true }),
+      replace({ 'process.env.NODE_ENV': JSON.stringify("production"), preventAssignment: true }),
       json(),
       nodeBuiltins(),
-      babel({ babelHelpers: "runtime", skipPreflightCheck: true, exclude: "node_modules/**" }),
+      babel({ babelHelpers: "runtime", skipPreflightCheck: true, exclude: /node_modules/ }),
       nodeResolve({ preferBuiltins: true, browser: true }),
-      commonjs(),
+      commonjs({ transformMixedEsModules: true }),
     ],
     onwarn ({ loc, message }) {
       message = chalk.grey(message);
