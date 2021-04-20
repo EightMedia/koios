@@ -2,7 +2,6 @@ const { paths } = require(`${process.cwd()}/.koiosrc`);
 const run = require("../run");
 const path = require("path");
 const bs = require("browser-sync").create("localdev");
-const { createProxyMiddleware } = require("http-proxy-middleware");
 const chokidar = require("chokidar");
 
 const yargs = require('yargs/yargs')
@@ -29,15 +28,10 @@ module.exports = function () {
      * Run BrowserSync
      */
 
-    const apiProxy = createProxyMiddleware("/.netlify/functions/*", {
-      target: "http://localhost:9000/"
-    });
-
     bs.init({
       server: {
         baseDir: paths.roots.to,
         directory: true,
-        middleware: [apiProxy]
       },
       files: [
         path.join(paths.roots.to, "**/*.css"),
