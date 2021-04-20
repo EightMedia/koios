@@ -4,6 +4,7 @@ const copy = require("../utils/immutable-clone");
 const pathDiff = require("../utils/path-diff");
 const thoughtify = require("../utils/thoughtify");
 const path = require("path");
+const fs = require("fs");
 const chalk = require("chalk");
 const { ESLint } = require("eslint");
 const rollup = require("rollup");
@@ -77,7 +78,12 @@ async function bundle(input) {
   
   const errors = [];
 
-  const bundle = await rollup.rollup({
+  // read ".rolluprc.json"
+  const config = await fs.promises.readFile(path.resolve(path.dirname(thought.source), `.rolluprc.json`))
+    .then(config => JSON.parse(config))
+    .catch(() => false);
+
+  const inputOptions = {
     input: thought.source,
     plugins: [
       replace({ 'process.env.NODE_ENV': JSON.stringify("production"), preventAssignment: true }),
@@ -92,21 +98,13 @@ async function bundle(input) {
       const error = loc ? `${pathDiff(loc.file, process.cwd())} [${loc.line}:${loc.column}]\n  ${message}` : message;
       errors.push(error);
     }
-  });
+  };
 
-  if (errors.length > 0) {
-    return thought.error({
-      scope: "bundler",
-      msg: `${pathDiff(process.cwd(), thought.source)}`,
-      errors
-    })
-  }
-
-  const { output } = await bundle.generate({
-    format: "iife",
+  const outputOptions = {
+    format: config?.output?.format || "iife",
     file: thought.destination,
     name: thought.name,
-    sourcemap: true,
+    sourcemap: config?.output?.sourcemap || true,
     banner: `/* ${package.name} v${package.version} */`,
     plugins: [
       terser({ 
@@ -118,7 +116,19 @@ async function bundle(input) {
     global: {
       window: "window"
     }
-  });
+  };
+
+  const bundle = await rollup.rollup(inputOptions);
+
+  if (errors.length > 0) {
+    return thought.error({
+      scope: "bundler",
+      msg: `${pathDiff(process.cwd(), thought.source)}`,
+      errors
+    })
+  }
+
+  const { output } = await bundle.generate(outputOptions);
 
   thought.data = output[0].code + `//# sourceMappingURL=${path.basename(thought.destination)}.map`;
 
