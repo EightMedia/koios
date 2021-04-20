@@ -149,10 +149,11 @@ function getPugdocDocuments(templateSrc, filename, locals) {
         fragment = { name: meta.name, example: fragment };
       }
       
-      extend.block && (fragment.example = `block ${extend.block}\n${rebaseIndent(fragment.example, 2).join("\n")}`);
-      extend.file && (fragment.example = `extends ${extend.file}\n${fragment.example}`);
-      
       meta.beforeEach && (fragment.example = `${meta.beforeEach}\n${fragment.example}`);
+      if (extend.block && extend.file) {
+        fragment.example = `block ${extend.block}\n${rebaseIndent(fragment.example, 2).join("\n")}`;
+        fragment.example = `extends ${extend.file}\n${fragment.example}`;
+      }
       meta.afterEach && (fragment.example = `${fragment.example}\n${meta.afterEach}`);
 
       // add fragment
