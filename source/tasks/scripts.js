@@ -35,7 +35,8 @@ async function lint(input) {
         "requireConfigFile": false
       },
       "extends": [
-        "eslint:recommended"
+        "eslint:recommended",
+        "plugin:json/recommended"
       ],
       "rules": {
         "global-require": 1,
@@ -113,9 +114,7 @@ async function bundle(input) {
         }
       }),
     ],
-    global: {
-      window: "window"
-    }
+    globals: config?.output?.globals || {}
   };
 
   const bundle = await rollup.rollup(inputOptions);
