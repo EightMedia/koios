@@ -38,6 +38,8 @@ function extractPugdocBlocks(templateSrc) {
     const meta = Object.assign({ 
       capture: CAPTURE_SECTION,
       examples: [],
+      beforeEach: "",
+      afterEach: "",
     }, parsePugdocComment(comment));
     
     // move single example to examples array
@@ -143,25 +145,46 @@ function getPugdocDocuments(templateSrc, filename, locals) {
 
     const extend = meta.extend || partExtends || { file: "_base", block: "body" };
 
+    let masterExample = "";
+
     // process examples
     meta.examples.forEach(fragment => {
       if (typeof fragment === "string") {
         fragment = { name: meta.name, example: fragment };
       }
+
+      masterExample += fragment.example;
       
-      meta.beforeEach && (fragment.example = `${meta.beforeEach}\n${fragment.example}`);
+      fragment.example = `${meta.beforeEach}\n${fragment.example}`;
       if (extend.block && extend.file) {
         fragment.example = `block ${extend.block}\n  example\n${rebaseIndent(fragment.example, 4).join("\n")}`;
         fragment.example = `extends ${extend.file}\n${fragment.example}`;
       }
-      meta.afterEach && (fragment.example = `${fragment.example}\n${meta.afterEach}`);
+      fragment.example = `${fragment.example}\n${meta.afterEach}`;
+
+      const output = compilePug(source, fragment.example, filename)({ ...locals, ...meta.locals });
 
       // add fragment
       fragments.push({
         meta: fragment,
-        output: compilePug(source, fragment.example, filename)({ ...locals, ...meta.locals })
+        output
       });
     });
+
+    // add master example containing all examples
+    if (meta.examples.length > 1) {
+      masterExample = `${meta.beforeEach}\n${masterExample}`;
+      if (extend.block && extend.file) {
+        masterExample = `block ${extend.block}\n  example\n${rebaseIndent(masterExample, 4).join("\n")}`;
+        masterExample = `extends ${extend.file}\n${masterExample}`;
+      }
+      masterExample = `${masterExample}\n${meta.afterEach}`;
+
+      fragments.push({ 
+        meta, 
+        output: compilePug(source, masterExample, filename)({ ...locals, ...meta.locals })
+      });
+    }
 
     return {
       meta, fragments, file: path.relative(".", filename)
