@@ -173,12 +173,11 @@ function getPugdocDocuments(templateSrc, filename, locals) {
 
     // add master example containing all examples
     if (meta.examples.length > 1) {
-      masterExample = `${meta.beforeEach}\n${masterExample}`;
       if (extend.block && extend.file) {
-        masterExample = `block ${extend.block}\n  example\n${rebaseIndent(masterExample, 4).join("\n")}`;
-        masterExample = `extends ${extend.file}\n${masterExample}`;
+        masterExample = `extends ${extend.file}\n${meta.beforeEach}\nblock ${extend.block}\n  example\n${rebaseIndent(masterExample, 4).join("\n")}\n${meta.afterEach}`;
+      } else {
+        masterExample = `${meta.beforeEach}\n${masterExample}\n${meta.afterEach}`;
       }
-      masterExample = `${masterExample}\n${meta.afterEach}`;
 
       fragments.push({ 
         meta, 
