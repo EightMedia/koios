@@ -71,11 +71,14 @@ async function lint(input) {
 }
 
 /**
- * Bundle
+ * Generate
  */
 
 async function bundle(input) {
   const thought = copy(input);
+
+  const basename = path.basename(thought.destination, ".js");
+  const minify = basename.substring(basename.length-4, basename.length) === ".min";
   
   const errors = [];
 
@@ -101,22 +104,6 @@ async function bundle(input) {
     }
   };
 
-  const outputOptions = {
-    format: config?.output?.format || "iife",
-    file: thought.destination,
-    name: thought.name,
-    sourcemap: config?.output?.sourcemap || true,
-    banner: `/* ${package.name} v${package.version} */`,
-    plugins: [
-      terser({ 
-        output: { 
-          comments: false 
-        }
-      }),
-    ],
-    globals: config?.output?.globals || {}
-  };
-
   const bundle = await rollup.rollup(inputOptions);
 
   if (errors.length > 0) {
@@ -127,11 +114,42 @@ async function bundle(input) {
     })
   }
 
-  const { output } = await bundle.generate(outputOptions);
+  /**
+   * Full output
+   */
 
-  thought.data = output[0].code + `//# sourceMappingURL=${path.basename(thought.destination)}.map`;
+  const outputOptions = {
+    format: config?.output?.format || "iife",
+    name: thought.name,
+    banner: `/* ${package.name} v${package.version} */`,
+    plugins: [],
+    globals: config?.output?.globals || {}
+  };
 
-  await thoughtify({ destination: `${thought.destination}.map`, data: output[0].map.toString()}).write();
+  const { output: fullOutput } = await bundle.generate(outputOptions);
+  thought.destination = minify ? path.join(path.dirname(thought.destination), path.basename(thought.destination, ".min.js") + ".js") : thought.destination;
+  thought.data = fullOutput[0].code;
+  
+  /**
+   * Write minified output if destination contains "min": filename.min.js
+   */
+
+  if (minify) {
+    const minifyOptions = Object.assign(outputOptions, {
+      plugins: [
+        terser({
+          output: { 
+            comments: false 
+          }
+        }),
+      ]
+    })
+
+    const mini = copy(input);
+    const { output: miniOutput } = await bundle.generate(minifyOptions);
+    mini.data = miniOutput[0].code;
+    await mini.write();
+  }
 
   return thought;
 }
