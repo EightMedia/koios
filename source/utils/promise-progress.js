@@ -2,7 +2,7 @@
  * Progressify Promise.all
  */
 
-module.exports = function(promises) {
+export default function(promises) {
   return cb => {
     let i = 0;
     for (const p of promises) {

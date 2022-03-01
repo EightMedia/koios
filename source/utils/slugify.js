@@ -1,4 +1,4 @@
-module.exports = function (str) {
+export default function (str) {
   return str
     .toString()
     .toLowerCase()

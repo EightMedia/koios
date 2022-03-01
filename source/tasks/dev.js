@@ -1,11 +1,12 @@
-const { paths } = require(`${process.cwd()}/.koiosrc`);
-const run = require("../run");
-const path = require("path");
-const bs = require("browser-sync").create("localdev");
-const chokidar = require("chokidar");
+import config from "../config.js";
+import run from "../run.js";
+import path from "path";
+import browserSync from "browser-sync";
+import chokidar from "chokidar";
+import yargs from "yargs";
+import hideBin from "yargs/helpers";
 
-const yargs = require('yargs/yargs')
-const { hideBin } = require('yargs/helpers')
+const bs = browserSync.create("localdev");
 const argv = yargs(hideBin(process.argv)).argv
 
 const verbose = argv.v || argv.verbose || false;
@@ -15,7 +16,7 @@ const verbose = argv.v || argv.verbose || false;
  * Entry point
  */
 
-module.exports = function () {
+export default function () {
   return new Promise(function(resolve, reject) {
     const chokidarOptions = {
       awaitWriteFinish: {
@@ -30,13 +31,13 @@ module.exports = function () {
 
     bs.init({
       server: {
-        baseDir: paths.roots.to,
+        baseDir: config.paths.roots.to,
         directory: true,
       },
       files: [
-        path.join(paths.roots.to, "**/*.css"),
-        path.join(paths.roots.to, "**/*.js"),
-        path.join(paths.roots.to, "**/*.html"),
+        path.join(config.paths.roots.to, "**/*.css"),
+        path.join(config.paths.roots.to, "**/*.js"),
+        path.join(config.paths.roots.to, "**/*.html"),
       ],
       watchOptions: chokidarOptions,
       notify: false,
@@ -50,9 +51,9 @@ module.exports = function () {
 
     const watcher = chokidar.watch(
       [
-        `${paths.roots.from}/**/*.scss`,
-        `${paths.roots.from}/**/*.js`,
-        `${paths.roots.from}/**/*.pug`
+        `${config.paths.roots.from}/**/*.scss`,
+        `${config.paths.roots.from}/**/*.js`,
+        `${config.paths.roots.from}/**/*.pug`
       ],
       chokidarOptions
     );

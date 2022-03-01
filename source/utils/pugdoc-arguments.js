@@ -1,6 +1,6 @@
-var doctrine = require("doctrine");
-var doctrineSyntax = doctrine.Syntax;
-var codeBlock = require("indented-code-block");
+import doctrine from "doctrine";
+import doctrineSyntax from "doctrineSyntax";
+import codeBlock from "indented-code-block";
 
 var TYPE_MAPPING = {};
 TYPE_MAPPING[doctrineSyntax.RecordType] = "Object";
@@ -143,7 +143,7 @@ function escapeArgumentsYAML(str, needle) {
   return str;
 }
 
-module.exports = {
+export default {
   getType: getJSDocType,
   isOptional: getJSDocOptional,
   isNullable: getJSDocNullable,

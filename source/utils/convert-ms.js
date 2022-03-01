@@ -2,7 +2,7 @@
  * Convert milliseconds to string with days, hours, minutes and seconds
  */
 
-module.exports = function(ms) {
+export default function(ms) {
   let d, h, m, s;
   s = Math.floor(ms / 1000);
   ms = ms % 1000;

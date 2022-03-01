@@ -1,20 +1,53 @@
-const { package, paths } = require(`${process.cwd()}/.koiosrc`);
-const think = require("../utils/think");
-const copy = require("../utils/immutable-clone");
-const pathDiff = require("../utils/path-diff");
-const thoughtify = require("../utils/thoughtify");
-const path = require("path");
-const fs = require("fs");
-const chalk = require("chalk");
-const { ESLint } = require("eslint");
-const rollup = require("rollup");
-const terser = require("rollup-plugin-terser").terser;
-const nodeResolve = require('@rollup/plugin-node-resolve').default;
-const commonjs = require("@rollup/plugin-commonjs");
-const babel = require('@rollup/plugin-babel').default;
-const nodeBuiltins = require("rollup-plugin-node-builtins");
-const json = require("@rollup/plugin-json");
-const replace = require("@rollup/plugin-replace");
+import config from "../config.js";
+import think from "../utils/think.js";
+import copy from "../utils/immutable-clone.js";
+import pathDiff from "../utils/path-diff.js";
+import path from "path";
+import fs from "fs";
+import chalk from "chalk";
+import { ESLint } from "eslint";
+import { rollup } from "rollup";
+import { terser } from "rollup-plugin-terser";
+import nodeResolve from "@rollup/plugin-node-resolve";
+import commonjs from "@rollup/plugin-commonjs";
+import { babel } from "@rollup/plugin-babel";
+import nodeBuiltins from "rollup-plugin-node-builtins";
+import json from "@rollup/plugin-json";
+import replace from "@rollup/plugin-replace";
+import vue from "rollup-plugin-vue";
+
+import postcssImport from "postcss-import";
+import postcssUrl from "postcss-url";
+import autoprefixer from "autoprefixer";
+import simplevars from "postcss-simple-vars";
+import nested from "postcss-nested";
+
+const postcssConfigList = [
+  postcssImport({
+    nodeResolve(id, basedir) {
+      // resolve alias @css, @import '@css/style.css'
+      // because @css/ has 5 chars
+      if (id.startsWith("@css")) {
+        return path.resolve("./src/assets/styles/css", id.slice(5));
+      }
+
+      // resolve node_modules, @import '~normalize.css/normalize.css'
+      // similar to how css-loader's handling of node_modules
+      if (id.startsWith("~")) {
+        return path.resolve("./node_modules", id.slice(1));
+      }
+
+      // resolve relative path, @import './components/style.css'
+      return path.resolve(basedir, id);
+    }
+  }),
+  simplevars,
+  nested,
+  postcssUrl({ url: "inline" }),
+  autoprefixer({
+    overrideBrowserslist: "> 1%, IE 6, Explorer >= 10, Safari >= 7"
+  })
+];
 
 /**
  * Lint
@@ -83,7 +116,7 @@ async function bundle(input) {
   const errors = [];
 
   // read ".rolluprc.json"
-  const config = await fs.promises.readFile(path.resolve(path.dirname(thought.source), `.rolluprc.json`))
+  const rollupConfig = await fs.promises.readFile(path.resolve(path.dirname(thought.source), `.rolluprc.json`))
     .then(config => JSON.parse(config))
     .catch(() => false);
 
@@ -92,9 +125,14 @@ async function bundle(input) {
     plugins: [
       replace({ 'process.env.NODE_ENV': JSON.stringify("production"), preventAssignment: true }),
       json(),
+      vue({ 
+        target: 'browser',
+        preprocessStyles: true,
+        postcssPlugins: [...postcssConfigList]
+      }),
       nodeBuiltins(),
-      babel({ babelHelpers: "runtime", skipPreflightCheck: true, exclude: /node_modules/ }),
-      nodeResolve({ preferBuiltins: true, browser: true }),
+      babel({ babelHelpers: "runtime", skipPreflightCheck: true, exclude: /node_modules/, extensions: ['.js', '.jsx', '.vue'] }),
+      nodeResolve({ preferBuiltins: true, browser: true, extensions: ['.js', '.jsx', '.vue'] }),
       commonjs({ transformMixedEsModules: true }),
     ],
     onwarn ({ loc, message }) {
@@ -104,7 +142,7 @@ async function bundle(input) {
     }
   };
 
-  const bundle = await rollup.rollup(inputOptions);
+  const bundle = await rollup(inputOptions);
 
   if (errors.length > 0) {
     return thought.error({
@@ -119,11 +157,13 @@ async function bundle(input) {
    */
 
   const outputOptions = {
-    format: config?.output?.format || "iife",
+    dir: path.dirname(thought.destination),
+    format: rollupConfig?.output?.format || "iife",
     name: thought.name,
-    banner: `/* ${package.name} v${package.version} */`,
+    banner: `/* ${config.project.name} v${config.project.version} */`,
     plugins: [],
-    globals: config?.output?.globals || {}
+    globals: rollupConfig?.output?.globals || {},
+    sourcemap: false
   };
 
   const { output: fullOutput } = await bundle.generate(outputOptions);
@@ -149,6 +189,10 @@ async function bundle(input) {
     const { output: miniOutput } = await bundle.generate(minifyOptions);
     mini.data = miniOutput[0].code;
     await mini.write();
+  }
+
+  if (bundle) {
+    await bundle.close();
   }
 
   return thought;
@@ -181,10 +225,10 @@ function build(input) {
  * Entry point
  */
 
-module.exports = (changed) => think({
+export default (changed) => think({
   changed,
   build,
-  rules: paths.scripts,
+  rules: config.paths.scripts,
   before: null,
   after: null
 });

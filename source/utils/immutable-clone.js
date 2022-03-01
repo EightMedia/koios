@@ -4,7 +4,7 @@
  * @param  {Array|Object} obj The array or object to copy
  * @return {Array|Object}     The clone of the array or object
  */
-module.exports = function copy(obj) {
+export default function copy(obj) {
   //
   // Methods
   //

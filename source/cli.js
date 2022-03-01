@@ -1,20 +1,22 @@
 #!/usr/bin/env node
 
-const { Signale } = require("signale");
+import Signale from "signale/signale.js";
 const logger = new Signale({ scope: "koios", interactive: true });
-const semver = require("semver");
 
-const yargs = require('yargs/yargs')
-const { hideBin } = require('yargs/helpers')
+import semver from "semver";
+
+import yargs from "yargs";
+import { hideBin } from "yargs/helpers";
+import run from "./run.js";
+
 const argv = yargs(hideBin(process.argv)).argv
-const run = require("./run");
 
 /**
- * Check if NodeJS version is at least 12.14.0
+ * Check NodeJS version
  */
 
-if (!semver.satisfies(process.version, ">=12.14.0")) {
-  logger.error(new Error("Koios needs NodeJS >=12.14.0 to function properly."));
+if (!semver.satisfies(process.version, ">=16.13.2")) {
+  logger.error(new Error("Koios needs NodeJS >=16.13.2 to function properly."));
   process.exit(0);
 }
 
@@ -25,7 +27,4 @@ if (!semver.satisfies(process.version, ">=12.14.0")) {
 const verbose = argv.v || argv.verbose || false;
 const file = argv.f || argv.file || undefined;
 
-if (require.main === module) {
-  delete require.cache[__filename];
-  run({ tasks: argv._, verbose, file });
-}
+run({ tasks: argv._, verbose, file });

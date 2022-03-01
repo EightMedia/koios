@@ -227,7 +227,7 @@ By default Webpack is configured to bundle CommonJS modules for the web:
 If you want to customize the webpack configuration for a single entry called `vacancies.js`, add a file called `vacancies.webpack.js` alongside the main entry. This can be useful to bundle react apps:
 
 ```JS
-module.exports = {
+export default {
   module: {
     rules: [
       {
@@ -253,7 +253,7 @@ module.exports = {
 Add a file called `webpack.config.js` to the directory containing the entries that require custom configuration. For example, if you have a directory `/source/api/` containing netlify functions, add the following `webpack.config.js` to that same directory:
 
 ```JS
-module.exports = {
+export default {
   target: "node",
   resolve: {
     mainFields: ["module", "main"],

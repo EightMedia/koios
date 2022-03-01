@@ -1,11 +1,11 @@
-const { package, paths, locals, htmlComponent } = require(`${process.cwd()}/.koiosrc`);
-const thoughtify = require("../utils/thoughtify");
-const think = require("../utils/think");
-const copy = require("../utils/immutable-clone");
-const pathDiff = require("../utils/path-diff");
-const slugify = require("../utils/slugify");
-const pugdoc = require("../utils/pugdoc-parser");
-const path = require("path");
+import config from "../config.js";
+import thoughtify from "../utils/thoughtify.js";
+import think from "../utils/think.js";
+import copy from "../utils/immutable-clone.js";
+import pathDiff from "../utils/path-diff.js";
+import slugify from "../utils/slugify.js";
+import pugdoc from "../utils/pugdoc-parser.js";
+import path from "path";
 
 /**
  * Compile pug into html
@@ -13,9 +13,9 @@ const path = require("path");
 
 async function compile(input) {
   const thought = copy(input);
-  const part = pugdoc(thought.data, thought.source, locals);
+  const part = pugdoc(thought.data, thought.source, config.locals);
 
-  const shortPath = pathDiff(path.join(process.cwd(), paths.roots.from), thought.source);
+  const shortPath = pathDiff(path.join(process.cwd(), config.paths.roots.from), thought.source);
 
   if (!part) return thought.info(`skip ${shortPath}`);
 
@@ -44,7 +44,7 @@ async function writeFragment(fragment, parentDestination) {
     writeFragmentJSON(
       fragment,
       destination,
-      pathDiff(path.resolve(paths.roots.to), thought.destination))
+      pathDiff(path.resolve(config.paths.roots.to), thought.destination))
   );
 }
 
@@ -53,7 +53,7 @@ async function writeFragment(fragment, parentDestination) {
  */
 
 async function writeFragmentHTML(fragment, destination) {
-  const data = htmlComponent ? htmlComponent
+  const data = config.htmlComponent ? config.htmlComponent
   .replace("{{output}}", fragment.output || "")
   .replace("{{title}}", fragment.meta.name) : fragment.output;
   
@@ -84,7 +84,7 @@ async function writeFragmentJSON(fragment, destination, htmlFile) {
 
 function addBanner(input) {
   const thought = copy(input);
-  thought.data = `<!-- ${package.name} v${package.version} -->\n${thought.data}\n`;
+  thought.data = `<!-- ${config.project.name} v${config.project.version} -->\n${thought.data}\n`;
   return thought;
 }
 
@@ -103,10 +103,10 @@ function build(input) {
  * Entry point
  */
 
-module.exports = (changed) => think({
+export default (changed) => think({
   changed,
   build,
-  rules: paths.parts,
+  rules: config.paths.parts,
   // before: () => puppetServer.start(),
   // after: () => puppetServer.stop()
 });

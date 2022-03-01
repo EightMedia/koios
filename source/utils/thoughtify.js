@@ -1,9 +1,9 @@
-const pathDiff = require("./path-diff");
-const chalk = require("chalk");
-const fs = require("fs").promises;
-const path = require("path");
+import pathDiff from "./path-diff.js"
+import chalk from "chalk";
+import fs from "fs/promises";
+import path from "path";
 
-module.exports = ({ source, destination, name, changed, dependencies, data }) => ({
+export default ({ source, destination, name, changed, dependencies, data }) => ({
   source,
   destination,
   name,

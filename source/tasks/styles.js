@@ -1,16 +1,16 @@
-const { package, paths } = require(`${process.cwd()}/.koiosrc`);
-const think = require("../utils/think");
-const pathDiff = require("../utils/path-diff");
-const copy = require("../utils/immutable-clone");
-const fs = require("fs");
-const path = require("path");
-const chalk = require("chalk");
-const sass = require("sass");
-const postcss = require("postcss");
-const autoprefixer = require("autoprefixer");
-const cssnano = require("cssnano");
-const stylelint = require("stylelint");
-const extractMediaQuery = require('postcss-extract-media-query');
+import config from "../config.js";
+import think from "../utils/think.js";
+import pathDiff from "../utils/path-diff.js";
+import copy from "../utils/immutable-clone.js";
+import fs from "fs";
+import path from "path";
+import chalk from "chalk";
+import sass from "sass";
+import postcss from "postcss";
+import autoprefixer from "autoprefixer";
+import cssnano from "cssnano";
+import stylelint from "stylelint";
+import extractMediaQuery from "postcss-extract-media-query";
 
 /**
  * Lint
@@ -24,7 +24,8 @@ async function lint(input) {
       configOverrides: {
         "extends": "stylelint-config-recommended-scss"
       },
-      syntax: "scss",
+      extends: ["stylelint-config-standard-scss"],
+      customSyntax: "postcss-scss",
       files: thought.changed || thought.dependencies,
       formatter: (result, retval) => {
         retval.logs = [];
@@ -99,21 +100,21 @@ async function minify(input) {
     })
   ];
   
-  const queriesFile = path.resolve(path.dirname(thought.source), `${path.basename(thought.source, ".scss")}.queries.json`);
-  const queriesFileExists = await fs.promises.stat(queriesFile).catch(() => false);
-  const queries = queriesFileExists ? require(queriesFile) : null;
+  // const queriesFile = path.resolve(path.dirname(thought.source), `${path.basename(thought.source, ".scss")}.queries.json`);
+  // const queriesFileExists = await fs.promises.stat(queriesFile).catch(() => false);
+  // const queries = queriesFileExists ? require(queriesFile) : null;
 
-  if (queries !== null) {
-    plugins.push(extractMediaQuery({
-      output: {
-        path: path.dirname(thought.destination),
-        name: `${path.basename(thought.destination, ".css")}-[query].[ext]`,
-      },
-      stats: false,
-      extractAll: false,
-      queries,
-    }));
-  }
+  // if (queries !== null) {
+  //   plugins.push(extractMediaQuery({
+  //     output: {
+  //       path: path.dirname(thought.destination),
+  //       name: `${path.basename(thought.destination, ".css")}-[query].[ext]`,
+  //     },
+  //     stats: false,
+  //     extractAll: false,
+  //     queries,
+  //   }));
+  // }
 
   const result = await postcss(plugins).process(thought.data, { from: undefined });
   
@@ -127,7 +128,7 @@ async function minify(input) {
 
 async function addBanner(input) {
   const thought = copy(input);
-  thought.data = `/* ${package.name} v${package.version} */\n${thought.data}`;
+  thought.data = `/* ${config.project.name} v${config.project.version} */\n${thought.data}`;
   return thought;
 }
 
@@ -160,10 +161,10 @@ function build(input) {
  * Entry point
  */
 
-module.exports = (changed) => think({
+export default (changed) => think({
   changed,
   build,
-  rules: paths.styles,
+  rules: config.paths.styles,
   before: null,
   after: null
 });

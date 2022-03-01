@@ -1,11 +1,11 @@
-const { paths } = require(`${process.cwd()}/.koiosrc`);
-const serveStatic = require("serve-static");
-const http = require("http");
-const finalhandler = require("finalhandler");
-const killable = require("killable");
-const { Cluster } = require('puppeteer-cluster');
+import { paths } from `${process.cwd()}/.koiosrc`;
+import serveStatic from "serve-static";
+import http from "http";
+import finalhandler from "finalhandler";
+import killable from "killable";
+import { Cluster } from "puppeteer-cluster";
 
-exports.start = () => {
+export function start () {
   return new Promise(async resolve => { 
     // start browser cluster
     exports.cluster = await Cluster.launch({
@@ -41,7 +41,7 @@ exports.start = () => {
   });
 }
 
-exports.stop = async () => {
+export function stop() {
   await exports.cluster.idle();
   await exports.cluster.close();
   exports.server.kill();

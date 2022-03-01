@@ -1,13 +1,13 @@
-const pug = require("pug");
+import pug from "pug";
 
-const { partExtends=undefined } = require(`${process.cwd()}/.koiosrc`);
+import { partExtends } from `${process.cwd()}/.koiosrc`;
 
-const path = require("path");
-const YAML = require("js-yaml");
-const getCodeBlock = require("pug-code-block");
-const detectIndent = require("detect-indent");
-const rebaseIndent = require("rebase-indent");
-const pugdocArguments = require("./pugdoc-arguments");
+import path from "path";
+import YAML from "js-yaml";
+import getCodeBlock from "pug-code-block";
+import detectIndent from "detect-indent";
+import rebaseIndent from "rebase-indent";
+import pugdocArguments from "./pugdoc-arguments";
 
 const MIXIN_NAME_REGEX = /^mixin +([-\w]+)?/;
 const EXTENDS_REGEX = /^extends +([-\w]+)?/;
@@ -193,4 +193,4 @@ function getPugdocDocuments(templateSrc, filename, locals) {
 
 
 // Exports
-module.exports = getPugdocDocuments;
+export default getPugdocDocuments;

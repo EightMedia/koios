@@ -1,12 +1,12 @@
-const { paths, package } = require(`${process.cwd()}/.koiosrc`);
-const promiseProgress = require("./utils/promise-progress");
-const { Signale } = require("signale");
-const readline = require("readline");
-const pathDiff = require("./utils/path-diff");
-const formatTime = require("./utils/format-time");
-const convertMs = require("./utils/convert-ms.js");
-const path = require("path");
-const fs = require("fs");
+import config from "./config.js";
+import promiseProgress from "./utils/promise-progress.js";
+import Signale from "signale/signale.js";
+import readline from "readline";
+import pathDiff from "./utils/path-diff.js";
+import formatTime from "./utils/format-time.js";
+import convertMs from "./utils/convert-ms.js";
+import path from "path";
+import fs from "fs";
 
 /*
  * Run a single task
@@ -21,16 +21,16 @@ async function run({ task, file, verbose }) {
 
   const log = new Signale({ scope: task, interactive: !verbose });
   const jsonLog = {  
-    version: package.version,
+    version: config.project.version,
     items: [],
   };
 
   const start = new Date();
   log.pending(`${formatTime(start)}`, file ? ` (${file})` : '');
   
-  await fs.promises.mkdir(paths.roots.to).catch((err) => err);
+  await fs.promises.mkdir(config.paths.roots.to).catch((err) => err);
 
-  const build = require(`./tasks/${task}`);
+  const { default: build } = await import(`./tasks/${task}.js`);
 
   return build(file).then(async thinker => {
     return promiseProgress(thinker.thoughts)((i, thought) => {
@@ -39,8 +39,8 @@ async function run({ task, file, verbose }) {
         message: thought.log.msg
       });
       thought.source && thought.destination && jsonLog.items.push({
-        source: path.normalize(pathDiff(path.join(process.cwd(), paths.roots.from), thought.source)),
-        destination: path.normalize(pathDiff(path.join(process.cwd(), paths.roots.to), thought.destination)),
+        source: path.normalize(pathDiff(path.join(process.cwd(), config.paths.roots.from), thought.source)),
+        destination: path.normalize(pathDiff(path.join(process.cwd(), config.paths.roots.to), thought.destination)),
         name: thought.name,
       });
     })
@@ -89,8 +89,8 @@ async function run({ task, file, verbose }) {
       const errorInfo = amounts.errors > 0 ? `(${amounts.errors} error${amounts.errors === 1 ? '' : 's'})` : '';
       log.complete(`${amounts.total} entr${amounts.total === 1 ? 'y' : 'ies'} in ${time} ${errorInfo}`);
 
-      await fs.promises.mkdir(`${paths.roots.to}/koios/`, { recursive: true });
-      fs.writeFile(`${paths.roots.to}/koios/${task}.json`, JSON.stringify(jsonLog), (err) => {
+      await fs.promises.mkdir(`${config.paths.roots.to}/koios/`, { recursive: true });
+      fs.writeFile(`${config.paths.roots.to}/koios/${task}.json`, JSON.stringify(jsonLog), (err) => {
         if (err) console.log(err);
       });
     });
@@ -101,7 +101,7 @@ async function run({ task, file, verbose }) {
  * Entry point
  */
 
-module.exports = async function({ tasks, file, verbose }) {
+export default async function({ tasks, file, verbose }) {
   if (typeof tasks === "string") tasks = [tasks];
   if (!tasks || tasks.length === 0) tasks = ["clean", "assets", "styles", "scripts", "parts", "pages"];
   const log = new Signale({ scope: "koios" });
@@ -109,8 +109,8 @@ module.exports = async function({ tasks, file, verbose }) {
   const start = new Date();
   log.pending(`${formatTime(start)}`);
   
-  for (let i = 0; i < tasks.length; i++) {
-    await run({ task: tasks[i], file, verbose }).catch(err => {
+  for (let task of tasks) {
+    await run({ task, file, verbose }).catch(err => {
       log.error(err);
       process.exit(1);
     });

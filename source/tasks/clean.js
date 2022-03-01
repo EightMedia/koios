@@ -1,22 +1,19 @@
-const { paths } = require(`${process.cwd()}/.koiosrc`);
-const thoughtify = require("../utils/thoughtify");
-const del = require("del");
-
-const fs = require("fs");
-const path = require("path");
+import config from "../config.js";
+import thoughtify from "../utils/thoughtify.js";
+import del from "del";
 
 /**
  * Entry point
  */
 
-module.exports = async function () {
+export default async function () {
   return {
     before: null,
     thoughts: [
       new Promise(async (resolve, reject) => {
-        del(`${paths.roots.to}**/*`)
+        del(`${config.paths.roots.to}**/*`)
           .then((result) => {
-            return `removed ${result.length} files from ${paths.roots.to}`;
+            return `removed ${result.length} files from ${config.paths.roots.to}`;
           })
           .then(msg => thoughtify({}).done(msg))
           .then(thought => resolve(thought))
