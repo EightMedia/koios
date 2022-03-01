@@ -16,6 +16,9 @@ import json from "@rollup/plugin-json";
 import replace from "@rollup/plugin-replace";
 import vue from "rollup-plugin-vue";
 
+import url from "@rollup/plugin-url";
+import alias from "@rollup/plugin-alias";
+import PostCSS from 'rollup-plugin-postcss';
 import postcssImport from "postcss-import";
 import postcssUrl from "postcss-url";
 import autoprefixer from "autoprefixer";
@@ -125,13 +128,38 @@ async function bundle(input) {
     plugins: [
       replace({ 'process.env.NODE_ENV': JSON.stringify("production"), preventAssignment: true }),
       json(),
+      alias({
+        entries: [
+          {
+            find: "@",
+            replacement: `${path.dirname(thought.source)}`
+          }
+        ],
+        customResolver: nodeResolve({
+          extensions: [".js", ".jsx", ".vue"]
+        })
+      }),
       vue({ 
         target: 'browser',
         preprocessStyles: true,
         postcssPlugins: [...postcssConfigList]
       }),
+      PostCSS({ include: /(?<!&module=.*)\.css$/,
+        plugins:[
+          ...postcssConfigList
+        ]
+       }),
+      url({
+        include: [
+          '**/*.svg',
+          '**/*.png',
+          '**/*.gif',
+          '**/*.jpg',
+          '**/*.jpeg'
+          ]
+      }),
+      babel({ babelHelpers: "runtime", skipPreflightCheck: true, exclude: "node_modules/**", extensions: ['.js', '.jsx', '.vue'] }),
       nodeBuiltins(),
-      babel({ babelHelpers: "runtime", skipPreflightCheck: true, exclude: /node_modules/, extensions: ['.js', '.jsx', '.vue'] }),
       nodeResolve({ preferBuiltins: true, browser: true, extensions: ['.js', '.jsx', '.vue'] }),
       commonjs({ transformMixedEsModules: true }),
     ],
@@ -163,7 +191,8 @@ async function bundle(input) {
     banner: `/* ${config.project.name} v${config.project.version} */`,
     plugins: [],
     globals: rollupConfig?.output?.globals || {},
-    sourcemap: false
+    sourcemap: false,
+    exports: "named",
   };
 
   const { output: fullOutput } = await bundle.generate(outputOptions);
