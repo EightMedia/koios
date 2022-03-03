@@ -4,7 +4,7 @@ import path from "path";
 import browserSync from "browser-sync";
 import chokidar from "chokidar";
 import yargs from "yargs";
-import hideBin from "yargs/helpers";
+import { hideBin } from "yargs/helpers";
 
 const bs = browserSync.create("localdev");
 const argv = yargs(hideBin(process.argv)).argv

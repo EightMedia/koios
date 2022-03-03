@@ -6,6 +6,8 @@ import path from "path";
 import fs from "fs";
 import chalk from "chalk";
 import { ESLint } from "eslint";
+import merge from "merge";
+
 import { rollup } from "rollup";
 import { terser } from "rollup-plugin-terser";
 import nodeResolve from "@rollup/plugin-node-resolve";
@@ -14,43 +16,6 @@ import { babel } from "@rollup/plugin-babel";
 import nodeBuiltins from "rollup-plugin-node-builtins";
 import json from "@rollup/plugin-json";
 import replace from "@rollup/plugin-replace";
-import vue from "rollup-plugin-vue";
-
-import url from "@rollup/plugin-url";
-import alias from "@rollup/plugin-alias";
-import PostCSS from 'rollup-plugin-postcss';
-import postcssImport from "postcss-import";
-import postcssUrl from "postcss-url";
-import autoprefixer from "autoprefixer";
-import simplevars from "postcss-simple-vars";
-import nested from "postcss-nested";
-
-const postcssConfigList = [
-  postcssImport({
-    nodeResolve(id, basedir) {
-      // resolve alias @css, @import '@css/style.css'
-      // because @css/ has 5 chars
-      if (id.startsWith("@css")) {
-        return path.resolve("./src/assets/styles/css", id.slice(5));
-      }
-
-      // resolve node_modules, @import '~normalize.css/normalize.css'
-      // similar to how css-loader's handling of node_modules
-      if (id.startsWith("~")) {
-        return path.resolve("./node_modules", id.slice(1));
-      }
-
-      // resolve relative path, @import './components/style.css'
-      return path.resolve(basedir, id);
-    }
-  }),
-  simplevars,
-  nested,
-  postcssUrl({ url: "inline" }),
-  autoprefixer({
-    overrideBrowserslist: "> 1%, IE 6, Explorer >= 10, Safari >= 7"
-  })
-];
 
 /**
  * Lint
@@ -113,64 +78,51 @@ async function lint(input) {
 async function bundle(input) {
   const thought = copy(input);
 
+  const sourceDir = path.dirname(thought.source);
   const basename = path.basename(thought.destination, ".js");
   const minify = basename.substring(basename.length-4, basename.length) === ".min";
   
   const errors = [];
 
-  // read ".rolluprc.json"
-  const rollupConfig = await fs.promises.readFile(path.resolve(path.dirname(thought.source), `.rolluprc.json`))
-    .then(config => JSON.parse(config))
+  const extraRollupConfigFile = path.resolve(sourceDir, '.rolluprc.mjs');
+  const hasExtraRollupConfig = await fs.promises.access(extraRollupConfigFile)
+    .then((ok) => ok === undefined && true)
     .catch(() => false);
 
-  const inputOptions = {
-    input: thought.source,
-    plugins: [
-      replace({ 'process.env.NODE_ENV': JSON.stringify("production"), preventAssignment: true }),
-      json(),
-      alias({
-        entries: [
-          {
-            find: "@",
-            replacement: `${path.dirname(thought.source)}`
-          }
-        ],
-        customResolver: nodeResolve({
-          extensions: [".js", ".jsx", ".vue"]
-        })
-      }),
-      vue({ 
-        target: 'browser',
-        preprocessStyles: true,
-        postcssPlugins: [...postcssConfigList]
-      }),
-      PostCSS({ include: /(?<!&module=.*)\.css$/,
-        plugins:[
-          ...postcssConfigList
-        ]
-       }),
-      url({
-        include: [
-          '**/*.svg',
-          '**/*.png',
-          '**/*.gif',
-          '**/*.jpg',
-          '**/*.jpeg'
-          ]
-      }),
-      babel({ babelHelpers: "runtime", skipPreflightCheck: true, exclude: "node_modules/**", extensions: ['.js', '.jsx', '.vue'] }),
-      nodeBuiltins(),
-      nodeResolve({ preferBuiltins: true, browser: true, extensions: ['.js', '.jsx', '.vue'] }),
-      commonjs({ transformMixedEsModules: true }),
-    ],
-    onwarn ({ loc, message }) {
-      message = chalk.grey(message);
-      const error = loc ? `${pathDiff(loc.file, process.cwd())} [${loc.line}:${loc.column}]\n  ${message}` : message;
-      errors.push(error);
-    }
-  };
+  const { default: extraRollupConfig } = hasExtraRollupConfig && await import(extraRollupConfigFile);
 
-  const bundle = await rollup(inputOptions);
+  const rollupConfig = merge.recursive(true,
+    {
+      plugins: [
+        replace({ 'process.env.NODE_ENV': JSON.stringify("production"), preventAssignment: true }),
+        json(),
+        babel({ babelHelpers: "runtime", skipPreflightCheck: true, exclude: /node_modules/ }),
+        nodeResolve({ preferBuiltins: true, browser: true }),
+        nodeBuiltins(),
+        commonjs({ transformMixedEsModules: true }),
+      ],
+      output: {
+        format: "iife",
+        sourcemap: false,
+      }
+    },
+    extraRollupConfig,
+    {
+      input: thought.source,
+      onwarn ({ code, loc, message }) {
+        if (code === 'THIS_IS_UNDEFINED' ) return;
+        message = chalk.grey(message);
+        const error = loc ? `${pathDiff(loc.file, process.cwd())} [${loc.line}:${loc.column}]\n  ${message}` : message;
+        errors.push(error);
+      },
+      output: {
+        name: thought.name,
+        dir: path.dirname(thought.destination),
+        banner: `/* ${config.project.name} v${config.project.version} */`,
+      }
+    });
+
+  const bundle = await rollup(rollupConfig);
 
   if (errors.length > 0) {
     return thought.error({
@@ -184,18 +136,7 @@ async function bundle(input) {
    * Full output
    */
 
-  const outputOptions = {
-    dir: path.dirname(thought.destination),
-    format: rollupConfig?.output?.format || "iife",
-    name: thought.name,
-    banner: `/* ${config.project.name} v${config.project.version} */`,
-    plugins: [],
-    globals: rollupConfig?.output?.globals || {},
-    sourcemap: false,
-    exports: "named",
-  };
-
-  const { output: fullOutput } = await bundle.generate(outputOptions);
+  const { output: fullOutput } = await bundle.generate(rollupConfig.output);
   thought.destination = minify ? path.join(path.dirname(thought.destination), path.basename(thought.destination, ".min.js") + ".js") : thought.destination;
   thought.data = fullOutput[0].code;
   
@@ -204,20 +145,18 @@ async function bundle(input) {
    */
 
   if (minify) {
-    const minifyOptions = Object.assign(outputOptions, {
-      plugins: [
-        terser({
-          output: { 
-            comments: false 
-          }
-        }),
-      ]
-    })
+    rollupConfig.output.plugins = [
+      terser({
+        output: { 
+          comments: false 
+        }
+      }),
+    ];
 
     const mini = copy(input);
-    const { output: miniOutput } = await bundle.generate(minifyOptions);
+    const { output: miniOutput } = await bundle.generate(rollupConfig.output);
     mini.data = miniOutput[0].code;
-    await mini.write();
+    mini.write();
   }
 
   if (bundle) {
