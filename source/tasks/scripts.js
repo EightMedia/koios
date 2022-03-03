@@ -96,9 +96,9 @@ async function bundle(input) {
       plugins: [
         replace({ 'process.env.NODE_ENV': JSON.stringify("production"), preventAssignment: true }),
         json(),
+        nodeBuiltins(),
         babel({ babelHelpers: "runtime", skipPreflightCheck: true, exclude: /node_modules/ }),
         nodeResolve({ preferBuiltins: true, browser: true }),
-        nodeBuiltins(),
         commonjs({ transformMixedEsModules: true }),
       ],
       output: {
