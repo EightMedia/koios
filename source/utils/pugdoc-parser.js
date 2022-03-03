@@ -1,13 +1,13 @@
 import pug from "pug";
 
-import { partExtends } from `${process.cwd()}/.koiosrc`;
+import config from "../config.js";
 
 import path from "path";
 import YAML from "js-yaml";
 import getCodeBlock from "pug-code-block";
 import detectIndent from "detect-indent";
 import rebaseIndent from "rebase-indent";
-import pugdocArguments from "./pugdoc-arguments";
+import pugdocArguments from "./pugdoc-arguments.js";
 
 const MIXIN_NAME_REGEX = /^mixin +([-\w]+)?/;
 const EXTENDS_REGEX = /^extends +([-\w]+)?/;
@@ -143,7 +143,7 @@ function getPugdocDocuments(templateSrc, filename, locals) {
       return pugdocArguments.parse(arg, true);
     });
 
-    const extend = meta.extend || partExtends || { file: "_base", block: "body" };
+    const extend = meta.extend || config.partExtends || { file: "_base", block: "body" };
 
     let masterExample = "";
 

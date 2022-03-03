@@ -1,5 +1,5 @@
 import doctrine from "doctrine";
-import doctrineSyntax from "doctrineSyntax";
+const doctrineSyntax = doctrine.Syntax;
 import codeBlock from "indented-code-block";
 
 var TYPE_MAPPING = {};
