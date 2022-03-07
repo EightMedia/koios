@@ -1,4 +1,4 @@
-import pugDependencies from "pug-dependencies";
+import pugDependencies from "@hylmar/pug-dependencies";
 import dependencyTree from "dependency-tree";
 import path from "path";
 
