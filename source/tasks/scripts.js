@@ -11,9 +11,9 @@ import merge from "merge";
 import { rollup } from "rollup";
 import { terser } from "rollup-plugin-terser";
 import nodeResolve from "@rollup/plugin-node-resolve";
+import nodePolyfills from 'rollup-plugin-polyfill-node';
 import commonjs from "@rollup/plugin-commonjs";
 import { babel } from "@rollup/plugin-babel";
-import nodeBuiltins from "rollup-plugin-node-builtins";
 import json from "@rollup/plugin-json";
 import replace from "@rollup/plugin-replace";
 
@@ -93,13 +93,14 @@ async function bundle(input) {
 
   const rollupConfig = merge.recursive(true,
     {
+      // external: ['stream'],
       plugins: [
         replace({ 'process.env.NODE_ENV': JSON.stringify("production"), preventAssignment: true }),
         json(),
-        nodeBuiltins(),
-        babel({ babelHelpers: "runtime", skipPreflightCheck: true, exclude: /node_modules/ }),
-        nodeResolve({ preferBuiltins: true, browser: true }),
+        nodePolyfills(),
+        nodeResolve({ preferBuiltins: false, browser: true }),
         commonjs({ transformMixedEsModules: true }),
+        babel({ babelHelpers: "bundled", skipPreflightCheck: true, exclude: /node_modules/, sourceType: "unambiguous" }),
       ],
       output: {
         format: "iife",
