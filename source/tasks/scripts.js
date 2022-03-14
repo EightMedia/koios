@@ -93,7 +93,6 @@ async function bundle(input) {
 
   const rollupConfig = merge.recursive(true,
     {
-      // external: ['stream'],
       plugins: [
         replace({ 'process.env.NODE_ENV': JSON.stringify("production"), preventAssignment: true }),
         json(),
