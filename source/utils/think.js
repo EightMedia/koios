@@ -33,9 +33,7 @@ export default async function ({ changed, build, rules, before, after }) {
 
     const subdir = path.dirname(pathDiff(globParent(pattern), entry));
 
-    const sourceName = path.basename(source, path.extname(pattern));
-    
-    const name = sourceName === "index" ? subdir : sourceName;
+    const name = path.basename(source, path.extname(pattern));
 
     const filename = path.basename(rules[pattern])
       .replace(/\$\{name\}/g, name)
