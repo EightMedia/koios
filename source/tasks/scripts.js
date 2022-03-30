@@ -80,7 +80,7 @@ async function bundle(input) {
 
   const sourceDir = path.dirname(thought.source);
   const basename = path.basename(thought.destination, ".js");
-  const minify = basename.substring(basename.length-4, basename.length) === ".min";
+  const addFullOutput = basename.substring(basename.length-4, basename.length) === ".min";
   
   const errors = [];
 
@@ -118,7 +118,17 @@ async function bundle(input) {
       output: {
         name: thought.name,
         dir: path.dirname(thought.destination),
-        banner: `/* ${config.project.name} v${config.project.version} */`,
+        banner: `/* @koios ${config.project.name} v${config.project.version} */`,
+        plugins: [
+          terser({
+            output: { 
+              comments: function (node, comment) {
+                const text = comment.value;
+                return /@koios/i.test(text);
+              } 
+            }
+          }),
+        ],
       }
     });
 
@@ -133,30 +143,23 @@ async function bundle(input) {
   }
 
   /**
-   * Full output
+   * Minified output
    */
 
-  const { output: fullOutput } = await bundle.generate(rollupConfig.output);
-  thought.destination = minify ? path.join(path.dirname(thought.destination), path.basename(thought.destination, ".min.js") + ".js") : thought.destination;
-  thought.data = fullOutput[0].code;
+  const { output } = await bundle.generate(rollupConfig.output);
+  thought.data = output[0].code;
   
   /**
-   * Write minified output if destination contains "min": filename.min.js
+   * Write full output if destination contains "min": filename.min.js
    */
 
-  if (minify) {
-    rollupConfig.output.plugins = [
-      terser({
-        output: { 
-          comments: false 
-        }
-      }),
-    ];
-
-    const mini = copy(input);
-    const { output: miniOutput } = await bundle.generate(rollupConfig.output);
-    mini.data = miniOutput[0].code;
-    mini.write();
+  if (addFullOutput) {
+    rollupConfig.output.plugins = [];
+    const full = copy(input);
+    full.destination = path.join(path.dirname(thought.destination), path.basename(thought.destination, ".min.js") + ".js");
+    const { output: fullOutput } = await bundle.generate(rollupConfig.output);
+    full.data = fullOutput[0].code;
+    full.write();
   }
 
   if (bundle) {
