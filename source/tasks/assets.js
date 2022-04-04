@@ -29,7 +29,7 @@ export default async function () {
   for (const entry in config.paths.assets) {
     const source = path.resolve(entry);
     const destination = path.resolve(config.paths.roots.to, config.paths.assets[entry]);
-    const err = process.env.NODE_ENV === "development" ? await fs.promises.symlink(source, destination) : await mvdir(source, destination, { copy: true });
+    const err = await mvdir(source, destination, { copy: true });
     const thought = !err ? thoughtify({}).done(pathDiff(process.cwd(), source)) : thoughtify({}).error(err);
     thinker.thoughts.push(thought);
   }
