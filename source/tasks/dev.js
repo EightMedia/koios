@@ -2,11 +2,15 @@ import config from "../config.js";
 import run from "../run.js";
 import path from "path";
 import chokidar from "chokidar";
-import liveServer from "live-server";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
-import fs from "node:fs";
+import browserSync from "browser-sync";
 
+// Patch BrowserSync to start a SecureServer
+import http2 from "http2";
+http2.createServer = http2.createSecureServer;
+
+// Get command line arguments
 const argv = yargs(hideBin(process.argv)).argv;
 const verbose = argv.v || argv.verbose || false;
 
@@ -27,17 +31,23 @@ export default function () {
      * Run Local Server
      */
 
-    liveServer.start({
-      port: 8000,
-      root: config.paths.roots.to,
-      logLevel: 0,
-      open: false,
-      ignore: "koios",
-      httpsModule: "spdy",
-      https: {
-        key: fs.readFileSync(config.https.key),
-        cert: fs.readFileSync(config.https.cert),
+    const bs = browserSync.create("localdev");
+    bs.init({
+      httpModule: "http2",
+      https: true,
+      server: {
+        baseDir: config.paths.roots.to,
+        directory: true,
       },
+      files: [
+        path.join(config.paths.roots.to, "**/*.css"),
+        path.join(config.paths.roots.to, "**/*.js"),
+        path.join(config.paths.roots.to, "**/*.html"),
+      ],
+      watchOptions: chokidarOptions,
+      notify: false,
+      port: 8000,
+      open: false,
     });
 
     /**
