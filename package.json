@@ -51,6 +51,7 @@
     "mvdir": "^1.0.21",
     "postcss": "^8.4.24",
     "postcss-extract-media-query": "^3.0.0",
+    "postcss-normalize-string": "^6.0.0",
     "postcss-scss": "^4.0.6",
     "preprocess": "^3.2.0",
     "pug": "^3.0.2",

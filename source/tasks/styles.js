@@ -11,6 +11,7 @@ import autoprefixer from "autoprefixer";
 import cssnano from "cssnano";
 import stylelint from "stylelint";
 import extractMediaQuery from "postcss-extract-media-query";
+import normalize from "postcss-normalize-string";
 
 /**
  * Lint
@@ -92,6 +93,7 @@ async function minify(input) {
         },
       ],
     }),
+    normalize({ preferredQuote: "single" }),
   ];
 
   // const queriesFile = path.resolve(path.dirname(thought.source), `${path.basename(thought.source, ".scss")}.queries.json`);
