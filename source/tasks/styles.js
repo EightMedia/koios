@@ -21,30 +21,32 @@ async function lint(input) {
 
   const thought = copy(input);
   const result = await stylelint.lint({
-      configOverrides: {
-        "extends": "stylelint-config-recommended-scss"
-      },
-      extends: ["stylelint-config-standard-scss"],
-      customSyntax: "postcss-scss",
-      files: thought.changed || thought.dependencies,
-      formatter: (result, retval) => {
-        retval.logs = [];
-        result.forEach(file => {
-          file.warnings.forEach(issue =>
-            retval.logs.push(
-              `${pathDiff(file.source, process.cwd())} [${issue.line}:${issue.column}]\n  ${chalk.grey(issue.text)}`
-            )
-          );
-        });
-        return retval;
-      }
-    });
+    configOverrides: {
+      extends: "stylelint-config-recommended-scss",
+    },
+    extends: ["stylelint-config-standard-scss"],
+    customSyntax: "postcss-scss",
+    files: thought.changed || thought.dependencies,
+    formatter: (result, retval) => {
+      retval.logs = [];
+      result.forEach((file) => {
+        file.warnings.forEach((issue) =>
+          retval.logs.push(
+            `${pathDiff(file.source, process.cwd())} [${issue.line}:${
+              issue.column
+            }]\n  ${chalk.grey(issue.text)}`
+          )
+        );
+      });
+      return retval;
+    },
+  });
 
   if (result.logs.length > 0) {
     return thought.warn({
       scope: "linter",
       msg: `${pathDiff(process.cwd(), thought.source)}`,
-      issues: result.logs
+      issues: result.logs,
     });
   }
 
@@ -57,20 +59,12 @@ async function lint(input) {
 
 function compile(input) {
   const thought = copy(input);
-  return new Promise((resolve, reject) => {
-    return sass.render(
-      {
-        data: thought.data,
-        outputStyle: "expanded",
-        includePaths: [path.dirname(thought.source)]
-      },
-      (err, result) => {
-        if (err) return reject(err);
-        thought.data = result.css;
-        return resolve(thought);
-      }
-    );
+  const result = sass.compileString(thought.data, {
+    output: "expanded",
+    loadPaths: [path.dirname(thought.source)],
   });
+  thought.data = result.css;
+  return thought;
 }
 
 /**
@@ -82,24 +76,24 @@ async function minify(input) {
 
   const plugins = [
     autoprefixer({
-      cascade: false
+      cascade: false,
     }),
     cssnano({
       preset: [
         "default",
         {
           discardComments: {
-            removeAll: true
+            removeAll: true,
           },
           discardDuplicates: true,
           discardEmpty: true,
           minifyFontValues: true,
-          minifySelectors: true
-        }
-      ]
-    })
+          minifySelectors: true,
+        },
+      ],
+    }),
   ];
-  
+
   // const queriesFile = path.resolve(path.dirname(thought.source), `${path.basename(thought.source, ".scss")}.queries.json`);
   // const queriesFileExists = await fs.promises.stat(queriesFile).catch(() => false);
   // const queries = queriesFileExists ? require(queriesFile) : null;
@@ -116,8 +110,10 @@ async function minify(input) {
   //   }));
   // }
 
-  const result = await postcss(plugins).process(thought.data, { from: undefined });
-  
+  const result = await postcss(plugins).process(thought.data, {
+    from: undefined,
+  });
+
   thought.data = result.css;
   return thought;
 }
@@ -148,23 +144,25 @@ async function save(input) {
 
 function build(input) {
   const thought = copy(input);
-  return thought.read()
+  return thought
+    .read()
     .then(lint)
     .then(compile)
     .then(minify)
     .then(addBanner)
     .then(save)
-    .catch(err => thought.error(err));
+    .catch((err) => thought.error(err));
 }
 
 /**
  * Entry point
  */
 
-export default (changed) => think({
-  changed,
-  build,
-  rules: config.paths.styles,
-  before: null,
-  after: null
-});
+export default (changed) =>
+  think({
+    changed,
+    build,
+    rules: config.paths.styles,
+    before: null,
+    after: null,
+  });
