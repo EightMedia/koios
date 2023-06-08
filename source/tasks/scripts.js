@@ -9,7 +9,7 @@ import { ESLint } from "eslint";
 import merge from "merge";
 
 import { rollup } from "rollup";
-import { terser } from "rollup-plugin-terser";
+import terser from "@rollup/plugin-terser";
 import nodeResolve from "@rollup/plugin-node-resolve";
 import nodePolyfills from 'rollup-plugin-polyfill-node';
 import commonjs from "@rollup/plugin-commonjs";

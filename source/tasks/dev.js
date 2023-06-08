@@ -1,17 +1,14 @@
 import config from "../config.js";
 import run from "../run.js";
 import path from "path";
+import browserSync from "browser-sync";
 import chokidar from "chokidar";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
-import browserSync from "browser-sync";
 
-// Patch BrowserSync to start a SecureServer
-import http2 from "http2";
-http2.createServer = http2.createSecureServer;
-
-// Get command line arguments
+const bs = browserSync.create("localdev");
 const argv = yargs(hideBin(process.argv)).argv;
+
 const verbose = argv.v || argv.verbose || false;
 
 /**
@@ -28,13 +25,10 @@ export default function () {
     };
 
     /**
-     * Run Local Server
+     * Run BrowserSync
      */
 
-    const bs = browserSync.create("localdev");
     bs.init({
-      httpModule: "http2",
-      https: true,
       server: {
         baseDir: config.paths.roots.to,
         directory: true,

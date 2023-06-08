@@ -1,6 +1,6 @@
 import config from "../config.js";
 import thoughtify from "../utils/thoughtify.js";
-import del from "del";
+import { deleteAsync } from "del";
 
 /**
  * Entry point
@@ -11,15 +11,15 @@ export default async function () {
     before: null,
     thoughts: [
       new Promise(async (resolve, reject) => {
-        del(`${config.paths.roots.to}**/*`)
+        deleteAsync(`${config.paths.roots.to}**/*`)
           .then((result) => {
             return `removed ${result.length} files from ${config.paths.roots.to}`;
           })
-          .then(msg => thoughtify({}).done(msg))
-          .then(thought => resolve(thought))
-          .catch(err => reject(err));
-      })
+          .then((msg) => thoughtify({}).done(msg))
+          .then((thought) => resolve(thought))
+          .catch((err) => reject(err));
+      }),
     ],
-    after: null
+    after: null,
   };
 }
