@@ -163,9 +163,9 @@ function getPugdocDocuments(templateSrc, filename, locals) {
 
     // process examples
     meta.examples.forEach((fragment) => {
-      if (typeof fragment === "string") {
+      if (typeof fragment === "string" || Array.isArray(fragment)) {
         // unnamed fragment, only add it to the master
-        masterExample += fragment;
+        masterExample += `${fragment}`;
         return;
       } else {
         // named fragment, add it to the master and continue processing it
@@ -196,7 +196,7 @@ function getPugdocDocuments(templateSrc, filename, locals) {
     });
 
     // add master example containing all examples
-    if (meta.examples.length > 1) {
+    if (masterExample.length > 0) {
       if (extend.block && extend.file) {
         masterExample = `extends ${extend.file}\n${meta.beforeEach}\nblock ${
           extend.block
