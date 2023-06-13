@@ -35,13 +35,16 @@ function extractPugdocBlocks(templateSrc) {
     // if the line contains a pugdoc comment return
     // the comment block and the next code block
     const comment = getCodeBlock.byLine(templateSrc, lineIndex + 1);
-    const meta = Object.assign({ 
-      capture: CAPTURE_SECTION,
-      examples: [],
-      beforeEach: "",
-      afterEach: "",
-    }, parsePugdocComment(comment));
-    
+    const meta = Object.assign(
+      {
+        capture: CAPTURE_SECTION,
+        examples: [],
+        beforeEach: "",
+        afterEach: "",
+      },
+      parsePugdocComment(comment)
+    );
+
     // move single example to examples array
     meta.example && meta.examples.push(meta.example) && delete meta.example;
 
@@ -49,7 +52,7 @@ function extractPugdocBlocks(templateSrc) {
     if (meta.capture <= 0) continue;
 
     let capture = Number.isInteger(meta.capture) ? meta.capture + 1 : Infinity;
-    
+
     // get all code blocks
     let code = getCodeBlock.byLine(templateSrc, lineIndex + 1, capture);
 
@@ -71,7 +74,7 @@ function extractPugdocBlocks(templateSrc) {
     // add to blocks array
     blocks.push({ lineNumber: lineIndex + 1, meta, code });
   }
-  
+
   return blocks;
 }
 
@@ -117,7 +120,13 @@ function compilePug(source, example, filename) {
     });
   }
 
-  return pug.compile(code, { basedir: process.cwd(), cache: false, filename, compileDebug: true, self: true });
+  return pug.compile(code, {
+    basedir: process.cwd(),
+    cache: false,
+    filename,
+    compileDebug: true,
+    self: true,
+  });
 }
 
 /**
@@ -134,63 +143,87 @@ function getPugdocDocuments(templateSrc, filename, locals) {
     const fragments = [];
 
     // parse jsdoc style arguments list
-    meta.arguments = meta.arguments && meta.arguments.map(function (arg) {
-      return pugdocArguments.parse(arg, true);
-    });
-    
-    // parse jsdoc style attributes list
-    meta.attributes = meta.attributes && meta.attributes.map(function (arg) {
-      return pugdocArguments.parse(arg, true);
-    });
+    meta.arguments =
+      meta.arguments &&
+      meta.arguments.map(function (arg) {
+        return pugdocArguments.parse(arg, true);
+      });
 
-    const extend = meta.extend || config.partExtends || { file: "_base", block: "body" };
+    // parse jsdoc style attributes list
+    meta.attributes =
+      meta.attributes &&
+      meta.attributes.map(function (arg) {
+        return pugdocArguments.parse(arg, true);
+      });
+
+    const extend = meta.extend ||
+      config.partExtends || { file: "_base", block: "body" };
 
     let masterExample = "";
 
     // process examples
-    meta.examples.forEach(fragment => {
+    meta.examples.forEach((fragment) => {
       if (typeof fragment === "string") {
-        fragment = { name: meta.name, example: fragment };
+        // unnamed fragment, only add it to the master
+        masterExample += fragment;
+        return;
+      } else {
+        // named fragment, add it to the master and continue processing it
+        masterExample += fragment.example;
       }
 
-      masterExample += fragment.example;
-      
-      fragment.example = `${fragment.example}`;
       if (extend.block && extend.file) {
-        fragment.example = `extends ${extend.file}\n${meta.beforeEach}\nblock ${extend.block}\n  example\n${rebaseIndent(fragment.example, 4).join("\n")}\n${meta.afterEach}`;
+        fragment.example = `extends ${extend.file}\n${meta.beforeEach}\nblock ${
+          extend.block
+        }\n  example\n${rebaseIndent(fragment.example, 4).join("\n")}\n${
+          meta.afterEach
+        }`;
       } else {
         fragment.example = `${meta.beforeEach}\n${fragment.example}\n${meta.afterEach}`;
       }
 
-      const output = compilePug(source, fragment.example, filename)({ ...locals, ...meta.locals });
+      const output = compilePug(
+        source,
+        fragment.example,
+        filename
+      )({ ...locals, ...meta.locals });
 
       // add fragment
       fragments.push({
         meta: fragment,
-        output
+        output,
       });
     });
 
     // add master example containing all examples
     if (meta.examples.length > 1) {
       if (extend.block && extend.file) {
-        masterExample = `extends ${extend.file}\n${meta.beforeEach}\nblock ${extend.block}\n  example\n${rebaseIndent(masterExample, 4).join("\n")}\n${meta.afterEach}`;
+        masterExample = `extends ${extend.file}\n${meta.beforeEach}\nblock ${
+          extend.block
+        }\n  example\n${rebaseIndent(masterExample, 4).join("\n")}\n${
+          meta.afterEach
+        }`;
       } else {
         masterExample = `${meta.beforeEach}\n${masterExample}\n${meta.afterEach}`;
       }
 
-      fragments.push({ 
-        meta, 
-        output: compilePug(source, masterExample, filename)({ ...locals, ...meta.locals })
+      fragments.push({
+        meta,
+        output: compilePug(
+          source,
+          masterExample,
+          filename
+        )({ ...locals, ...meta.locals }),
       });
     }
 
     return {
-      meta, fragments, file: path.relative(".", filename)
+      meta,
+      fragments,
+      file: path.relative(".", filename),
     };
   });
 }
-
 
 // Exports
 export default getPugdocDocuments;

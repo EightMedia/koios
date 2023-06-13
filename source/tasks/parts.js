@@ -15,15 +15,24 @@ async function compile(input) {
   const thought = copy(input);
   const part = pugdoc(thought.data, thought.source, config.locals);
 
-  const shortPath = pathDiff(path.join(process.cwd(), config.paths.roots.from), thought.source);
+  const shortPath = pathDiff(
+    path.join(process.cwd(), config.paths.roots.from),
+    thought.source
+  );
 
   if (!part) return thought.info(`skip ${shortPath}`);
 
   const promises = [];
   part.forEach((component) => {
-    component.fragments.forEach(fragment => fragment.meta.name && promises.push(writeFragment(fragment, thought.destination)));
-  })
-  const fragments = await Promise.all(promises).catch(err => thought.error(err));
+    component.fragments.forEach(
+      (fragment) =>
+        fragment.meta.name &&
+        promises.push(writeFragment(fragment, thought.destination))
+    );
+  });
+  const fragments = await Promise.all(promises).catch((err) =>
+    thought.error(err)
+  );
 
   return thought.done(`${shortPath} (${fragments.length})`);
 }
@@ -33,18 +42,18 @@ async function compile(input) {
  */
 
 async function writeFragment(fragment, parentDestination) {
-  const filename = fragment.meta.name ? slugify(fragment.meta.name) : path.basename(parentDestination);
+  const filename = fragment.meta.name
+    ? slugify(fragment.meta.name)
+    : path.basename(parentDestination);
 
-  const destination = path.resolve(
-    path.dirname(parentDestination),
-    filename
-  );
+  const destination = path.resolve(path.dirname(parentDestination), filename);
 
-  return writeFragmentHTML(fragment, destination).then((thought) => 
+  return writeFragmentHTML(fragment, destination).then((thought) =>
     writeFragmentJSON(
       fragment,
       destination,
-      pathDiff(path.resolve(config.paths.roots.to), thought.destination))
+      pathDiff(path.resolve(config.paths.roots.to), thought.destination)
+    )
   );
 }
 
@@ -53,11 +62,15 @@ async function writeFragment(fragment, parentDestination) {
  */
 
 async function writeFragmentHTML(fragment, destination) {
-  const data = config.htmlComponent ? config.htmlComponent
-  .replace("{{output}}", fragment.output || "")
-  .replace("{{title}}", fragment.meta.name) : fragment.output;
-  
-  return addBanner(thoughtify({ data, destination: `${destination}.html` })).write();
+  const data = config.htmlComponent
+    ? config.htmlComponent
+        .replace("{{output}}", fragment.output || "")
+        .replace("{{title}}", fragment.meta.name)
+    : fragment.output;
+
+  return addBanner(
+    thoughtify({ data, destination: `${destination}.html` })
+  ).write();
 }
 
 /**
@@ -94,19 +107,21 @@ function addBanner(input) {
 
 function build(input) {
   const thought = copy(input);
-  return thought.read()
+  return thought
+    .read()
     .then(compile)
-    .catch(err => thought.error(err));
+    .catch((err) => thought.error(err));
 }
 
 /**
  * Entry point
  */
 
-export default (changed) => think({
-  changed,
-  build,
-  rules: config.paths.parts,
-  // before: () => puppetServer.start(),
-  // after: () => puppetServer.stop()
-});
+export default (changed) =>
+  think({
+    changed,
+    build,
+    rules: config.paths.parts,
+    // before: () => puppetServer.start(),
+    // after: () => puppetServer.stop()
+  });
