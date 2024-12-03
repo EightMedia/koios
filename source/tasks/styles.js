@@ -5,10 +5,10 @@ import copy from "../utils/immutable-clone.js";
 import fs from "fs";
 import path from "path";
 import chalk from "chalk";
-import sass from "sass";
+import * as sass from "sass";
 import postcss from "postcss";
 import autoprefixer from "autoprefixer";
-import cssnano from "cssnano";
+import cleancss from "clean-css";
 import stylelint from "stylelint";
 import extractMediaQuery from "postcss-extract-media-query";
 import normalize from "postcss-normalize-string";
@@ -79,20 +79,6 @@ async function minify(input) {
     autoprefixer({
       cascade: false,
     }),
-    cssnano({
-      preset: [
-        "default",
-        {
-          discardComments: {
-            removeAll: true,
-          },
-          discardDuplicates: true,
-          discardEmpty: true,
-          minifyFontValues: true,
-          minifySelectors: true,
-        },
-      ],
-    }),
     normalize({ preferredQuote: "single" }),
   ];
 
@@ -116,7 +102,9 @@ async function minify(input) {
     from: undefined,
   });
 
-  thought.data = result.css;
+  const minified = new cleancss().minify(result.css);
+
+  thought.data = minified.styles;
   return thought;
 }
 

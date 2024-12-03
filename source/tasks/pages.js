@@ -10,8 +10,12 @@ import pug from "pug";
 async function compile(input) {
   const thought = copy(input);
   return pug.render(
-    thought.data, 
-    Object.assign(config.locals, { self: true, filename: thought.source }), 
+    thought.data,
+    Object.assign(config.locals, {
+      self: true,
+      filename: thought.source,
+      basedir: process.cwd(),
+    }),
     (err, html) => {
       if (err) throw err;
       thought.data = html;
@@ -46,21 +50,23 @@ async function save(input) {
 
 function build(input) {
   const thought = copy(input);
-  return thought.read()
+  return thought
+    .read()
     .then(compile)
     .then(addBanner)
     .then(save)
-    .catch(err => thought.error(err));
+    .catch((err) => thought.error(err));
 }
 
 /**
  * Entry point
  */
 
-export default (changed) => think({
-  changed,
-  build,
-  rules: config.paths.pages,
-  before: null,
-  after: null
-});
+export default (changed) =>
+  think({
+    changed,
+    build,
+    rules: config.paths.pages,
+    before: null,
+    after: null,
+  });
