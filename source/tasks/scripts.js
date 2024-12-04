@@ -8,10 +8,12 @@ import chalk from "chalk";
 import { ESLint } from "eslint";
 import merge from "merge";
 
+import globals from "globals";
+
 import { rollup } from "rollup";
 import terser from "@rollup/plugin-terser";
 import nodeResolve from "@rollup/plugin-node-resolve";
-import nodePolyfills from 'rollup-plugin-polyfill-node';
+import nodePolyfills from "rollup-plugin-polyfill-node";
 import commonjs from "@rollup/plugin-commonjs";
 import { babel } from "@rollup/plugin-babel";
 import json from "@rollup/plugin-json";
@@ -25,38 +27,43 @@ async function lint(input) {
   if (process.env.NODE_ENV !== "development") return input;
 
   const thought = copy(input);
-  const eslint = new ESLint({ 
+  const eslint = new ESLint({
     baseConfig: {
-      "env": {
-        "browser": true,
-        "node": true,
+      languageOptions: {
+        globals: {
+          ...globals.browser,
+          ...globals.node,
+        },
+        parser: "@babel/eslint-parser",
       },
-      "parser": "@babel/eslint-parser",
-      "parserOptions": {
-        "requireConfigFile": false
+      parserOptions: {
+        requireConfigFile: false,
       },
-      "extends": [
-        "eslint:recommended",
-        "plugin:json/recommended"
-      ],
-      "rules": {
+      extends: ["eslint:recommended", "plugin:json/recommended"],
+      rules: {
         "global-require": 1,
-        "no-mixed-requires": 1
+        "no-mixed-requires": 1,
       },
-      "globals": {
-        "window": true,
-        "document": true
-      }
-    }
-  })
+      globals: {
+        window: true,
+        document: true,
+      },
+    },
+  });
 
-  const results = await eslint.lintFiles(thought.changed || thought.dependencies);
+  const results = await eslint.lintFiles(
+    thought.changed || thought.dependencies
+  );
   const issues = [];
 
-  results.forEach(result => {
+  results.forEach((result) => {
     if (result.errorCount === 0 && result.warningCount === 0) return;
-    result.messages.forEach(issue => {
-      issues.push(`${pathDiff(result.filePath, process.cwd())} [${issue.line}:${issue.column}] ${issue.ruleId}\n  ${chalk.grey(issue.message)}`);
+    result.messages.forEach((issue) => {
+      issues.push(
+        `${pathDiff(result.filePath, process.cwd())} [${issue.line}:${
+          issue.column
+        }] ${issue.ruleId}\n  ${chalk.grey(issue.message)}`
+      );
     });
   });
 
@@ -64,7 +71,7 @@ async function lint(input) {
     return thought.warn({
       scope: "linter",
       msg: `${pathDiff(process.cwd(), thought.source)}`,
-      issues
+      issues,
     });
   }
 
@@ -80,39 +87,55 @@ async function bundle(input) {
 
   const sourceDir = path.dirname(thought.source);
   const basename = path.basename(thought.destination, ".js");
-  const addFullOutput = basename.substring(basename.length-4, basename.length) === ".min";
-  
+  const addFullOutput =
+    basename.substring(basename.length - 4, basename.length) === ".min";
+
   const errors = [];
 
-  const extraRollupConfigFile = path.resolve(sourceDir, '.rolluprc.mjs');
-  const hasExtraRollupConfig = await fs.promises.access(extraRollupConfigFile)
+  const extraRollupConfigFile = path.resolve(sourceDir, ".rolluprc.mjs");
+  const hasExtraRollupConfig = await fs.promises
+    .access(extraRollupConfigFile)
     .then((ok) => ok === undefined && true)
     .catch(() => false);
 
-  const { default: extraRollupConfig } = hasExtraRollupConfig && await import(extraRollupConfigFile);
+  const { default: extraRollupConfig } =
+    hasExtraRollupConfig && (await import(extraRollupConfigFile));
 
-  const rollupConfig = merge.recursive(true,
+  const rollupConfig = merge.recursive(
+    true,
     {
       plugins: [
-        replace({ 'process.env.NODE_ENV': JSON.stringify("production"), preventAssignment: true }),
+        replace({
+          "process.env.NODE_ENV": JSON.stringify("production"),
+          preventAssignment: true,
+        }),
         json(),
         nodePolyfills(),
         nodeResolve({ preferBuiltins: false, browser: true }),
         commonjs({ transformMixedEsModules: true }),
-        babel({ babelHelpers: "bundled", skipPreflightCheck: true, exclude: /node_modules/, sourceType: "unambiguous" }),
+        babel({
+          babelHelpers: "bundled",
+          skipPreflightCheck: true,
+          exclude: /node_modules/,
+          sourceType: "unambiguous",
+        }),
       ],
       output: {
         format: "iife",
         sourcemap: false,
-      }
+      },
     },
     extraRollupConfig,
     {
       input: thought.source,
-      onwarn ({ code, loc, message }) {
-        if (code === 'THIS_IS_UNDEFINED' ) return;
+      onwarn({ code, loc, message }) {
+        if (code === "THIS_IS_UNDEFINED") return;
         message = chalk.grey(message);
-        const error = loc ? `${pathDiff(loc.file, process.cwd())} [${loc.line}:${loc.column}]\n  ${message}` : message;
+        const error = loc
+          ? `${pathDiff(loc.file, process.cwd())} [${loc.line}:${
+              loc.column
+            }]\n  ${message}`
+          : message;
         errors.push(error);
       },
       output: {
@@ -121,16 +144,17 @@ async function bundle(input) {
         banner: `/* @koios ${config.project.name} v${config.project.version} */`,
         plugins: [
           terser({
-            output: { 
+            output: {
               comments: function (node, comment) {
                 const text = comment.value;
                 return /@koios/i.test(text);
-              } 
-            }
+              },
+            },
           }),
         ],
-      }
-    });
+      },
+    }
+  );
 
   const bundle = await rollup(rollupConfig);
 
@@ -138,8 +162,8 @@ async function bundle(input) {
     return thought.error({
       scope: "bundler",
       msg: `${pathDiff(process.cwd(), thought.source)}`,
-      errors
-    })
+      errors,
+    });
   }
 
   /**
@@ -148,7 +172,7 @@ async function bundle(input) {
 
   const { output } = await bundle.generate(rollupConfig.output);
   thought.data = output[0].code;
-  
+
   /**
    * Write full output if destination contains "min": filename.min.js
    */
@@ -156,7 +180,10 @@ async function bundle(input) {
   if (addFullOutput) {
     rollupConfig.output.plugins = [];
     const full = copy(input);
-    full.destination = path.join(path.dirname(thought.destination), path.basename(thought.destination, ".min.js") + ".js");
+    full.destination = path.join(
+      path.dirname(thought.destination),
+      path.basename(thought.destination, ".min.js") + ".js"
+    );
     const { output: fullOutput } = await bundle.generate(rollupConfig.output);
     full.data = fullOutput[0].code;
     full.write();
@@ -185,21 +212,23 @@ async function save(input) {
 
 function build(input) {
   const thought = copy(input);
-  return thought.read()
+  return thought
+    .read()
     .then(lint)
     .then(bundle)
     .then(save)
-    .catch(err => thought.error(err));
+    .catch((err) => thought.error(err));
 }
 
 /**
  * Entry point
  */
 
-export default (changed) => think({
-  changed,
-  build,
-  rules: config.paths.scripts,
-  before: null,
-  after: null
-});
+export default (changed) =>
+  think({
+    changed,
+    build,
+    rules: config.paths.scripts,
+    before: null,
+    after: null,
+  });

@@ -32,10 +32,7 @@ export default async function () {
       config.paths.roots.to,
       config.paths.assets[entry]
     );
-    const err =
-      process.env.NODE_ENV === "development"
-        ? await fs.promises.symlink(source, destination)
-        : await mvdir(source, destination, { copy: true });
+    const err = await mvdir(source, destination, { copy: true });
     const thought = !err
       ? thoughtify({}).done(pathDiff(process.cwd(), source))
       : thoughtify({}).error(err);
