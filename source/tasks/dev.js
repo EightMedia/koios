@@ -4,6 +4,7 @@ import path from "path";
 import browserSync from "browser-sync";
 import chokidar from "chokidar";
 import yargs from "yargs";
+import { globby } from "globby";
 import { hideBin } from "yargs/helpers";
 
 const bs = browserSync.create("localdev");
@@ -16,7 +17,7 @@ const verbose = argv.v || argv.verbose || false;
  */
 
 export default function () {
-  return new Promise(function (resolve, reject) {
+  return new Promise(async function (resolve, reject) {
     const chokidarOptions = {
       awaitWriteFinish: {
         stabilityThreshold: 500,
@@ -49,11 +50,11 @@ export default function () {
      */
 
     const watcher = chokidar.watch(
-      [
+      await globby([
         `${config.paths.roots.from}/**/*.scss`,
         `${config.paths.roots.from}/**/*.js`,
         `${config.paths.roots.from}/**/*.pug`,
-      ],
+      ]),
       chokidarOptions
     );
 
