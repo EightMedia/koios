@@ -6,6 +6,7 @@ import path from "path";
 import fs from "fs";
 import chalk from "chalk";
 import { ESLint } from "eslint";
+import js from "@eslint/js";
 import merge from "merge";
 
 import globals from "globals";
@@ -17,6 +18,8 @@ import nodePolyfills from "rollup-plugin-polyfill-node";
 import commonjs from "@rollup/plugin-commonjs";
 import { babel } from "@rollup/plugin-babel";
 import json from "@rollup/plugin-json";
+import jsonConfig from "eslint-plugin-json";
+
 import replace from "@rollup/plugin-replace";
 
 /**
@@ -29,25 +32,19 @@ async function lint(input) {
   const thought = copy(input);
   const eslint = new ESLint({
     baseConfig: {
+      ...js.configs.recommended,
+      ...jsonConfig.configs["recommended"],
       languageOptions: {
         globals: {
           ...globals.browser,
           ...globals.node,
         },
         parser: "@babel/eslint-parser",
-      },
-      parserOptions: {
-        requireConfigFile: false,
+        parserOptions: {
+          requireConfigFile: false,
+        },
       },
       extends: ["eslint:recommended", "plugin:json/recommended"],
-      rules: {
-        "global-require": 1,
-        "no-mixed-requires": 1,
-      },
-      globals: {
-        window: true,
-        document: true,
-      },
     },
   });
 
