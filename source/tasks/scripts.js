@@ -17,6 +17,7 @@ import nodeResolve from "@rollup/plugin-node-resolve";
 import nodePolyfills from "rollup-plugin-polyfill-node";
 import commonjs from "@rollup/plugin-commonjs";
 import { babel } from "@rollup/plugin-babel";
+import babelParser from "@babel/eslint-parser";
 import json from "@rollup/plugin-json";
 import jsonConfig from "eslint-plugin-json";
 
@@ -37,14 +38,12 @@ async function lint(input) {
       languageOptions: {
         globals: {
           ...globals.browser,
-          ...globals.node,
         },
-        parser: "@babel/eslint-parser",
+        parser: babelParser,
         parserOptions: {
           requireConfigFile: false,
         },
       },
-      extends: ["eslint:recommended", "plugin:json/recommended"],
     },
   });
 
