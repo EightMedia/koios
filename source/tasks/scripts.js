@@ -176,15 +176,17 @@ async function bundle(input) {
       continue;
     }
 
-    const name = thought.subdir === "." ? thought.name : thought.subdir;
-
     if (chunkOrAsset.isEntry === true) {
       const entry = thoughtify({
         data: chunkOrAsset.code,
         destination:
           chunkOrAsset.imports.length === 0
-            ? path.join(path.dirname(thought.destination), name + ".js")
-            : path.join(path.dirname(thought.destination), name, "index.js"),
+            ? thought.destination
+            : path.join(
+                path.dirname(thought.destination),
+                path.basename(thought.destination, ".js"),
+                "index.js"
+              ),
       });
       entry.write();
       continue;
@@ -194,7 +196,7 @@ async function bundle(input) {
       data: chunkOrAsset.code,
       destination: path.join(
         path.dirname(thought.destination),
-        name,
+        path.basename(thought.destination, ".js"),
         chunkOrAsset.fileName
       ),
     });
