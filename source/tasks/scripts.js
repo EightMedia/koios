@@ -2,6 +2,7 @@ import config from "../config.js";
 import think from "../utils/think.js";
 import copy from "../utils/immutable-clone.js";
 import pathDiff from "../utils/path-diff.js";
+import thoughtify from "../utils/thoughtify.js";
 import path from "path";
 import fs from "fs";
 import chalk from "chalk";
@@ -167,7 +168,38 @@ async function bundle(input) {
    */
 
   const { output } = await bundle.generate(rollupConfig.output);
-  thought.data = output[0].code;
+
+  for (const chunkOrAsset of output) {
+    if (chunkOrAsset.type === "asset") {
+      thought.data = chunkOrAsset.source;
+      thought.write();
+      continue;
+    }
+
+    const name = thought.subdir === "." ? thought.name : thought.subdir;
+
+    if (chunkOrAsset.isEntry === true) {
+      const entry = thoughtify({
+        data: chunkOrAsset.code,
+        destination:
+          chunkOrAsset.imports.length === 0
+            ? path.join(path.dirname(thought.destination), name + ".js")
+            : path.join(path.dirname(thought.destination), name, "index.js"),
+      });
+      entry.write();
+      continue;
+    }
+
+    const chunk = thoughtify({
+      data: chunkOrAsset.code,
+      destination: path.join(
+        path.dirname(thought.destination),
+        name,
+        chunkOrAsset.fileName
+      ),
+    });
+    chunk.write();
+  }
 
   /**
    * Write full output if destination contains "min": filename.min.js
@@ -198,7 +230,6 @@ async function bundle(input) {
 
 async function save(input) {
   const thought = copy(input);
-  await thought.write();
   return thought.done();
 }
 

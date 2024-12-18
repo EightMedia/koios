@@ -60,6 +60,7 @@ export default async function ({ changed, build, rules, before, after }) {
         thoughtify({
           source,
           destination,
+          subdir,
           name: camelize(name),
           changed,
           dependencies,

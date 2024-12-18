@@ -1,11 +1,20 @@
-import pathDiff from "./path-diff.js"
+import pathDiff from "./path-diff.js";
 import chalk from "chalk";
 import fs from "fs/promises";
 import path from "path";
 
-export default ({ source, destination, name, changed, dependencies, data }) => ({
+export default ({
   source,
   destination,
+  name,
+  subdir,
+  changed,
+  dependencies,
+  data,
+}) => ({
+  source,
+  destination,
+  subdir,
   name,
   changed,
   dependencies,
@@ -40,10 +49,13 @@ export default ({ source, destination, name, changed, dependencies, data }) => (
     if (msg instanceof Error) {
       msg = {
         msg: pathDiff(process.cwd(), this.source),
-        errors: [chalk.grey(msg.stack)]
-      }
+        errors: [chalk.grey(msg.stack)],
+      };
     }
-    this.log = this.log || typeof msg === "string" ? { type: "error", msg } : Object.assign(msg, { type: "error" });
+    this.log =
+      this.log || typeof msg === "string"
+        ? { type: "error", msg }
+        : Object.assign(msg, { type: "error" });
     return this;
   },
 
@@ -59,7 +71,10 @@ export default ({ source, destination, name, changed, dependencies, data }) => (
   },
 
   async warn(msg) {
-    this.log = this.log || typeof msg === "string" ? { type: "warn", msg } : Object.assign(msg, { type: "warn" });
+    this.log =
+      this.log || typeof msg === "string"
+        ? { type: "warn", msg }
+        : Object.assign(msg, { type: "warn" });
     return this;
   },
 
@@ -69,5 +84,5 @@ export default ({ source, destination, name, changed, dependencies, data }) => (
 
   hasErrors() {
     return this.log.errors && this.log.type === "error";
-  }
-})
+  },
+});
