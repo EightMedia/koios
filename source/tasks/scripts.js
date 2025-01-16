@@ -179,14 +179,11 @@ async function bundle(input) {
     if (chunkOrAsset.isEntry === true) {
       const entry = thoughtify({
         data: chunkOrAsset.code,
-        destination:
-          chunkOrAsset.imports.length === 0
-            ? thought.destination
-            : path.join(
-                path.dirname(thought.destination),
-                path.basename(thought.destination, ".js"),
-                "index.js"
-              ),
+        destination: path.join(
+          path.dirname(thought.destination),
+          path.basename(thought.destination, ".js"),
+          "index.js"
+        ),
       });
       entry.write();
       continue;
