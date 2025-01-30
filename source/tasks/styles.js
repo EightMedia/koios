@@ -9,7 +9,7 @@ import * as sass from "sass";
 import postcss from "postcss";
 import autoprefixer from "autoprefixer";
 import stylelint from "stylelint";
-import combineMediaQuery from "postcss-combine-media-query";
+import sortMediaQueries from "postcss-sort-media-queries";
 import extractMediaQuery from "postcss-extract-media-query";
 import clean from "postcss-clean";
 import normalize from "postcss-normalize-string";
@@ -92,7 +92,7 @@ async function minify(input) {
       cascade: false,
     }),
     normalize({ preferredQuote: "single" }),
-    combineMediaQuery(),
+    sortMediaQueries(),
     extractMediaQuery({
       output: {
         path: path.dirname(thought.destination),
