@@ -8,10 +8,10 @@ import chalk from "chalk";
 import * as sass from "sass";
 import postcss from "postcss";
 import autoprefixer from "autoprefixer";
-import cleancss from "clean-css";
 import stylelint from "stylelint";
 import combineMediaQuery from "postcss-combine-media-query";
 import extractMediaQuery from "postcss-extract-media-query";
+import clean from "postcss-clean";
 import normalize from "postcss-normalize-string";
 
 /**
@@ -76,37 +76,47 @@ function compile(input) {
 async function minify(input) {
   const thought = copy(input);
 
+  const queriesFile = path.resolve(
+    path.dirname(thought.source),
+    `${path.basename(thought.source, ".scss")}.queries.json`
+  );
+  const queriesFileExists = await fs.promises
+    .stat(queriesFile)
+    .catch(() => false);
+  const { default: queries } = queriesFileExists
+    ? await import(queriesFile, { assert: { type: "json" } })
+    : { default: {} };
+
   const plugins = [
     autoprefixer({
       cascade: false,
     }),
     normalize({ preferredQuote: "single" }),
     combineMediaQuery(),
+    extractMediaQuery({
+      output: {
+        path: path.dirname(thought.destination),
+        name: `${path.basename(thought.destination, ".css")}-[query].[ext]`,
+      },
+      config: {
+        plugins: {
+          "postcss-clean": {},
+        },
+      },
+      stats: false,
+      extractAll: false,
+      queries,
+    }),
+    clean(),
   ];
-
-  // const queriesFile = path.resolve(path.dirname(thought.source), `${path.basename(thought.source, ".scss")}.queries.json`);
-  // const queriesFileExists = await fs.promises.stat(queriesFile).catch(() => false);
-  // const queries = queriesFileExists ? require(queriesFile) : null;
-
-  // if (queries !== null) {
-  //   plugins.push(extractMediaQuery({
-  //     output: {
-  //       path: path.dirname(thought.destination),
-  //       name: `${path.basename(thought.destination, ".css")}-[query].[ext]`,
-  //     },
-  //     stats: false,
-  //     extractAll: false,
-  //     queries,
-  //   }));
-  // }
 
   const result = await postcss(plugins).process(thought.data, {
     from: undefined,
   });
 
-  const minified = new cleancss().minify(result.css);
+  // const minified = new cleancss().minify(result.css);
 
-  thought.data = minified.styles;
+  thought.data = result.css;
   return thought;
 }
 
