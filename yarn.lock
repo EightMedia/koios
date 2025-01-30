@@ -3807,6 +3807,11 @@ path-type@^5.0.0:
   resolved "https://registry.yarnpkg.com/path-type/-/path-type-5.0.0.tgz#14b01ed7aea7ddf9c7c3f46181d4d04f9c785bb8"
   integrity sha512-5HviZNaZcfqP95rwpv+1HDgUamezbqdSYTyzjTvwtJSnIH+3vnbmWsItli8OFEndS984VT55M3jduxZbX351gg==
 
+picocolors@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/picocolors/-/picocolors-0.2.1.tgz#570670f793646851d1ba135996962abad587859f"
+  integrity sha512-cMlDqaLEqfSaW8Z7N5Jw+lyIW869EzT73/F5lhtY9cLGoVxSXznfgfXMO0Z5K0o0Q2TkTXq+0KFsdnSe3jDViA==
+
 picocolors@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/picocolors/-/picocolors-1.0.0.tgz#cb5bdc74ff3f51892236eaf79d68bc44564ab81c"
@@ -3847,6 +3852,13 @@ portscanner@2.2.0:
   dependencies:
     async "^2.6.0"
     is-number-like "^1.0.3"
+
+postcss-combine-media-query@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/postcss-combine-media-query/-/postcss-combine-media-query-1.0.1.tgz#99a8c4477c31b5e20061c6509bb18165c0f8066e"
+  integrity sha512-DFSXuYy3ltDkC2esIF0ORoS9DCjlyfWhtoQkG9brZMuJY1ABOER95sm3dvccR6IEgSrYX4RgqiHD4Lq3JGrxyw==
+  dependencies:
+    postcss "^7.0.21"
 
 postcss-extract-media-query@^3.0.0:
   version "3.0.0"
@@ -3905,6 +3917,14 @@ postcss-values-parser@^6.0.2:
     color-name "^1.1.4"
     is-url-superb "^4.0.0"
     quote-unquote "^1.0.0"
+
+postcss@^7.0.21:
+  version "7.0.39"
+  resolved "https://registry.yarnpkg.com/postcss/-/postcss-7.0.39.tgz#9624375d965630e2e1f2c02a935c82a59cb48309"
+  integrity sha512-yioayjNbHn6z1/Bywyb2Y4s3yvDAeXGOyxqD+LnVOinq6Mdmd++SW2wUNVzavyyHxd6+DxzWGIuosg6P1Rj8uA==
+  dependencies:
+    picocolors "^0.2.1"
+    source-map "^0.6.1"
 
 postcss@^8.4.40, postcss@^8.4.48, postcss@^8.4.49:
   version "8.4.49"
@@ -4612,7 +4632,7 @@ source-map-support@~0.5.20:
     buffer-from "^1.0.0"
     source-map "^0.6.0"
 
-source-map@^0.6.0, source-map@~0.6.0, source-map@~0.6.1:
+source-map@^0.6.0, source-map@^0.6.1, source-map@~0.6.0, source-map@~0.6.1:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.6.1.tgz#74722af32e9614e9c287a8d0bbde48b5e2f1a263"
   integrity sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==

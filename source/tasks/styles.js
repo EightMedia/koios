@@ -10,6 +10,7 @@ import postcss from "postcss";
 import autoprefixer from "autoprefixer";
 import cleancss from "clean-css";
 import stylelint from "stylelint";
+import combineMediaQuery from "postcss-combine-media-query";
 import extractMediaQuery from "postcss-extract-media-query";
 import normalize from "postcss-normalize-string";
 
@@ -80,6 +81,7 @@ async function minify(input) {
       cascade: false,
     }),
     normalize({ preferredQuote: "single" }),
+    combineMediaQuery(),
   ];
 
   // const queriesFile = path.resolve(path.dirname(thought.source), `${path.basename(thought.source, ".scss")}.queries.json`);
