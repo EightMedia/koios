@@ -100,6 +100,7 @@ async function minify(input) {
       },
       config: {
         plugins: {
+          "postcss-sort-media-queries": {},
           "postcss-clean": {},
         },
       },
