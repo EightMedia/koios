@@ -176,24 +176,10 @@ async function bundle(input) {
       continue;
     }
 
-    if (chunkOrAsset.isEntry === true) {
-      const entry = thoughtify({
-        data: chunkOrAsset.code,
-        destination: path.join(
-          path.dirname(thought.destination),
-          path.basename(thought.destination, ".js"),
-          "index.js"
-        ),
-      });
-      entry.write();
-      continue;
-    }
-
     const chunk = thoughtify({
       data: chunkOrAsset.code,
       destination: path.join(
         path.dirname(thought.destination),
-        path.basename(thought.destination, ".js"),
         chunkOrAsset.fileName
       ),
     });
