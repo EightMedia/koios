@@ -84,7 +84,7 @@ async function minify(input) {
     .stat(queriesFile)
     .catch(() => false);
   const { default: queries } = queriesFileExists
-    ? await import(queriesFile, { assert: { type: "json" } })
+    ? await import(queriesFile, { with: { type: "json" } })
     : { default: {} };
 
   const plugins = [
